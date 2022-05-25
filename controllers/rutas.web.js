@@ -179,14 +179,14 @@ router.get('/procesar-objetivos', async (req, res) => {
 
 })
 
-router.get('/mercha', isAuthenticated, (req, res) => {
+router.get('/gestion', isAuthenticated, (req, res) => {
   let user = req.user.name
-  res.render('../views/mercha', { user })
+  res.render('../views/gestion', { user })
 })
 
-router.get('/clientes', isAuthenticated, (req, res) => {
+router.get('/administrador', isAuthenticated, (req, res) => {
   let user = req.user.name
-  res.render('../views/clientes', { user })
+  res.render('../views/administrador', { user })
 })
 
 router.get('/msg-ok', (req, res) => {
