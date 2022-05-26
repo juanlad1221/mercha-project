@@ -189,6 +189,42 @@ router.get('/administrador', isAuthenticated, (req, res) => {
   res.render('../views/administrador', { user })
 })
 
+router.get('/clientes', async (req, res) => {
+  let user = req.user.name
+
+  res.render('../views/clientes', { user })
+})//end get
+
+router.get('/objetivos', async (req, res) => {
+  let user = req.user.name
+
+  res.render('../views/objetivos', {user})
+})//end get
+
+
+//apis internas
+router.get('/api-clientes', async (req, res) => {
+  //traigo datos de la bd
+  let clientes = await Clients.where({active:true})
+
+  let data = {data:clientes}
+  res.status(200).json(data)
+})//end get
+
+router.get('/api-objetivos', async (req, res) => {
+  //traigo datos de la bd
+  let objetivos = await Objetives.where({active:true})
+
+  let data = {data:objetivos}
+  res.status(200).json(data)
+})//end get
+
+
+
+
+
+
+
 router.get('/msg-ok', (req, res) => {
   let user = req.user.name
   res.render('../views/msgOk', { user, title: 'Archivo eliminado correctamente' })
