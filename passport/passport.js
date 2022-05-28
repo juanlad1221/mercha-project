@@ -8,7 +8,7 @@ const User = require('../schemas/Users')
 
 //Serialize
 passport.serializeUser(function(user,done){
-    done(null, user[0].id);
+    done(null, user[0]._id);
 });
 
 //Deserialize

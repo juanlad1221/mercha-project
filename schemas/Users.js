@@ -8,6 +8,7 @@ const users_schema = Schema({
     name: { type: String, requerid: true },
     phone: { type: String, requerid: true },
     type: { type: String, requerid: true },
+    id:{type:Number},
     active: { type: Boolean, requerid: true, default: true }
 
 });

@@ -21,7 +21,9 @@
                     <th>LOCALIDAD</th>
                     <th>PROVINCIA</th>
                     <th>PAIS</th>
+                    <th>NOMBRE VENDEDOR</th>
                     <th>VENDEDOR</th>
+                    <th>NOMBRE MERCHANDISING</th>
                     <th>MERCHANDISING</th>
                     <th>RUBRO</th>
                     <th>SUBRUBRO</th>
@@ -49,8 +51,7 @@
                     language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
                     //order: [[1, "asc"]],
                     bDestroy: true,
-                    scrollX: 200,
-                    scrollCollapse: true,
+                    scrollX: true,
                     columnDefs: [
                         { "className": "dt-center", "targets": "_all" }
                     ],
@@ -63,7 +64,9 @@
                         { "data": "Localidad" },
                         { "data": "Provincia" },
                         { "data": "Pais" },
+                        { "data": "Nombre_Vendedor" },
                         { "data": "Vendedor" },
+                        { "data": "Nombre_Merchandising" },
                         { "data": "Merchandising" },
                         { "data": "Rubro" },
                         { "data": "Subrubro" },

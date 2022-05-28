@@ -39,15 +39,15 @@
     </div>
 
     <div class="mt-4">
-        <table id="basic-datatable" class="table table-striped">
+        <table id="basic-datatable" class="table table-striped nowrap">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start date</th>
-                    <th>Salary</th>
+                    <th>ULTIMA VISITA</th>
+                    <th>ÁREA</th>
+                    <th>TOTAL BASE</th>
+                    <th>OBJETIVO MES</th>
+                    <th>RELEVADOS</th>
+                    <th>ALCANSE EN %</th>
                 </tr>
             </thead>
 
@@ -66,6 +66,14 @@
                     <td>Accountant</td>
                     <td>Tokyo</td>
                     <td>63</td>
+                    <td>2011/07/25</td>
+                    <td>$170,750</td>
+                </tr>
+                <tr>
+                    <td>Garrett Winters</td>
+                    <td>Accountant</td>
+                    <td>Tokyo</td>
+                    <td>40</td>
                     <td>2011/07/25</td>
                     <td>$170,750</td>
                 </tr>
@@ -89,13 +97,31 @@
                 let year = currentTime.getFullYear()
                 let mounth = currentTime.getMonth() + 1
 
-                
+
                 //establezco mes seleccionado
-                document.getElementById('mes').value=mounth
-                
+                document.getElementById('mes').value = mounth
 
-                $('#basic-datatable').DataTable();
+                var table = $('#basic-datatable').DataTable({
+                    fixedHeader: true,
+                    language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+                    bDestroy: true,
+                    scrollX: true,
+                    columnDefs: [
+                        { "className": "dt-center", "targets": "_all" }
+                    ],
+                })
 
+                $('#basic-datatable thead tr').clone(true).appendTo('#basic-datatable thead')
 
+                $('#basic-datatable thead tr:eq(1) th').each(function (i) {
+                    var title = $(this).text();
+                    $(this).html('<input type="text" />')
+
+                    $('input', this).on('keyup change', function () {
+                        if (table.column(i).search() !== this.value) {
+                            table.column(i).search(this.value).draw()
+                        }
+                    })
+                })
             });
         </script>

@@ -16,6 +16,7 @@ const Xls = require('../schemas/xls')
 const Clients = require('../schemas/Clients')
 const Objetives = require('../schemas/Objetives');
 const Survey = require("../schemas/Survey");
+const { type } = require("os");
 //const prisma = new PrismaClient()
 
 let currentTime = new Date();
@@ -77,7 +78,7 @@ router.get('/validar-clientes', async (req, res) => {
 
   try {
     let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: true })
-    
+
     if (update.modifiedCount == 1) {
       res.redirect('load_clientes')
     }
@@ -114,11 +115,11 @@ router.get('/procesar-clientes', async (req, res) => {
       await Clients.collection.drop()
 
       //inserto clientes xls en la bd
-      let insert =await Clients.insertMany(dataexcel)
+      let insert = await Clients.insertMany(dataexcel)
       if (insert) {
         let update = await Xls.updateOne({ type: 'CLIENTS' }, { processed: true })
         if (update.modifiedCount == 1) {
-            res.redirect('load_clientes')
+          res.redirect('load_clientes')
         }
       }
 
@@ -198,26 +199,72 @@ router.get('/clientes', async (req, res) => {
 router.get('/objetivos', async (req, res) => {
   let user = req.user.name
 
-  res.render('../views/objetivos', {user})
+  res.render('../views/objetivos', { user })
 })//end get
 
 
 //apis internas
 router.get('/api-clientes', async (req, res) => {
   //traigo datos de la bd
-  let clientes = await Clients.where({active:true})
+  let clientes = await Clients.where({ active: true })
 
-  let data = {data:clientes}
+  let data = { data: clientes }
   res.status(200).json(data)
 })//end get
 
 router.get('/api-objetivos', async (req, res) => {
   //traigo datos de la bd
-  let objetivos = await Objetives.where({active:true})
+  let objetivos = await Objetives.where({ active: true })
 
-  let data = {data:objetivos}
+  let data = { data: objetivos }
   res.status(200).json(data)
 })//end get
+
+router.get('/api-gestion', async (req, res) => {
+  try {
+    //traigo datos de la bd
+    let merchas = await Users.where({ type: 'MERCHA' })
+    let Vendedores = await Users.where({ type: 'SELLER' })
+    //let survey = await Survey.where({})
+    //console.log(merchas)
+    //console.log('uno',await Survey.where({Merchandising:1}).sort({ _id: -1 }))
+    //console.log(await Survey.where({Merchandising:e.id}).sort({ _id: -1 }).limit(5))
+    let arr = []
+    let yu = [1]
+    let obj = {}
+    yu.forEach(async e => {
+
+      //obj.id = e.id
+  
+      let ultima_fecha = await Survey.where({Merchandising:e.id}).sort({ _id: -1 })
+      //obj.date = ultima_fecha[0].Date
+
+      let total_base = await Clients.where({Merchandising:e.id}).count()
+      //obj.total_base = total_base
+
+      let objetivos_mes = await Objetives.where({Merchandising:e.id, Año: year, Mes:mounth}).count()
+      //obj.objetivos_mes = objetivos_mes
+
+      let relevados_mes = await Survey.where({Merchandising:e.id, Año: year, Mes:mounth, Status:true}).count()
+      //obj.relevados_mes = relevados_mes
+
+      let porcentaje = (100 * Number(relevados_mes))/Number(objetivos_mes)
+      //obj.porcentaje = porcentaje
+
+      
+      arr.push(relevados_mes)
+
+    })
+
+
+    console.log(arr)
+    let data = { data: arr }
+    res.status(200).json(data)
+  } catch (error) {
+    console.log(error)
+  }
+})//end get
+
 
 
 
@@ -240,15 +287,15 @@ router.get('/msg-ok-upload', (req, res) => {
   res.render('../views/msgOkUpload', { user })
 })//end get
 
-router.get('/download/clientes',async (req, res) => {
-  let xls = await Xls.where({type: 'CLIENTS'})
+router.get('/download/clientes', async (req, res) => {
+  let xls = await Xls.where({ type: 'CLIENTS' })
 
   res.status(200).download(xls[0].url)
 })//end get
 
-router.get('/download/objetivos',async (req, res) => {
-  let xls = await Xls.where({type: 'OBJETIVES'})
- 
+router.get('/download/objetivos', async (req, res) => {
+  let xls = await Xls.where({ type: 'OBJETIVES' })
+
   res.status(200).download(xls[0].url)
 })//end get
 
