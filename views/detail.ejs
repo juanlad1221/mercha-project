@@ -1,0 +1,17 @@
+<%- include('block_inicio')%>
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Survey</h4>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex align-content-start flex-wrap">
+    <%fotos.forEach(e=>{%>
+        <%e.Pictures.forEach(f=>{%>
+        <img class="m-1" style="width:20%" src=<%='data:image/jpg;base64,'+f%> />
+        <%})%>
+    <%})%>
+</div>
+<%- include('block_end')%>

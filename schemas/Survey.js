@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const survey_schema = Schema({
     Codigo_Cliente: { type: String },
     client_id:{type: Object},
-    Nombre: { type: String },
+    Nombre: { type: String  },
     Vendedor:{type: Number},
     Nombre_Vendedor:{type: String},
     Merchandising:{type: Number},
@@ -13,7 +13,7 @@ const survey_schema = Schema({
     Mes:{type:Number,requerid:true},
     Año:{type:Number, requerid:true},
     Date:{type:Date, default:new Date()},
-    Pictures:{type: Array},
+    Pictures:[],
     Status:{type: Boolean, requerid: true, default: false },
     active:{ type: Boolean, requerid: true, default: true }
 });

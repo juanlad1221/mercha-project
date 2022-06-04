@@ -17,6 +17,7 @@ const Clients = require('../schemas/Clients')
 const Objetives = require('../schemas/Objetives');
 const Survey = require("../schemas/Survey");
 const { type } = require("os");
+const { route } = require("./upload.movil.controller");
 //const prisma = new PrismaClient()
 
 let currentTime = new Date();
@@ -202,6 +203,14 @@ router.get('/objetivos', async (req, res) => {
   res.render('../views/objetivos', { user })
 })//end get
 
+router.get('/detail', async (req, res) => {
+  let user = req.user.name
+  let result = await Survey.where({Codigo_Cliente: '999'})
+  
+  res.render('../views/detail', {user, fotos:result })
+  
+})//end
+
 
 //apis internas
 router.get('/api-clientes', async (req, res) => {
@@ -315,7 +324,7 @@ router.post('/upload/clientes', upload.single('file'), async (req, res) => {
     }
 
     let status_delete = await Xls.deleteOne({ type: 'CLIENTS' })
-    console.log(status_delete)
+    
     if (status_delete) {
       let new_xls = await new Xls(obj)
       new_xls.save()
@@ -332,7 +341,7 @@ router.post('/upload/clientes', upload.single('file'), async (req, res) => {
 
 })//end post
 
-//upload users
+//upload objetives
 router.post('/upload/objetives', upload.single('file'), async (req, res) => {
 
   try {
@@ -428,6 +437,13 @@ router.post('/upload/objetives', upload.single('file'), async (req, res) => {
 
 })//end post
 
+
+
+
+
+
+
+
 //login
 router.post('/login', passport.authenticate('local-login', {
   successRedirect: '/dashboard',
@@ -435,7 +451,7 @@ router.post('/login', passport.authenticate('local-login', {
   passReqToCallback: true
 }))//end post
 
-router.post('/upload/xls-delete', async (req, res) => {
+/*router.post('/upload/xls-delete', async (req, res) => {
   const { client, objetive } = req.body
 
   if (client) {
@@ -462,7 +478,7 @@ router.post('/upload/xls-delete', async (req, res) => {
   }
 
 
-})//end post
+})//end post*/
 
 
 module.exports = router
