@@ -1,20 +1,143 @@
-<%- include('block_inicio') %>
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box">
-            <h4 class="page-title">Panel Administrador</h4>
+﻿<%-include("block_inicio") %>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Panel de Gestion</h4>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="d-flex align-items-center justify-content-end"
+        style="width:100%; background-color:rgb(222, 217, 223); padding-right:2%">
+        <div class="d-flex flex-column pt-2" style="width: auto;">
+            <label for="">MES</label>
+            <select class="form-select mb-3" id="mes">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+
+        <div class="d-flex flex-column pt-2" style="width: auto; margin-left:5%">
+            <label for="">MERCHANDICING/VENDEDOR</label>
+            <select class="form-select mb-3">
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <table id="basic-datatable" class="table table-striped nowrap">
+            <thead>
+                <tr>
+                    <th>ULTIMA VISITA</th>
+                    <th>ÁREA</th>
+                    <th>TOTAL BASE</th>
+                    <th>OBJETIVO MES</th>
+                    <th>RELEVADOS</th>
+                    <th>ALCANSE EN %</th>
+                </tr>
+            </thead>
 
 
+            <tbody>
+                <tr>
+                    <td>2021/04/11</td>
+                    <td>Jose Corsico</td>
+                    <td>100</td>
+                    <td>30</td>
+                    <td>10</td>
+                    <td>25</td>
+                </tr>
+                <tr>
+                    <td>2022/04/13</td>
+                    <td>Juan Biani</td>
+                    <td>92</td>
+                    <td>25</td>
+                    <td>18</td>
+                    <td>37</td>
+                </tr>
+                <tr>
+                    <td>2022/03/23</td>
+                    <td>Raul Castro</td>
+                    <td>71</td>
+                    <td>23</td>
+                    <td>11</td>
+                    <td>14</td>
+                </tr>
+<tr>
+                    <td>2022/03/11</td>
+                    <td>Santiago Ramirez</td>
+                    <td>68</td>
+                    <td>21</td>
+                    <td>15</td>
+                    <td>22</td>
+                </tr>
+<tr>
+                    <td>2022/02/23</td>
+                    <td>Daniela Santa Cruz</td>
+                    <td>80</td>
+                    <td>27</td>
+                    <td>20</td>
+                    <td>84</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-<%- include('block_end') %>
-<style>
-    .bt{
-        border: 1px solid blue;
-    }
-</style>
-<script>
 
-</script>
+    <%- include("block_end") %>
+
+        <style>
+            .bt {
+                border: 1px solid blue;
+            }
+        </style>
+        <script>
+
+            $(document).ready(function () {
+
+                let currentTime = new Date();
+                let year = currentTime.getFullYear()
+                let mounth = currentTime.getMonth() + 1
+
+
+                //establezco mes seleccionado
+                document.getElementById('mes').value = mounth
+
+                var table = $('#basic-datatable').DataTable({
+                    fixedHeader: true,
+                    language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+                    bDestroy: true,
+                    scrollX: true,
+                    columnDefs: [
+                        { "className": "dt-center", "targets": "_all" }
+                    ],
+                })
+
+                $('#basic-datatable thead tr').clone(true).appendTo('#basic-datatable thead')
+
+                $('#basic-datatable thead tr:eq(1) th').each(function (i) {
+                    var title = $(this).text();
+                    $(this).html('<input type="text" />')
+
+                    $('input', this).on('keyup change', function () {
+                        if (table.column(i).search() !== this.value) {
+                            table.column(i).search(this.value).draw()
+                        }
+                    })
+                })
+            });
+        </script>

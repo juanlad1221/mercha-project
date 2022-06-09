@@ -5,6 +5,7 @@ const multer = require('multer')
 const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
+//const path = require('path')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 //const {Base64} = require('js-base64');//
@@ -18,6 +19,7 @@ const Objetives = require('../schemas/Objetives');
 const Survey = require("../schemas/Survey");
 const { type } = require("os");
 const { route } = require("./upload.movil.controller");
+const { clearScreenDown } = require("readline");
 //const prisma = new PrismaClient()
 
 let currentTime = new Date();
@@ -47,9 +49,9 @@ router.get("/load_clientes", isAuthenticated, async (req, res) => {
     let xls = await Xls.where({ type: 'CLIENTS' })
 
     if (xls.length === 1) {
-      res.render('../views/upload_clientes', { user, flag: true, validated: xls[0].validated, processed: xls[0].processed })
+      res.render('../views/upload_clientes', { user, flag: true, validated: xls[0].validated, error:xls[0].validated, processed: xls[0].processed })
     } else {
-      res.render('../views/upload_clientes', { user, flag: false, validated: false, processed: false })
+      res.render('../views/upload_clientes', { user, flag: false, validated: false, error:false, processed: false })
     }
 
   } catch (error) {
@@ -78,11 +80,43 @@ router.get("/load_objetivos", isAuthenticated, async (req, res) => {
 router.get('/validar-clientes', async (req, res) => {
 
   try {
+    let user = req.user.name
+    let xls = await Xls.findOne({type:'CLIENTS'})
+
+    //verifico que sea excel el archivo
+    let file = path.basename(xls.url)
+    if(path.extname(file) != '.xlsx'){
+      //hay error en excel
+     let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: false, error:true })
+      res.redirect('/load_clientes')
+    }
+
+
     let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: true })
 
     if (update.modifiedCount == 1) {
       res.redirect('load_clientes')
     }
+    //completo los telefonos
+    /*const workbook = XLSN.readFile(xls.url)
+      const workbookSheet = workbook.SheetNames
+      let sheet = workbookSheet[0]
+      const dataexcel = XLSN.utils.sheet_to_json(workbook.Sheets[sheet])
+
+      let arr=[]
+      dataexcel.forEach(e => {
+       if(!isKeyExists(e,'Telefono')){
+          e.Telefono = 'sin datos'
+       } 
+       arr.push(e)
+      })*/
+
+      //if(arr){console.log(arr)}
+    /*let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: true })
+
+    if (update.modifiedCount == 1) {
+      res.redirect('load_clientes')
+    }*/
   } catch (error) {
     console.log(error)
   }
@@ -112,11 +146,21 @@ router.get('/procesar-clientes', async (req, res) => {
       let sheet = workbookSheet[0]
       const dataexcel = XLSN.utils.sheet_to_json(workbook.Sheets[sheet])
 
+      let arr=[]
+      dataexcel.forEach(e => {
+       if(!isKeyExists(e,'Telefono')){
+          e.Telefono = 'sin datos'
+       } 
+       arr.push(e)
+      })
+
       //borro la bd.
-      await Clients.collection.drop()
+      let result = await Clients.collection.drop()
+
+      
 
       //inserto clientes xls en la bd
-      let insert = await Clients.insertMany(dataexcel)
+      let insert = await Clients.insertMany(arr)
       if (insert) {
         let update = await Xls.updateOne({ type: 'CLIENTS' }, { processed: true })
         if (update.modifiedCount == 1) {
@@ -148,11 +192,20 @@ router.get('/procesar-objetivos', async (req, res) => {
       let sheet = workbookSheet[0]
       const dataexcel = XLSN.utils.sheet_to_json(workbook.Sheets[sheet])
 
+      let arr=[]
+      dataexcel.forEach(e => {
+       if(!isKeyExists(e,'Telefono')){
+          e.Telefono = 'sin datos'
+       } 
+       
+       arr.push(e)
+      })
+
       //borro objetivos de la bd.
-      await Objetives.collection.drop()
+      let result = await Objetives.collection.drop()
 
       //inserto xls objetivos en bd
-      let status_insert = await Objetives.insertMany(dataexcel)
+      let status_insert = await Objetives.insertMany(arr)
       if (status_insert) {
         //traigo los objetivos del mes a insertar en survey
         let objetives = await Objetives.where({ Año: year, Mes: mounth })
@@ -203,13 +256,23 @@ router.get('/objetivos', async (req, res) => {
   res.render('../views/objetivos', { user })
 })//end get
 
-router.get('/detail', async (req, res) => {
+router.get('/admin-relevamientos', async (req, res) => {
   let user = req.user.name
-  let result = await Survey.where({Codigo_Cliente: '999'})
-  
-  res.render('../views/detail', {user, fotos:result })
-  
-})//end
+
+  res.render('../views/administradorClientes', { user })
+})//end get
+
+router.get('/test:id', async (req, res) => {
+  let id = req.params.id
+  let user = req.user.name
+  console.log(id)
+  //traigo datos de la bd
+  let datos = await Survey.where({ Codigo_Cliente:String(1207) })
+  console.log(datos)
+  res.render('../views/login', { user })
+})
+
+
 
 
 //apis internas
@@ -274,6 +337,44 @@ router.get('/api-gestion', async (req, res) => {
   }
 })//end get
 
+router.get('/api-admin-clientes', async (req, res) => {
+  //let user = req.user.name
+  let uno = new Date('2022-05-01').toISOString()
+  let dos = new Date('2022-06-08 00:27:10').toISOString()
+
+  let survey = await Survey.where({Date:dos})
+  
+  //let survey = await Survey.where({Date:{$get:uno, $lte:dos}})
+  //let clientes = await Clients.where({active:true})
+  console.log(survey)
+  //if(survey && clientes){
+    
+
+      /*arr.push({
+        Codigo_Cliente: e.Codigo_Cliente,
+        Date:e.Date,
+        Nombre: e.Nombre,
+        Direccion:e.Direccion,
+        Telefono:e.Telefono,
+        Zona:e.Zona,
+        Localidad:e.Localidad,
+        Provincia:e.Provincia,
+        Nro:nro
+      })*/
+
+    
+
+    //console.log(arr)
+    //res.status(200).json(arr)
+  
+  //let data = { data: result } 
+  //res.status(200).json(arr)
+  //res.render('../views/administradorClientes', {user, data:result})
+})//end
+
+
+
+
 
 
 
@@ -320,7 +421,8 @@ router.post('/upload/clientes', upload.single('file'), async (req, res) => {
     //inserto nvo documneto CLIENTS
     let obj = {
       url: req.file.path,
-      type: 'CLIENTS'
+      type: 'CLIENTS',
+      error:false
     }
 
     let status_delete = await Xls.deleteOne({ type: 'CLIENTS' })
@@ -437,6 +539,22 @@ router.post('/upload/objetives', upload.single('file'), async (req, res) => {
 
 })//end post
 
+router.get('/api-objetivos', async (req, res) => {
+  //traigo datos de la bd
+  let objetivos = await Objetives.where({ active: true })
+
+  let data = { data: objetivos }
+  res.status(200).json(data)
+})//end get
+
+router.get('/api-admin-relevacion', async (req, res) => {
+  //traigo datos de la bd
+  let objetivos = await Survey.where({ active: true })
+
+  //let data = { data: objetivos }
+  res.status(200).json(data)
+})//end get
+
 
 
 
@@ -479,6 +597,10 @@ router.post('/login', passport.authenticate('local-login', {
 
 
 })//end post*/
+
+function isKeyExists(obj,key){
+  return obj.hasOwnProperty(key);
+}
 
 
 module.exports = router

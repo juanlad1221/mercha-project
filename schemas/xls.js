@@ -6,6 +6,7 @@ const xls_schema = Schema({
     url: { type: String, requerid: true },
     type: { type: String, requerid: true },
     validated:{type: Boolean, default:false},
+    error:{type: Boolean, default:false},
     processed:{type:Boolean, default:false}
 
 });

@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require('multer')
 const router = express.Router()
+let moment = require('moment'); // require
 const { storage } = require('./utils/multer.config')
 
 //models
@@ -23,7 +24,7 @@ router.post('/upload-img', async(req, res) => {
                 if(consult){
                     console.log('Actualizo Correctamente...')
                     let update = await Survey.updateOne({ Codigo_Cliente:req.body.Codigo_Cliente, 
-                        Merchandising:req.body.Merchandising }, { Status: true, Pictures:req.body.Pictures })
+                        Merchandising:req.body.Merchandising }, { Status: true, Pictures:req.body.Pictures, Date: moment().format('DD-MM-YYYY') })
                         res.status(200).json({msg:'Envio Exitoso...', status:200, type:'MERCHA'})
                 }else{
                     res.status(404).json({msg:'No se encontró mercha/vendedor...'})

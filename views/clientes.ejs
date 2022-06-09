@@ -1,15 +1,16 @@
 <%- include('block_inicio')%>
 
+    <!--titulo-->
     <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <h4 class="page-title">Clientes</h4>
+        <div class="col-12 bt">
+            <div class="page-title-box d-flex justify-content-center">
+                <h3 class="page-title">Clientes</h3>
             </div>
         </div>
     </div>
 
     <!--tabla-->
-    <div class="mt-5">
+    <div class="mt-5 mb-5">
         <table id="basic-datatable" class="table table-striped nowrap">
             <thead>
                 <tr>
@@ -41,7 +42,7 @@
                 border: 1px solid blue;
             }
         </style>
-        
+
         <script>
             $(document).ready(function () {
                 $('#basic-datatable').DataTable({
@@ -50,6 +51,7 @@
                     //order: [[1, "asc"]],
                     bDestroy: true,
                     scrollX: true,
+                    autoWidth: false,
                     columnDefs: [
                         { "className": "dt-center", "targets": "_all" }
                     ],
