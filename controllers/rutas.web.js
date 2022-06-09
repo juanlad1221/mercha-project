@@ -5,6 +5,7 @@ const multer = require('multer')
 const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
+var moment = require('moment'); // require
 //const path = require('path')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
@@ -338,13 +339,12 @@ router.get('/api-gestion', async (req, res) => {
 })//end get
 
 router.get('/api-admin-clientes', async (req, res) => {
-  //let user = req.user.name
-  let uno = new Date('2022-05-01').toISOString()
-  let dos = new Date('2022-06-08 00:27:10').toISOString()
-
-  let survey = await Survey.where({Date:dos})
   
-  //let survey = await Survey.where({Date:{$get:uno, $lte:dos}})
+  let uno = moment().format('01-06-2022')
+  let dos = moment().format('09-06-2022')
+  
+  
+  let survey = await Survey.where({Date:{$gte:uno, $lte:dos}})
   //let clientes = await Clients.where({active:true})
   console.log(survey)
   //if(survey && clientes){
