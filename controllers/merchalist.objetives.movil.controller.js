@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router()
 
 //models
-const Objetives = require('../schemas/Objetives')
 const Survey = require('../schemas/Survey')
 
 let currentTime = new Date();
@@ -14,7 +13,7 @@ router.post("/list-objetives-movil", async (req, res) => {
         const { id } = req.body
         
         let survey = await Survey.where({active:true, Merchandising:id, Año:year, Mes:mounth})
-        //console.log(survey)
+ 
         if(survey){
             let data = survey
             res.status(200).json(data)

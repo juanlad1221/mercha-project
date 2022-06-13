@@ -19,7 +19,9 @@ const survey_schema = Schema({
     Año:{type:Number, requerid:true},
     Date:{type:String, requerid:true,default:null},
     Pictures:[],
-    Status:{type: Boolean, requerid: true, default: false },
+    Total_Pictures:{type:Number, default:0},
+    Msg:{String},
+    Relevado:{type:Boolean, requerid: true, default: false },
     active:{ type: Boolean, requerid: true, default: true }
 });
 

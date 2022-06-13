@@ -19,7 +19,6 @@ const clients_schema = Schema({
     Nombre_Merchandising:{type: String},
     Rubro:{type: String},
     Subrubro:{type: String},
-    On_survey:{type:Boolean, requerid: true, default: false },
     active:{ type: Boolean, requerid: true, default: true }
 
 });

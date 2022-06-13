@@ -21,6 +21,7 @@ const Survey = require("../schemas/Survey");
 const { type } = require("os");
 const { route } = require("./upload.movil.controller");
 const { clearScreenDown } = require("readline");
+const { collection } = require("../schemas/Users");
 //const prisma = new PrismaClient()
 
 let currentTime = new Date();
@@ -50,9 +51,9 @@ router.get("/load_clientes", isAuthenticated, async (req, res) => {
     let xls = await Xls.where({ type: 'CLIENTS' })
 
     if (xls.length === 1) {
-      res.render('../views/upload_clientes', { user, flag: true, validated: xls[0].validated, error:xls[0].validated, processed: xls[0].processed })
+      res.render('../views/upload_clientes', { user, flag: true, validated: xls[0].validated, error: xls[0].validated, processed: xls[0].processed })
     } else {
-      res.render('../views/upload_clientes', { user, flag: false, validated: false, error:false, processed: false })
+      res.render('../views/upload_clientes', { user, flag: false, validated: false, error: false, processed: false })
     }
 
   } catch (error) {
@@ -82,13 +83,13 @@ router.get('/validar-clientes', async (req, res) => {
 
   try {
     let user = req.user.name
-    let xls = await Xls.findOne({type:'CLIENTS'})
+    let xls = await Xls.findOne({ type: 'CLIENTS' })
 
     //verifico que sea excel el archivo
     let file = path.basename(xls.url)
-    if(path.extname(file) != '.xlsx'){
+    if (path.extname(file) != '.xlsx') {
       //hay error en excel
-     let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: false, error:true })
+      let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: false, error: true })
       res.redirect('/load_clientes')
     }
 
@@ -112,7 +113,7 @@ router.get('/validar-clientes', async (req, res) => {
        arr.push(e)
       })*/
 
-      //if(arr){console.log(arr)}
+    //if(arr){console.log(arr)}
     /*let update = await Xls.updateOne({ type: 'CLIENTS' }, { validated: true })
 
     if (update.modifiedCount == 1) {
@@ -147,18 +148,18 @@ router.get('/procesar-clientes', async (req, res) => {
       let sheet = workbookSheet[0]
       const dataexcel = XLSN.utils.sheet_to_json(workbook.Sheets[sheet])
 
-      let arr=[]
+      let arr = []
       dataexcel.forEach(e => {
-       if(!isKeyExists(e,'Telefono')){
+        if (!isKeyExists(e, 'Telefono')) {
           e.Telefono = 'sin datos'
-       } 
-       arr.push(e)
+        }
+        arr.push(e)
       })
 
       //borro la bd.
       let result = await Clients.collection.drop()
 
-      
+
 
       //inserto clientes xls en la bd
       let insert = await Clients.insertMany(arr)
@@ -183,7 +184,6 @@ router.get('/procesar-clientes', async (req, res) => {
 //Procesar objetivos xls
 router.get('/procesar-objetivos', async (req, res) => {
   try {
-    //let user = req.user.name
     //traigo la url de objetivos
     let url = await Xls.findOne({ type: 'OBJETIVES' })
 
@@ -193,13 +193,13 @@ router.get('/procesar-objetivos', async (req, res) => {
       let sheet = workbookSheet[0]
       const dataexcel = XLSN.utils.sheet_to_json(workbook.Sheets[sheet])
 
-      let arr=[]
+      let arr = []
       dataexcel.forEach(e => {
-       if(!isKeyExists(e,'Telefono')){
+        if (!isKeyExists(e, 'Telefono')) {
           e.Telefono = 'sin datos'
-       } 
-       
-       arr.push(e)
+        }
+
+        arr.push(e)
       })
 
       //borro objetivos de la bd.
@@ -212,7 +212,7 @@ router.get('/procesar-objetivos', async (req, res) => {
         let objetives = await Objetives.where({ Año: year, Mes: mounth })
 
         //Borro por las dudas de survey lo q haya de objetivos para el mes.
-        let status_delete = await Survey.deleteMany({ Año: year, Mes: mounth })
+        let status_delete = await Survey.deleteMany({ Año: year, Mes: mounth, Relevado: false })
 
         //Inserto los objetivos del año y mes
         let status_insert_survey = await Survey.insertMany(objetives)
@@ -257,20 +257,20 @@ router.get('/objetivos', async (req, res) => {
   res.render('../views/objetivos', { user })
 })//end get
 
-router.get('/admin-relevamientos', async (req, res) => {
+router.get('/control-relevamientos', async (req, res) => {
   let user = req.user.name
 
-  res.render('../views/administradorClientes', { user })
+  res.render('../views/control_relevamientos', { user })
 })//end get
 
-router.get('/test:id', async (req, res) => {
+router.get('/clientes-relevamientos:id', async (req, res) => {
   let id = req.params.id
   let user = req.user.name
   console.log(id)
   //traigo datos de la bd
-  let datos = await Survey.where({ Codigo_Cliente:String(1207) })
-  console.log(datos)
-  res.render('../views/login', { user })
+  //let datos = await Survey.where({ Codigo_Cliente: String(1207) })
+  //console.log(datos)
+  res.render('../views/clientes_relevamientos', { user })
 })
 
 
@@ -308,23 +308,23 @@ router.get('/api-gestion', async (req, res) => {
     yu.forEach(async e => {
 
       //obj.id = e.id
-  
-      let ultima_fecha = await Survey.where({Merchandising:e.id}).sort({ _id: -1 })
+
+      let ultima_fecha = await Survey.where({ Merchandising: e.id }).sort({ _id: -1 })
       //obj.date = ultima_fecha[0].Date
 
-      let total_base = await Clients.where({Merchandising:e.id}).count()
+      let total_base = await Clients.where({ Merchandising: e.id }).count()
       //obj.total_base = total_base
 
-      let objetivos_mes = await Objetives.where({Merchandising:e.id, Año: year, Mes:mounth}).count()
+      let objetivos_mes = await Objetives.where({ Merchandising: e.id, Año: year, Mes: mounth }).count()
       //obj.objetivos_mes = objetivos_mes
 
-      let relevados_mes = await Survey.where({Merchandising:e.id, Año: year, Mes:mounth, Status:true}).count()
+      let relevados_mes = await Survey.where({ Merchandising: e.id, Año: year, Mes: mounth, Status: true }).count()
       //obj.relevados_mes = relevados_mes
 
-      let porcentaje = (100 * Number(relevados_mes))/Number(objetivos_mes)
+      let porcentaje = (100 * Number(relevados_mes)) / Number(objetivos_mes)
       //obj.porcentaje = porcentaje
 
-      
+
       arr.push(relevados_mes)
 
     })
@@ -338,35 +338,141 @@ router.get('/api-gestion', async (req, res) => {
   }
 })//end get
 
-router.get('/api-admin-clientes', async (req, res) => {
-  
-  let uno = moment().format('01-06-2022')
-  let dos = moment().format('09-06-2022')
-  
-  
-  let survey = await Survey.where({Date:{$gte:uno, $lte:dos}})
-  //let clientes = await Clients.where({active:true})
-  console.log(survey)
+router.post('/api-relevamientos', async (req, res) => {
+
+  if (req.body) {
+    if (req.body.mes) {
+      let mes_solo = Number(moment(req.body.mes).format('MM'))
+      var año_solo = moment(req.body.mes).format('YYYY');
+      //let mes_solo = moment(req.body.mes).month() + 1
+      switch (req.body.type) {
+        case 'todos':
+          let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
+          let merchas = await Users.where({ type: 'MERCHA' })
+          let vendedores = await Users.where({ type: 'SELLER' })
+
+          if (merchas && vendedores) {
+            let arr = []
+            //todos los usuarios
+            let usuarios = merchas.concat(vendedores)
+
+            usuarios.forEach(e => {
+              let obj = {}
+              obj.name = e.name
+              obj.type = e.type
+              obj.phone = e.phone
+              obj.id = e.id
+              obj.Date_ultimo = 'no data'
+              /*let yu = await Survey.find({Merchandising:e.id}).sort({_id:'asc'})
+              if(yu){
+                if(yu[0].Date == null){
+                  console.log('nulo')
+                  obj.Date_ultimo = 'Sin Relevamiento'
+                }else{
+                  console.log('no nulo')
+                  obj.Date_ultimo = e.Date
+                }
+                
+                arr.push(obj)
+              }*/
+
+              arr.push(obj)
+            })//end for
+
+            /*arr.forEach(async e => {
+              let yu = await Survey.find({Merchandising:e.id}).sort({_id:'asc'})
+              if(yu){
+                if(yu[0].Date == null){
+                  console.log('nulo')
+                  obj.Date_ultimo = 'Sin Relevamiento'
+                }else{
+                  console.log('no nulo')
+                  obj.Date_ultimo = e.Date
+                }
+                
+              }
+            })//end for*/
+          
+            let data = { data: arr }
+            res.status(200).json(data)
+          }
+          break
+        case 'mercha':
+          let surveyMercha = await Survey.where({ Año: year, Mes: mounth })
+          let data_mercha = await Users.where({ type: 'MERCHA' })
+         
+          if (data_mercha) {
+            let arr = []
+            let usuarios = data_mercha
+
+            usuarios.forEach(e => {
+              let obj = {}
+              obj.name = e.name
+              obj.type = e.type
+              obj.phone = e.phone
+              obj.id = e.id
+              obj.Date_ultimo = 'no data'
+              /*let yu = await Survey.find({Merchandising:e.id}).sort({_id:'asc'})
+              if(yu){
+                if(yu[0].Date == null){
+                  console.log('nulo')
+                  obj.Date_ultimo = 'Sin Relevamiento'
+                }else{
+                  console.log('no nulo')
+                  obj.Date_ultimo = e.Date
+                }
+                
+                arr.push(obj)
+              }*/
+
+              arr.push(obj)
+            })//end for
+
+           
+            console.log(arr)
+            let data = { data: arr }
+            res.status(200).json(data)
+          }
+          break
+        case 'seller':
+          console.log('9')
+          break
+      }
+    }
+
+    //let usuario = req.body.usuario
+    //let date1 = String(req.body.mes + '-01')
+    //let date2 = moment(date1).endOf('month').format('YYYY-MM-DD')
+    //let mes_solo = moment(date1).format('MM')
+    //console.log(req.body)
+    //let survey = await Survey.where({Mes:Number(mes_solo)})
+    //console.log(survey)
+  }
+
+
+  //let survey = await Survey.where({Date:{$gte:date1, $lte:date2}})
+
+  //console.log(survey)
   //if(survey && clientes){
-    
 
-      /*arr.push({
-        Codigo_Cliente: e.Codigo_Cliente,
-        Date:e.Date,
-        Nombre: e.Nombre,
-        Direccion:e.Direccion,
-        Telefono:e.Telefono,
-        Zona:e.Zona,
-        Localidad:e.Localidad,
-        Provincia:e.Provincia,
-        Nro:nro
-      })*/
 
-    
+  /*arr.push({
+    Codigo_Cliente: e.Codigo_Cliente,
+    Date:e.Date,
+    Nombre: e.Nombre,
+    Direccion:e.Direccion,
+    Telefono:e.Telefono,
+    Zona:e.Zona,
+    Localidad:e.Localidad,
+    Provincia:e.Provincia,
+    Nro:nro
+  })*/
 
-    //console.log(arr)
-    //res.status(200).json(arr)
-  
+
+
+  //console.log(arr)
+  //res.status(200).json(arr)
+
   //let data = { data: result } 
   //res.status(200).json(arr)
   //res.render('../views/administradorClientes', {user, data:result})
@@ -422,11 +528,11 @@ router.post('/upload/clientes', upload.single('file'), async (req, res) => {
     let obj = {
       url: req.file.path,
       type: 'CLIENTS',
-      error:false
+      error: false
     }
 
     let status_delete = await Xls.deleteOne({ type: 'CLIENTS' })
-    
+
     if (status_delete) {
       let new_xls = await new Xls(obj)
       new_xls.save()
@@ -598,7 +704,7 @@ router.post('/login', passport.authenticate('local-login', {
 
 })//end post*/
 
-function isKeyExists(obj,key){
+function isKeyExists(obj, key) {
   return obj.hasOwnProperty(key);
 }
 

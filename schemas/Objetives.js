@@ -21,6 +21,8 @@ const objetives_schema = Schema({
     Subrubro:{type: String},
     Mes:{type:Number,requerid:true},
     Año:{type:Number, requerid:true},
+    Is_Objetive:{type:Boolean,requerid: true, default: false},
+    Relevado:{type:Boolean, requerid: true, default: false },
     active:{ type: Boolean, requerid: true, default: true }
 
 });

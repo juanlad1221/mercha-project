@@ -4,32 +4,25 @@ const router = express.Router()
 
 //models
 const Clients = require('../schemas/Clients')
-const Objetives = require('../schemas/Objetives')
+const Survey = require('../schemas/Survey')
 //Instancio prisma
 //const prisma = new PrismaClient()
+
+let currentTime = new Date();
+let year = currentTime.getFullYear()
+let mounth = currentTime.getMonth() + 1
+        
 
 router.post("/mercha-list-movil", async (req, res) => {
     try {
         const { id } = req.body
 
-        let currentTime = new Date();
-        let year = currentTime.getFullYear()
-        let mounth = currentTime.getMonth() + 1
+        let clientes = await Clients.where({active:true, Merchandising:id})
+        let survey = await Survey.where({active:true, Merchandising:id, Año:year, Mes:mounth})
         
-        let clients = await Clients.where({active:true, Merchandising:id})
-        let objetives = await Objetives.where({active:true, Merchandising:id, Año:year, Mes:mounth})
-        
-        if(clients.length > 0 && objetives.length > 0){
-            
-            clients.forEach(e => {
-                objetives.forEach(f => {
-                    if(e.Codigo_Cliente === f.Codigo_Cliente){
-                        e.On_survey = true
-                    }
-                })
-            })
-            
-            let data = clients
+        if(clientes && survey){
+            console.log('entro')
+            let data = {clientes, survey}
             res.status(200).json(data)
         }else{
             res.status(404).json({msg:'Data not found...'})
