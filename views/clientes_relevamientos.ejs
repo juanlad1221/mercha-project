@@ -1,20 +1,181 @@
 <%- include('block_inicio') %>
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box">
-            <h4 class="page-title">Panel Gestion</h4>
+    <!--titulo-->
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-flex justify-content-center">
+                        <h3 style="font-size:25px;" class="page-title">Relevamientos</h3>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="row d-flex justify-content-end mt-5">
+
+        <div style="background-color: rgb(157, 152, 184); width:60%; 
+            height:100px;display:flex; 
+            justify-content:end; align-items:center; 
+            border-top-left-radius:15px; border-bottom-left-radius:15px; margin-right:1%">
+
+            <!-- Button Group -->
+            <div class="btn-group mt-1" style="margin-right: 4%;">
+                <button id="todos" type="button" class="btn btn-primary">Todos</button>
+                <button id="relevados" type="button" class="btn btn-primary">Relevados</button>
+                <button id="sin-relevar" type="button" class="btn btn-primary">Sin Relevar</button>
+            </div>
+
+
+            <div class="mb-3">
+                <label style="color:rgb(63, 61, 61)" class="form-label">Mes</label>
+                <input class="form-control" id="date" type="month" name="month">
+            </div>
+
+            <div style="margin-left: 4%;">
+                <button class="btn btn-primary" style="height:100%" id="btn">Buscar</button>
+            </div>
+
+        </div>
+
+
+        <!--tabla-->
+        <div class="mt-4 mb-5">
+            <div class="card">
+                <div class="card-body">
+                    <table id="basic-datatable" class="table table-striped nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID CLIENTE</th>
+                                <th>FECHA</th>
+                                <th>CLIENTE</th>
+                                <th>DIRECCION</th>
+                                <th>LOCALIDAD</th>
+                                <th>FOTOS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <input id="id-user" type="text" hidden value=<%=id%>>
+    <input id="type-user" type="text" hidden value=<%=tipo%>>
+
+    <%- include('block_end') %>
+        <style>
+            .bt {
+                border: 1px solid blue;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+                let user = document.getElementById('id-user')
+                let typeUser = document.getElementById('type-user')
+                let date = document.getElementById('date')
+                let btn = document.getElementById('btn')
+                let btnTodos = document.getElementById('todos')
+                let btnRelevados = document.getElementById('relevados')
+                let btnSinRelevar = document.getElementById('sin-relevar')
+
+                //armo la fecha de hoy
+                let currentTime = new Date();
+                let year = currentTime.getFullYear()
+                let mounth = currentTime.getMonth() + 1
+                let day = currentTime.getDate()
+                let mes;
+                let type;
+
+                //se carga el mes actual
+                date.value = String(`${year + "-" + "0" + mounth}`)
+                //se carga el boton por defto
+                borrarClassButton()
+                btnTodos.classList.add('active')
+
+                window.onload = () => {
+                    mes = `${year + "-" + mounth + "-" + day}`
+                    type = 'todos'
+                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes,'idUser':user.value,'typeUser':typeUser.value })
+                }
+
+                //extrae mes cuando se carga el input
+                date.onchange = () => {
+                    mes = String(date.value + '-01')
+                }//end
+
+
+                //btn Todos
+                btnTodos.onclick = () => {
+                    borrarClassButton()
+                    type = 'todos'
+                    btnTodos.classList.add('active')
+                }//end
+                //btn mercha
+                btnRelevados.onclick = () => {
+                    borrarClassButton()
+                    type = 'relevados'
+                    btnRelevados.classList.add('active')
+                }//end
+                //btn seller
+                btnSinRelevar.onclick = () => {
+                    borrarClassButton()
+                    type = 'sin-relevar'
+                    btnSinRelevar.classList.add('active')
+                }//end
+
+
+                //funcion crea tabla
+                function loadTable(url, verb, data) {
+                    $('#basic-datatable').DataTable({
+                        ajax: {
+                            'url': url,
+                            'data': data,
+                            'type': verb
+                        },
+                        //data:{json},
+                        language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+                        //processing: true,
+                        bDestroy: true,
+                        scrollX: true,
+                        autoWidth: false,
+                        columnDefs: [
+                            { "className": "dt-center", "targets": "_all" }
+                        ],
+                        columns: [
+                            { "data": "id" },
+                            { "data": "Date_ultimo" },
+                            { "data": "name" },
+                            { "data": "direccion" },
+                            { "data": "localidad" },
+                            {
+                                "defaultContent": "Pictures",
+                                "render": function (data, type, row) {
+                                    if (row) {
+                                        return "<i class='dripicons-camera ver font-16 me-1'></i>"
+                                    } 
+                                }
+                            }
+
+                        ],
+                    });//end table
+                }//end loadtable
+
+
+                btn.onclick = () => {
+                    if (type == '' || mes == '') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
+                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes })
+                }
 
 
 
-<%- include('block_end') %>
-<style>
-    .bt{
-        border: 1px solid blue;
-    }
-</style>
-<script>
-
-</script>
+                function borrarClassButton() {
+                    btnTodos.classList.remove('active')
+                    btnRelevados.classList.remove('active')
+                    btnSinRelevar.classList.remove('active')
+                }
+            })//end ready
+        </script>

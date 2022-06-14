@@ -6,7 +6,7 @@ const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
 var moment = require('moment'); // require
-//const path = require('path')
+const {base, objMes, relevados} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 //const {Base64} = require('js-base64');//
@@ -263,18 +263,13 @@ router.get('/control-relevamientos', async (req, res) => {
   res.render('../views/control_relevamientos', { user })
 })//end get
 
-router.get('/clientes-relevamientos:id', async (req, res) => {
+router.get('/clientes-relevamientos:id&:tipo', async (req, res) => {
   let id = req.params.id
+  let tipo = req.params.tipo
   let user = req.user.name
-  console.log(id)
-  //traigo datos de la bd
-  //let datos = await Survey.where({ Codigo_Cliente: String(1207) })
-  //console.log(datos)
-  res.render('../views/clientes_relevamientos', { user })
+  
+  res.render('../views/clientes_relevamientos', { user,id,tipo })
 })
-
-
-
 
 //apis internas
 router.get('/api-clientes', async (req, res) => {
@@ -342,141 +337,131 @@ router.post('/api-relevamientos', async (req, res) => {
 
   if (req.body) {
     if (req.body.mes) {
-      let mes_solo = Number(moment(req.body.mes).format('MM'))
-      var año_solo = moment(req.body.mes).format('YYYY');
-      //let mes_solo = moment(req.body.mes).month() + 1
+      let año_solo = new Date(req.body.mes).getFullYear()
+      let mes_solo = new Date(req.body.mes).getMonth() + 1
+      
+      
       switch (req.body.type) {
         case 'todos':
-          let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
-          let merchas = await Users.where({ type: 'MERCHA' })
-          let vendedores = await Users.where({ type: 'SELLER' })
+          let surveys = await Survey.where({ Año: año_solo, Mes:mes_solo})
+          let all_users = await Users.where({})
 
-          if (merchas && vendedores) {
+          if (all_users && surveys) {
             let arr = []
-            //todos los usuarios
-            let usuarios = merchas.concat(vendedores)
 
-            usuarios.forEach(e => {
-              let obj = {}
-              obj.name = e.name
-              obj.type = e.type
-              obj.phone = e.phone
-              obj.id = e.id
-              obj.Date_ultimo = 'no data'
-              /*let yu = await Survey.find({Merchandising:e.id}).sort({_id:'asc'})
-              if(yu){
-                if(yu[0].Date == null){
-                  console.log('nulo')
-                  obj.Date_ultimo = 'Sin Relevamiento'
-                }else{
-                  console.log('no nulo')
-                  obj.Date_ultimo = e.Date
-                }
-                
+            all_users.forEach(e => {
+              if (e.type != 'ADMIN') {
+                let obj = {}
+                obj.id = e.id
+                obj.Date_ultimo = 'no data'
+                obj.name = e.name
+                obj.type = e.type
+                obj.total_base = base(e.id,surveys)
+                let objm = objMes(e.id, año_solo, mes_solo, surveys)
+                obj.obj_mes = objm
+                let rel = relevados(e.id, año_solo, mes_solo, true,surveys)
+                obj.relevados = rel
+                obj.porcentaje = Math.round((100 * rel)/objm) || 0
                 arr.push(obj)
-              }*/
-
-              arr.push(obj)
+              }
             })//end for
 
-            /*arr.forEach(async e => {
-              let yu = await Survey.find({Merchandising:e.id}).sort({_id:'asc'})
-              if(yu){
-                if(yu[0].Date == null){
-                  console.log('nulo')
-                  obj.Date_ultimo = 'Sin Relevamiento'
-                }else{
-                  console.log('no nulo')
-                  obj.Date_ultimo = e.Date
-                }
-                
-              }
-            })//end for*/
-          
             let data = { data: arr }
             res.status(200).json(data)
           }
           break
         case 'mercha':
-          let surveyMercha = await Survey.where({ Año: year, Mes: mounth })
-          let data_mercha = await Users.where({ type: 'MERCHA' })
-         
-          if (data_mercha) {
-            let arr = []
-            let usuarios = data_mercha
+          let survey_mercha = await Survey.where({Año: año_solo, Mes:mes_solo})
+          let all_users_mercha = await Users.where({type:'MERCHA'})
 
-            usuarios.forEach(e => {
-              let obj = {}
-              obj.name = e.name
-              obj.type = e.type
-              obj.phone = e.phone
-              obj.id = e.id
-              obj.Date_ultimo = 'no data'
-              /*let yu = await Survey.find({Merchandising:e.id}).sort({_id:'asc'})
-              if(yu){
-                if(yu[0].Date == null){
-                  console.log('nulo')
-                  obj.Date_ultimo = 'Sin Relevamiento'
-                }else{
-                  console.log('no nulo')
-                  obj.Date_ultimo = e.Date
-                }
-                
-                arr.push(obj)
-              }*/
+          if (all_users_mercha && survey_mercha) {
+            let arr2 = []
 
-              arr.push(obj)
+            all_users_mercha.forEach(e => {
+              if (e.type != 'ADMIN') {
+                let obj = {}
+                obj.id = e.id
+                obj.Date_ultimo = 'no data'
+                obj.name = e.name
+                obj.type = e.type
+                obj.total_base = base(e.id,survey_mercha)
+                let objm = objMes(e.id, año_solo, mes_solo, survey_mercha)
+                obj.obj_mes = objm
+                let rel = relevados(e.id, año_solo, mes_solo, true,survey_mercha)
+                obj.relevados = rel
+                obj.porcentaje = Math.round((100 * rel)/objm) || 0
+                arr2.push(obj)
+              }
             })//end for
 
-           
-            console.log(arr)
-            let data = { data: arr }
+            let data = { data: arr2 }
             res.status(200).json(data)
           }
           break
-        case 'seller':
-          console.log('9')
+          case 'seller':
+            let survey_seller = await Survey.where({Año: año_solo, Mes:mes_solo})
+            let all_users_seller = await Users.where({type:'SELLER'})
+  
+            if (all_users_seller && survey_seller) {
+              let arr3 = []
+  
+              all_users_seller.forEach(e => {
+                if (e.type != 'ADMIN') {
+                  let obj = {}
+                  obj.id = e.id
+                  obj.Date_ultimo = 'no data'
+                  obj.name = e.name
+                  obj.type = e.type
+                  obj.total_base = base(e.id,survey_seller)
+                  let objm = objMes(e.id, año_solo, mes_solo, survey_seller)
+                  obj.obj_mes = objm
+                  let rel = relevados(e.id, año_solo, mes_solo, true,survey_seller)
+                  obj.relevados = rel
+                  obj.porcentaje = Math.round((100 * rel)/objm) || 0
+                  arr3.push(obj)
+                }
+              })//end for
+  
+              let data = { data: arr3 }
+              res.status(200).json(data)
+            }
+            break
+      }//end switch
+    }//end if body mes
+  }//end if body
+})//end post
+
+router.post('/api-clientes-relevamietos', async (req, res) => {
+  if(req.body){
+    if(req.body.mes){
+      let año_solo = new Date(req.body.mes).getFullYear()
+      let mes_solo = new Date(req.body.mes).getMonth() + 1
+      let user = Number(req.body.idUser)
+      let type_user = req.body.typeUser
+
+      switch (req.body.type) {
+        case 'todos':
+          console.log(req.body)
+          if(type_user == 'MERCHA'){
+            let surveyAll = await Survey.where({Merchandising:user,Año:año_solo,Mes:mes_solo})
+          }
+          if(type_user == 'SELLER'){
+            //let surveyAll = await Survey.where({ Año:año_solo, Mes:mes_solo})
+          }
+          
+          //let all_users = await Users.where({})
+
           break
-      }
-    }
-
-    //let usuario = req.body.usuario
-    //let date1 = String(req.body.mes + '-01')
-    //let date2 = moment(date1).endOf('month').format('YYYY-MM-DD')
-    //let mes_solo = moment(date1).format('MM')
-    //console.log(req.body)
-    //let survey = await Survey.where({Mes:Number(mes_solo)})
-    //console.log(survey)
-  }
-
-
-  //let survey = await Survey.where({Date:{$gte:date1, $lte:date2}})
-
-  //console.log(survey)
-  //if(survey && clientes){
-
-
-  /*arr.push({
-    Codigo_Cliente: e.Codigo_Cliente,
-    Date:e.Date,
-    Nombre: e.Nombre,
-    Direccion:e.Direccion,
-    Telefono:e.Telefono,
-    Zona:e.Zona,
-    Localidad:e.Localidad,
-    Provincia:e.Provincia,
-    Nro:nro
-  })*/
-
-
-
-  //console.log(arr)
-  //res.status(200).json(arr)
-
-  //let data = { data: result } 
-  //res.status(200).json(arr)
-  //res.render('../views/administradorClientes', {user, data:result})
-})//end
+        case 'relevados':
+          console.log(req.body)
+          break
+        case 'sin-relevar':
+          console.log(req.body)
+          break
+      }//end switch
+    }//end if mes
+  }//end if body
+})//end post
 
 
 

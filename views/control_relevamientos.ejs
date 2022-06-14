@@ -12,13 +12,14 @@
         </div>
     </div>
 
-    <div class="row d-flex justify-content-end mt-2">
+    <div class="row d-flex justify-content-end mt-5">
 
 
 
-        <div style="background-color: rgb(224, 219, 219); width:80%; height:100px;display:flex; 
+        <div style="background-color: rgb(157, 152, 184); width:60%; 
+        height:100px;display:flex; 
         justify-content:end; align-items:center; 
-        border-top-left-radius:15px; border-bottom-left-radius:15px;" class="btg">
+        border-top-left-radius:15px; border-bottom-left-radius:15px; margin-right:1%">
 
             <!-- Button Group -->
             <div class="btn-group mt-1" style="margin-right: 4%;">
@@ -41,7 +42,7 @@
 
         
         <!--tabla-->
-        <div class="mt-5 mb-5">
+        <div class="mt-4 mb-5">
             <div class="card">
                 <div class="card-body">
                     <table id="basic-datatable" class="table table-striped nowrap">
@@ -51,21 +52,28 @@
                                 <th>ULTIMO RELEVAMIENTO</th>
                                 <th>RESPONSABLE</th>
                                 <th>TIPO</th>
-                                <th>TELEFONO</th>
-                                <th>FOTOS</th>
+                                <th>TOTAL BASE</th>
+                                <th>OBJ. MES</th>
+                                <th>RELEVADOS</th>
+                                <th>PORCENTAJE</th>
+                                <th>VER</th>
                             </tr>
                         </thead>
                         <tbody>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            </tbody>
-            </table>
+            </div>   
         </div>
-
 
     </div>
     <%- include('block_end')%>
 
+        <style>
+            .ver:hover{
+                cursor: pointer;
+            }
+        </style>
 
 
 
@@ -144,17 +152,22 @@
                             { "data": "Date_ultimo" },
                             { "data": "name" },
                             { "data": "type" },
-                            { "data": "phone" },
+                            { "data": "total_base" },
+                            { "data": "obj_mes" },
+                            { "data": "relevados" },
+                            { "data": "porcentaje",
+                            "render": function (data, type, row) {
+                                    if (row) {
+                                        return row.porcentaje + " %"
+                                    } 
+                                } 
+                            },
                             {
                                 "defaultContent": "Pictures",
                                 "render": function (data, type, row) {
-                                    console.log(row)
                                     if (row) {
-
-                                        return "<div style='display:flex;'> <p>10</p> <button class='btn btn-primary ver' style='margin-left:5px'>Ver...</button> </div>"
-                                    } else {
-                                        return "sin fotos"
-                                    }
+                                        return "<i class='dripicons-preview ver font-16 me-1'></i>"
+                                    } 
                                 }
                             }
 
@@ -175,19 +188,18 @@
                     btnMercha.classList.remove('active')
                     btnSeller.classList.remove('active')
                 }
-
-                
-
             });//end ready
 
 
             
             //Selecciona elementos en tabla Ver
             let id;
+            let tipo;
             $('#basic-datatable tbody').on('click', '.ver', function () {
-                //$('#content_modal').html('')
+                tipo = $(this).parents("tr").find("td").eq(3).text()
                 id = $(this).parents("tr").find("td").eq(0).text()
-                window.location.href = '/clientes-relevamientos'+id
+                
+                window.location.href = '/clientes-relevamientos'+id+'&'+tipo
             })
 
 
