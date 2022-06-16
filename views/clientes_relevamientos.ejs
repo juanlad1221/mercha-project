@@ -71,11 +71,14 @@
             .bt {
                 border: 1px solid blue;
             }
+            .ver:hover{
+                cursor: pointer;
+            }
         </style>
         <script>
             $(document).ready(function () {
                 let user = document.getElementById('id-user')
-                let typeUser = document.getElementById('type-user')
+                let type_User = document.getElementById('type-user')
                 let date = document.getElementById('date')
                 let btn = document.getElementById('btn')
                 let btnTodos = document.getElementById('todos')
@@ -89,6 +92,7 @@
                 let day = currentTime.getDate()
                 let mes;
                 let type;
+                let idUser;
 
                 //se carga el mes actual
                 date.value = String(`${year + "-" + "0" + mounth}`)
@@ -99,12 +103,16 @@
                 window.onload = () => {
                     mes = `${year + "-" + mounth + "-" + day}`
                     type = 'todos'
-                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes,'idUser':user.value,'typeUser':typeUser.value })
+                    idUser = user.value
+                    typeUser = type_User.value
+                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes,'idUser':idUser,'typeUser':typeUser })
                 }
 
                 //extrae mes cuando se carga el input
                 date.onchange = () => {
                     mes = String(date.value + '-01')
+                    //idUser = user.value
+                    //typeUser = type_User.value
                 }//end
 
 
@@ -112,18 +120,24 @@
                 btnTodos.onclick = () => {
                     borrarClassButton()
                     type = 'todos'
+                    idUser = user.value
+                    typeUser = type_User.value
                     btnTodos.classList.add('active')
                 }//end
                 //btn mercha
                 btnRelevados.onclick = () => {
                     borrarClassButton()
                     type = 'relevados'
+                    idUser = user.value
+                    typeUser = type_User.value
                     btnRelevados.classList.add('active')
                 }//end
                 //btn seller
                 btnSinRelevar.onclick = () => {
                     borrarClassButton()
                     type = 'sin-relevar'
+                    idUser = user.value
+                    typeUser = type_User.value
                     btnSinRelevar.classList.add('active')
                 }//end
 
@@ -155,7 +169,7 @@
                                 "defaultContent": "Pictures",
                                 "render": function (data, type, row) {
                                     if (row) {
-                                        return "<i class='dripicons-camera ver font-16 me-1'></i>"
+                                        return "<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:5%'>10</h5> <i class='dripicons-camera ver font-16 me-1 mb-1'></i> </div>"
                                     } 
                                 }
                             }
@@ -167,7 +181,7 @@
 
                 btn.onclick = () => {
                     if (type == '' || mes == '') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
-                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes })
+                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes,'idUser':idUser,'typeUser':typeUser })
                 }
 
 

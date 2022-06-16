@@ -340,7 +340,6 @@ router.post('/api-relevamientos', async (req, res) => {
       let año_solo = new Date(req.body.mes).getFullYear()
       let mes_solo = new Date(req.body.mes).getMonth() + 1
       
-      
       switch (req.body.type) {
         case 'todos':
           let surveys = await Survey.where({ Año: año_solo, Mes:mes_solo})
@@ -434,29 +433,156 @@ router.post('/api-relevamientos', async (req, res) => {
 router.post('/api-clientes-relevamietos', async (req, res) => {
   if(req.body){
     if(req.body.mes){
+      //obtengo los datos
       let año_solo = new Date(req.body.mes).getFullYear()
-      let mes_solo = new Date(req.body.mes).getMonth() + 1
+      let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
+      let mes_solo = Number(oneDate.format('MM'))
       let user = Number(req.body.idUser)
       let type_user = req.body.typeUser
+      console.log(req.body)
 
       switch (req.body.type) {
         case 'todos':
-          console.log(req.body)
           if(type_user == 'MERCHA'){
             let surveyAll = await Survey.where({Merchandising:user,Año:año_solo,Mes:mes_solo})
+            let arr = []
+
+            if(surveyAll){
+              surveyAll.forEach(e => {
+                let obj = {}
+                obj.id = e.Codigo_Cliente
+                obj.Date_ultimo = 'sin datos'
+                obj.name = e.Nombre
+                obj.direccion = e.Direccion
+                obj.localidad = e.Localidad
+                obj.Pictures = 12
+
+                arr.push(obj)
+              })//end
+              
+              //envio datos
+              let data = { data: arr }
+              res.status(200).json(data)
+            }
           }
           if(type_user == 'SELLER'){
-            //let surveyAll = await Survey.where({ Año:año_solo, Mes:mes_solo})
-          }
-          
-          //let all_users = await Users.where({})
+            let sellerAll = await Survey.where({Vendedor:user,Año:año_solo,Mes:mes_solo})
+            let arr = []
 
+            if(sellerAll){
+              sellerAll.forEach(e => {
+                let obj = {}
+                obj.id = e.Codigo_Cliente
+                obj.Date_ultimo = 'sin datos'
+                obj.name = e.Nombre
+                obj.direccion = e.Direccion
+                obj.localidad = e.Localidad
+                obj.Pictures = 12
+
+                arr.push(obj)
+              })//end
+              
+              //envio datos
+              let data = { data: arr }
+              res.status(200).json(data)
+            }
+          }
           break
         case 'relevados':
-          console.log(req.body)
+          if(type_user == 'MERCHA'){
+            let surveyAll = await Survey.where({Merchandising:user,Año:año_solo,Mes:mes_solo, Relevado:true})
+            let arr = []
+
+            if(surveyAll){
+              surveyAll.forEach(e => {
+                let obj = {}
+                obj.id = e.Codigo_Cliente
+                obj.Date_ultimo = 'sin datos'
+                obj.name = e.Nombre
+                obj.direccion = e.Direccion
+                obj.localidad = e.Localidad
+                obj.Pictures = 12
+
+                arr.push(obj)
+              })//end
+              
+              //envio datos
+              let data = { data: arr }
+              res.status(200).json(data)
+            }
+          }
+
+          if(type_user == 'SELLER'){
+            let sellerAll = await Survey.where({Vendedor:user,Año:año_solo,Mes:mes_solo, Relevado:true})
+            let arr = []
+
+            if(sellerAll){
+              sellerAll.forEach(e => {
+                let obj = {}
+                obj.id = e.Codigo_Cliente
+                obj.Date_ultimo = 'sin datos'
+                obj.name = e.Nombre
+                obj.direccion = e.Direccion
+                obj.localidad = e.Localidad
+                obj.Pictures = 12
+
+                arr.push(obj)
+              })//end
+              
+              //envio datos
+              let data = { data: arr }
+              res.status(200).json(data)
+            }
+          }
           break
         case 'sin-relevar':
-          console.log(req.body)
+          if(type_user == 'MERCHA'){
+            let surveyAll = await Survey.where({Merchandising:user,Año:año_solo,Mes:mes_solo, Relevado:false})
+            let arr = []
+
+            if(surveyAll){
+              surveyAll.forEach(e => {
+                let obj = {}
+                obj.id = e.Codigo_Cliente
+                obj.Date_ultimo = 'sin datos'
+                obj.name = e.Nombre
+                obj.direccion = e.Direccion
+                obj.localidad = e.Localidad
+                obj.Pictures = 12
+
+                arr.push(obj)
+              })//end
+              
+              //envio datos
+              let data = { data: arr }
+              res.status(200).json(data)
+            }
+          }
+
+          if(type_user == 'SELLER'){
+            let sellerAll = await Survey.where({Vendedor:user,Año:año_solo,Mes:mes_solo, Relevado:false})
+            let arr = []
+
+            if(sellerAll){
+              sellerAll.forEach(e => {
+                let obj = {}
+                obj.id = e.Codigo_Cliente
+                obj.Date_ultimo = 'sin datos'
+                obj.name = e.Nombre
+                obj.direccion = e.Direccion
+                obj.localidad = e.Localidad
+                obj.Pictures = 12
+
+                arr.push(obj)
+              })//end
+              
+              //envio datos
+              let data = { data: arr }
+              res.status(200).json(data)
+            }
+          }
+          
+
           break
       }//end switch
     }//end if mes
@@ -473,7 +599,7 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
 
 
 
-router.get('/msg-ok', (req, res) => {
+/*router.get('/msg-ok', (req, res) => {
   let user = req.user.name
   res.render('../views/msgOk', { user, title: 'Archivo eliminado correctamente' })
 })//end get
@@ -486,7 +612,7 @@ router.get('/msg-error', (req, res) => {
 router.get('/msg-ok-upload', (req, res) => {
   let user = req.user.name
   res.render('../views/msgOkUpload', { user })
-})//end get
+})//end get*/
 
 router.get('/download/clientes', async (req, res) => {
   let xls = await Xls.where({ type: 'CLIENTS' })

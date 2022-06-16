@@ -15,11 +15,13 @@ router.post("/auth-movil", async (req, res) => {
         //Extrae datos del body
         const {movil, password} = req.body
         console.log(movil, password)
-        let user = await Users.findOne({active:true, phone:movil})
+        let Movil = movil.trim()
+        let Password = password.trim()
+        let user = await Users.findOne({active:true, phone:Movil})
         
         if(user){
             //password
-            let resultPass = bcrypt.compareSync(password, user.password);
+            let resultPass = bcrypt.compareSync(Password, user.password);
             
             if(user && resultPass){
                 let obj = {}
