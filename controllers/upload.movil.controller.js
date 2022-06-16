@@ -33,6 +33,7 @@ router.post('/upload-img', async(req, res) => {
                     let update = await Survey.updateOne({ Codigo_Cliente: Codigo_Cliente, 
                         Merchandising: Id_user }, { Relevado: true, 
                         Pictures: Pictures, Msg: Msg,
+                        Total_Pictures: Total_Pictures,
                         Date: moment().format('DD-MM-YYYY')})
                         
                     if(update.modifiedCount == 1){
