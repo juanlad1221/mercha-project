@@ -5,17 +5,19 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-flex justify-content-center">
-                        <h3 style="font-size:25px;" class="page-title">Archivos Clientes</h3>
+                        <h3 style="font-size:25px;" class="page-title">Cargar Archivo Clientes</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
-        <div class="card mt-5">
+
+
+    <div class="d-flex justify-content-between mt-4">
+        <div class="card" style="width: 50%;">
             <div class="card-body">
-                <div class="d-flex justify-content-around mt-3">
+                <div class="d-flex justify-content-center">
 
                     <!--Upload-->
                     <form action="/upload/clientes" enctype="multipart/form-data" method="POST">
@@ -30,44 +32,37 @@
                         </div>
 
                         <button type="submit" id="btn" class="btn btn-info mt-3"><i class="mdi mdi-cloud me-1"></i>
-                            <span>Subir</span> </button>
+                            <span>Subir</span>
+                        </button>
                     </form>
-
-                    <!--download-->
-                    <% if(flag){%>
-                        <div class="">
-                            <div class="dz-message needsclick">
-                                <i class="h1 text-muted dripicons-cloud-download"></i>
-                                <h3>Descargue el archivo excel subido</h3>
-
-                            </div>
-
-                            <form action="/download/clientes" method="GET">
-                                <button type="submit" class="btn btn-info"><i class="mdi mdi-cloud me-1"></i>
-                                    <span>Descargar</span> </button>
-                            </form>
-                        </div>
-                        <%}%>
                 </div>
             </div>
         </div>
-    
+
+        <div class="card" style="width: 30%;">
+            <div class="card-body">
+                <!--download-->
+                <% if(flag){%>
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="dz-message needsclick">
+                            <i class="h1 text-muted dripicons-cloud-download"></i>
+                        </div>
+
+                        <form action="/download/clientes" method="GET">
+                            <button type="submit" class="btn btn-info mt-3"><i class="mdi mdi-cloud me-1"></i>
+                                <span>Descargar</span> </button>
+                        </form>
+                    </div>
+                    <%}%>
+            </div>
+        </div>
+    </div>
 
 
-
-
-
-
-    <div class="column mb-5">
-
-
-
-
-
-
+    <div class="column mb-5 mt-5">
 
         <!--Card 1-->
-        <div class="col-md-6 col-xxl-3 mt-5">
+        <div class="col-md-6 col-xxl-3 mt-2">
             <!-- project card -->
             <div class="card d-block">
                 <div class="card-body">

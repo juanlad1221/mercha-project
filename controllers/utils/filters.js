@@ -16,8 +16,28 @@ const base = (v1, data) => {
     return filtrado3.length
   }
 
+  const getMerchaReleved = (v1, data) => {
+    let filtrado = data.filter(function (v){
+      return v.Merchandising == v1 && 
+      v.Relevado == true
+                    })
+  
+    return filtrado
+  }
+
+  const getSellerReleved = (v1, data) => {
+    let filtrado = data.filter(function (v){
+      return v.Vendedor == v1 && 
+      v.Relevado == true
+                    })
+  
+    return filtrado
+  }
+
   module.exports = {
     base,
     objMes,
-    relevados
+    relevados,
+    getMerchaReleved,
+    getSellerReleved
   }

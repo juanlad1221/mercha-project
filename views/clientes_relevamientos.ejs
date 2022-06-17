@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-flex justify-content-center">
-                        <h3 style="font-size:25px;" class="page-title">Relevamientos</h3>
+                        <h3 style="font-size:25px;" class="page-title">Relevamientos de Clientes</h3>
                     </div>
                 </div>
             </div>
@@ -28,7 +28,7 @@
 
 
             <div class="mb-3">
-                <label style="color:rgb(63, 61, 61)" class="form-label">Mes</label>
+                <label style="color:white" class="form-label">Mes</label>
                 <input class="form-control" id="date" type="month" name="month">
             </div>
 
@@ -71,7 +71,8 @@
             .bt {
                 border: 1px solid blue;
             }
-            .ver:hover{
+
+            .ver:hover {
                 cursor: pointer;
             }
         </style>
@@ -105,14 +106,13 @@
                     type = 'todos'
                     idUser = user.value
                     typeUser = type_User.value
-                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes,'idUser':idUser,'typeUser':typeUser })
+                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes, 'idUser': idUser, 'typeUser': typeUser })
                 }
 
                 //extrae mes cuando se carga el input
                 date.onchange = () => {
                     mes = String(date.value + '-01')
-                    //idUser = user.value
-                    //typeUser = type_User.value
+                    if (mes === '-01') { alert('DEBE SELECCIONAR UN MES...'); return }
                 }//end
 
 
@@ -161,16 +161,27 @@
                         ],
                         columns: [
                             { "data": "id" },
-                            { "data": "Date_ultimo" },
+                            {
+                                "data": "Date_ultimo",
+                                "render": function (data, type, row) {
+                                    if (row.Date_ultimo) {
+                                        return row.Date_ultimo
+                                    } else {
+                                        return 'No Relevado'
+                                    }
+                                }
+                            },
                             { "data": "name" },
                             { "data": "direccion" },
                             { "data": "localidad" },
                             {
-                                "defaultContent": "Pictures",
+                                "defaultContent": "Total_Pictures",
                                 "render": function (data, type, row) {
-                                    if (row) {
-                                        return "<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:5%'>10</h5> <i class='dripicons-camera ver font-16 me-1 mb-1'></i> </div>"
-                                    } 
+                                    if (row.Total_Pictures) {
+                                        return `<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:15%'>${row.Total_Pictures}</h5> <i class="fa fa-camera fa-lg ver" aria-hidden="true"></i> </div>`
+                                    } else {
+                                        return `<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:15%'>0</h5> </div>`
+                                    }
                                 }
                             }
 
@@ -180,9 +191,18 @@
 
 
                 btn.onclick = () => {
-                    if (type == '' || mes == '') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
-                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes,'idUser':idUser,'typeUser':typeUser })
+                    if (type == '' || mes == '' || mes == '-01') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
+                    loadTable('/api-clientes-relevamietos', 'POST', { 'type': type, 'mes': mes, 'idUser': idUser, 'typeUser': typeUser })
                 }
+
+
+                //Selecciona elementos en tabla Ver
+                let cliente;
+                $('#basic-datatable tbody').on('click', '.ver', function () {
+                    cliente = $(this).parents("tr").find("td").eq(0).text()
+                    let fecha = $(this).parents("tr").find("td").eq(1).text()
+                    window.location.href = '/detalle-relevamiento' + cliente + '&' + fecha
+                })
 
 
 

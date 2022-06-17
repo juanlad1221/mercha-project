@@ -6,7 +6,7 @@ const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
 var moment = require('moment'); // require
-const {base, objMes, relevados} = require('./utils/filters')
+const {base, objMes, relevados, getMerchaReleved, getSellerReleved} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 //const {Base64} = require('js-base64');//
@@ -267,9 +267,38 @@ router.get('/clientes-relevamientos:id&:tipo', async (req, res) => {
   let id = req.params.id
   let tipo = req.params.tipo
   let user = req.user.name
+  global.tipo = tipo
+  global.id_usuario = id
   
-  res.render('../views/clientes_relevamientos', { user,id,tipo })
+  res.render('../views/clientes_relevamientos', { user, id, tipo })
 })
+
+router.get('/detalle-relevamiento:cliente&:fecha', async (req, res) => {
+  try {
+    let cliente = req.params.cliente
+    let fecha = req.params.fecha
+    let tipo = global.tipo
+    let id_usuario = Number(global.id_usuario)
+    let user = req.user.name
+
+    //consulto las fotos
+    if(tipo == 'MERCHA'){
+      let result = await Survey.findOne({Codigo_Cliente:cliente, Date:fecha, Merchandising:id_usuario})
+      if(result){
+        let dataMercha = {
+          fotos:result.Pictures,
+          Nombre:result.Nombre
+        }
+        res.render('../views/detalle_relevamiento', { user, dataMercha })
+      }
+    }//END IF
+    
+   
+
+  } catch (error) {
+    console.log(error)
+  }
+})//end get
 
 //apis internas
 router.get('/api-clientes', async (req, res) => {
@@ -337,8 +366,10 @@ router.post('/api-relevamientos', async (req, res) => {
 
   if (req.body) {
     if (req.body.mes) {
+      console.log(req.body)
       let año_solo = new Date(req.body.mes).getFullYear()
-      let mes_solo = new Date(req.body.mes).getMonth() + 1
+      let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
+      let mes_solo = Number(oneDate.format('MM'))
       
       switch (req.body.type) {
         case 'todos':
@@ -355,6 +386,34 @@ router.post('/api-relevamientos', async (req, res) => {
                 obj.Date_ultimo = 'no data'
                 obj.name = e.name
                 obj.type = e.type
+
+                if(e.type == 'MERCHA'){
+                  let list = getMerchaReleved(e.id,surveys)
+                  if(list.length > 0){
+                    obj.Date_ultimo = list.sort((a,b) =>{
+                      if(a.Date > b.Date){return -1};
+                      if(a.Date < b.Date){return 1};
+                      return 0;
+                    })[0].Date
+                  }else{
+                    obj.Date_ultimo = 'no data'
+                  }
+                }
+
+                if(e.type == 'SELLER'){
+                  let lista = getSellerReleved(e.id,surveys)
+                  if(lista.length > 0){  
+                    obj.Date_ultimo = lista.sort((a,b) =>{
+                    if(a.Date > b.Date){return -1}
+                    if(a.Date < b.Date){return 1}
+                    return 0
+                    })[0].Date
+                  }else{
+                    obj.Date_ultimo = 'no data'
+                  }
+                  
+                }
+
                 obj.total_base = base(e.id,surveys)
                 let objm = objMes(e.id, año_solo, mes_solo, surveys)
                 obj.obj_mes = objm
@@ -383,6 +442,20 @@ router.post('/api-relevamientos', async (req, res) => {
                 obj.Date_ultimo = 'no data'
                 obj.name = e.name
                 obj.type = e.type
+
+                if(e.type == 'MERCHA'){
+                  let list = getMerchaReleved(e.id,surveys)
+                  if(list.length > 0){
+                    obj.Date_ultimo = list.sort((a,b) =>{
+                      if(a.Date > b.Date){return -1};
+                      if(a.Date < b.Date){return 1};
+                      return 0;
+                    })[0].Date
+                  }else{
+                    obj.Date_ultimo = 'no data'
+                  }
+                }
+
                 obj.total_base = base(e.id,survey_mercha)
                 let objm = objMes(e.id, año_solo, mes_solo, survey_mercha)
                 obj.obj_mes = objm
@@ -411,6 +484,20 @@ router.post('/api-relevamientos', async (req, res) => {
                   obj.Date_ultimo = 'no data'
                   obj.name = e.name
                   obj.type = e.type
+
+                  if(e.type == 'SELLER'){
+                    let lista = getSellerReleved(e.id,surveys)
+                    if(lista.length > 0){  
+                      obj.Date_ultimo = lista.sort((a,b) =>{
+                      if(a.Date > b.Date){return -1}
+                      if(a.Date < b.Date){return 1}
+                      return 0
+                      })[0].Date
+                    }else{
+                      obj.Date_ultimo = 'no data'
+                    }  
+                  }
+
                   obj.total_base = base(e.id,survey_seller)
                   let objm = objMes(e.id, año_solo, mes_solo, survey_seller)
                   obj.obj_mes = objm
@@ -439,7 +526,6 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
       let mes_solo = Number(oneDate.format('MM'))
       let user = Number(req.body.idUser)
       let type_user = req.body.typeUser
-      console.log(req.body)
 
       switch (req.body.type) {
         case 'todos':
@@ -451,11 +537,11 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
               surveyAll.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
-                obj.Date_ultimo = 'sin datos'
+                obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
-                obj.Pictures = 12
+                obj.Total_Pictures = e.Total_Pictures
 
                 arr.push(obj)
               })//end
@@ -473,11 +559,11 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
               sellerAll.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
-                obj.Date_ultimo = 'sin datos'
+                obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
-                obj.Pictures = 12
+                obj.Total_Pictures = e.Total_Pictures
 
                 arr.push(obj)
               })//end
@@ -497,11 +583,11 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
               surveyAll.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
-                obj.Date_ultimo = 'sin datos'
+                obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
-                obj.Pictures = 12
+                obj.Total_Pictures = e.Total_Pictures
 
                 arr.push(obj)
               })//end
@@ -520,11 +606,11 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
               sellerAll.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
-                obj.Date_ultimo = 'sin datos'
+                obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
-                obj.Pictures = 12
+                obj.Total_Pictures = e.Total_Pictures
 
                 arr.push(obj)
               })//end
@@ -544,11 +630,11 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
               surveyAll.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
-                obj.Date_ultimo = 'sin datos'
+                obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
-                obj.Pictures = 12
+                obj.Total_Pictures = e.Total_Pictures
 
                 arr.push(obj)
               })//end
@@ -567,11 +653,11 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
               sellerAll.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
-                obj.Date_ultimo = 'sin datos'
+                obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
-                obj.Pictures = 12
+                obj.Total_Pictures = e.Total_Pictures
 
                 arr.push(obj)
               })//end
@@ -597,22 +683,6 @@ router.post('/api-clientes-relevamietos', async (req, res) => {
 
 
 
-
-
-/*router.get('/msg-ok', (req, res) => {
-  let user = req.user.name
-  res.render('../views/msgOk', { user, title: 'Archivo eliminado correctamente' })
-})//end get
-
-router.get('/msg-error', (req, res) => {
-  let user = req.user.name
-  res.render('../views/msgError', { user, title: 'Archivo NO pudo eliminarse, intente nuevamente' })
-})//end get
-
-router.get('/msg-ok-upload', (req, res) => {
-  let user = req.user.name
-  res.render('../views/msgOkUpload', { user })
-})//end get*/
 
 router.get('/download/clientes', async (req, res) => {
   let xls = await Xls.where({ type: 'CLIENTS' })
@@ -786,34 +856,7 @@ router.post('/login', passport.authenticate('local-login', {
   passReqToCallback: true
 }))//end post
 
-/*router.post('/upload/xls-delete', async (req, res) => {
-  const { client, objetive } = req.body
 
-  if (client) {
-
-    let result = await Xls.deleteOne({ type: 'CLIENTS' })
-
-    if (result.deletedCount > 0) {
-      res.redirect('/msg-ok')
-    } else {
-      console.log('Error en la eliminacion...')
-      res.redirect('/msg-error')
-    }
-  }
-
-  if (objetive) {
-    let result = await Xls.deleteOne({ type: 'OBJETIVES' })
-    console.log(result)
-    if (result.deletedCount > 0) {
-      res.redirect('/msg-ok')
-    } else {
-      console.log('Error en la eliminacion...')
-      res.redirect('/msg-error')
-    }
-  }
-
-
-})//end post*/
 
 function isKeyExists(obj, key) {
   return obj.hasOwnProperty(key);

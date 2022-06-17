@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-flex justify-content-center">
-                        <h3 style="font-size:25px;" class="page-title">Administrador Relevamientos</h3>
+                        <h3 style="font-size:25px;" class="page-title">Administrador de Relevamientos</h3>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
 
 
             <div class="mb-3">
-                <label style="color:rgb(63, 61, 61)" class="form-label">Mes</label>
+                <label style="color:white" class="form-label">Mes</label>
                 <input class="form-control" id="date" type="month" name="month">
             </div>
 
@@ -93,19 +93,21 @@
                 let mes = `${year + "-" + mounth + "-" + day}`
                 let type = 'todos'
 
+                
                 //se carga el mes actual
                 date.value = String(`${year + "-" + "0" + mounth}`)
                 //se carga el boton por defto
                 borrarClassButton()
                 btnTodos.classList.add('active')
 
-                window.onload = () => {
+                window.onload = () => { 
                     loadTable('/api-relevamientos', 'POST', { 'type': type, 'mes': mes })
                 }
 
                 //extrae mes cuando se carga el input
                 date.onchange = () => {
                     mes = String(date.value + '-01')
+                    if(mes === '-01'){alert('DEBE SELECCIONAR UN MES...');return}
                 }//end
 
 
@@ -166,7 +168,7 @@
                                 "defaultContent": "Pictures",
                                 "render": function (data, type, row) {
                                     if (row) {
-                                        return "<i class='dripicons-preview ver font-16 me-1'></i>"
+                                        return "<i class='fa fa-eye fa-lg ver' aria-hidden='true'></i>"
                                     } 
                                 }
                             }
@@ -177,7 +179,7 @@
 
 
                 btn.onclick = () => {
-                    if (type == '' || mes == '') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
+                    if (type == '' || mes == '' || mes == '-01') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
                     loadTable('/api-relevamientos', 'POST', { 'type': type, 'mes': mes })
                 }
 
@@ -198,7 +200,7 @@
             $('#basic-datatable tbody').on('click', '.ver', function () {
                 tipo = $(this).parents("tr").find("td").eq(3).text()
                 id = $(this).parents("tr").find("td").eq(0).text()
-                
+
                 window.location.href = '/clientes-relevamientos'+id+'&'+tipo
             })
 

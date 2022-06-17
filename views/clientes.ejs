@@ -1,38 +1,45 @@
 <%- include('block_inicio')%>
-
     <!--titulo-->
-    <div class="row">
-        <div class="col-12 bt">
-            <div class="page-title-box d-flex justify-content-center">
-                <h3 class="page-title">Clientes</h3>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-flex justify-content-center">
+                        <h3 style="font-size:25px;" class="page-title">Ver Clientes</h3>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!--tabla-->
     <div class="mt-5 mb-5">
-        <table id="basic-datatable" class="table table-striped nowrap">
-            <thead>
-                <tr>
-                    <th>ID COM</th>
-                    <th>NOMBRE</th>
-                    <th>DIRECCIÓN</th>
-                    <th>TELEFONO</th>
-                    <th>ZONA</th>
-                    <th>LOCALIDAD</th>
-                    <th>PROVINCIA</th>
-                    <th>PAIS</th>
-                    <th>NOMBRE VENDEDOR</th>
-                    <th>VENDEDOR</th>
-                    <th>NOMBRE MERCHANDISING</th>
-                    <th>MERCHANDISING</th>
-                    <th>RUBRO</th>
-                    <th>SUBRUBRO</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="card">
+            <div class="card-body">
+                <table id="basic-datatable" class="table table-striped nowrap">
+                    <thead>
+                        <tr>
+                            <th>ID COM</th>
+                            <th>NOMBRE</th>
+                            <th>DIRECCIÓN</th>
+                            <th>TELEFONO</th>
+                            <th>ZONA</th>
+                            <th>LOCALIDAD</th>
+                            <th>PROVINCIA</th>
+                            <th>PAIS</th>
+                            <th>NOMBRE VENDEDOR</th>
+                            <th>VENDEDOR</th>
+                            <th>NOMBRE MERCHANDISING</th>
+                            <th>MERCHANDISING</th>
+                            <th>RUBRO</th>
+                            <th>SUBRUBRO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <%- include('block_end')%>
