@@ -27,6 +27,7 @@ router.post("/list-movil", async (req, res) => {
             let arr = []
             clientes.forEach(e => {
                 let obj = {}
+                obj._id = e._id
                 obj.Codigo_Cliente = e.Codigo_Cliente
                 obj.Nombre = e.Nombre
                 obj.Direccion = e.Direccion

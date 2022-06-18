@@ -1,17 +1,38 @@
 <%- include('block_inicio')%>
                         
     <!--titulo-->
-    <div class="row">
-        <div class="col-12 bt">
-            <div class="page-title-box d-flex justify-content-center">
-                <h3 class="page-title">Dashboard</h3>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-flex justify-content-center">
+                        <h3 style="font-size:25px;" class="page-title">Dashboard</h3>
+                    </div>
+                </div>
             </div>
-        </div>                     
+        </div>
     </div>
 
     <!--contenido-->
     <div class=" row bt">
-        jjj
+        <div class="card" style="width: 20%;">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-6">
+                        <h5 class="text-muted fw-normal mt-0 text-truncate" title="Campaign Sent">Campaign Sent</h5>
+                        <h3 class="my-2 py-1">9,184</h3>
+                        <p class="mb-0 text-muted">
+                            <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 3.27%</span>
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-end">
+                            <div id="campaign-sent-chart" data-colors="#536de6"></div>
+                        </div>
+                    </div>
+                </div> <!-- end row-->
+            </div> <!-- end card-body -->
+        </div> <!-- end card -->
     </div>
                         
 <%- include('block_end')%>
