@@ -13,7 +13,7 @@ let mounth = currentTime.getMonth() + 1
 
 router.post('/upload-img', async(req, res) => {
     try {
-        
+        console.log(req.body)
         if(req.body){
             //datos del movil
             let Codigo_Cliente = String(req.body.Codigo_Cliente.trim())

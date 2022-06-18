@@ -22,6 +22,7 @@ const { type } = require("os");
 const { route } = require("./upload.movil.controller");
 const { clearScreenDown } = require("readline");
 const { collection } = require("../schemas/Users");
+const e = require("express");
 //const prisma = new PrismaClient()
 
 let currentTime = new Date();
@@ -287,11 +288,39 @@ router.get('/detalle-relevamiento:cliente&:fecha', async (req, res) => {
       if(result){
         let dataMercha = {
           fotos:result.Pictures,
-          Nombre:result.Nombre
+          Nombre:result.Nombre,
+          Id_cliente:result.Codigo_Cliente,
+          Direccion:result.Direccion,
+          Localidad:result.Localidad,
+          Id_Mercha:result.Merchandising,
+          Tipo:'MERCHA',
+          Nombre:result.Nombre_Merchandising,
+          Date:result.Date,
+          Msg:result.Msg
         }
         res.render('../views/detalle_relevamiento', { user, dataMercha })
       }
     }//END IF
+
+    if(tipo == 'SELLER'){
+      let result = await Survey.findOne({Codigo_Cliente:cliente, Date:fecha, Vendedor:id_usuario})
+      if(result){
+        let dataMercha = {
+          fotos:result.Pictures,
+          Nombre:result.Nombre,
+          Id_cliente:result.Codigo_Cliente,
+          Direccion:result.Direccion,
+          Localidad:result.Localidad,
+          Id_Vendedor:result.Merchandising,
+          Tipo:'SELLER',
+          Nombre:result.Nombre_Merchandising,
+          Date:result.Date,
+          Msg:result.Msg
+        }
+        res.render('../views/detalle_relevamiento', { user, dataMercha })
+      }
+    }//END IF
+    
     
    
 
@@ -366,7 +395,6 @@ router.post('/api-relevamientos', async (req, res) => {
 
   if (req.body) {
     if (req.body.mes) {
-      console.log(req.body)
       let año_solo = new Date(req.body.mes).getFullYear()
       let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
       let mes_solo = Number(oneDate.format('MM'))
@@ -444,7 +472,7 @@ router.post('/api-relevamientos', async (req, res) => {
                 obj.type = e.type
 
                 if(e.type == 'MERCHA'){
-                  let list = getMerchaReleved(e.id,surveys)
+                  let list = getMerchaReleved(e.id,survey_mercha)
                   if(list.length > 0){
                     obj.Date_ultimo = list.sort((a,b) =>{
                       if(a.Date > b.Date){return -1};
@@ -486,7 +514,7 @@ router.post('/api-relevamientos', async (req, res) => {
                   obj.type = e.type
 
                   if(e.type == 'SELLER'){
-                    let lista = getSellerReleved(e.id,surveys)
+                    let lista = getSellerReleved(e.id,survey_seller)
                     if(lista.length > 0){  
                       obj.Date_ultimo = lista.sort((a,b) =>{
                       if(a.Date > b.Date){return -1}
