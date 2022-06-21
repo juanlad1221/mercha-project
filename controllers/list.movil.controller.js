@@ -22,7 +22,7 @@ router.post("/list-movil", async (req, res) => {
 
         if (type == 'MERCHA') {
             let clientes = await Clients.where({ Merchandising: id })
-            let survey = await Survey.where({ Merchandising: id })
+            let survey = await Survey.where({ Merchandising: id, type: type })
 
             let arr = []
             clientes.forEach(e => {
@@ -40,24 +40,60 @@ router.post("/list-movil", async (req, res) => {
                 survey.forEach(f => {
                     if (e.Codigo_Cliente == f.Codigo_Cliente) {
 
-                        if(f.Año == year && f.Mes == mounth){
+                        if (f.Año == year && f.Mes == mounth) {
                             obj.Objetive = true
                         }
-                        
+
                         if (f.Relevado == true) {
                             obj.Relevado = true
-                        } 
+                        }
                     }
                 })//end for2
 
                 arr.push(obj)
             })//end for
-           
+
             res.status(200).json(arr)
-        }
+        }//end if mercha
+
+        if (type == 'SELLER') {
+            let clientes = await Clients.where({ Vendedor: id })
+            let survey = await Survey.where({ Vendedor: id, type: type })
+
+            let arr = []
+            clientes.forEach(e => {
+                let obj = {}
+                obj._id = e._id
+                obj.Codigo_Cliente = e.Codigo_Cliente
+                obj.Nombre = e.Nombre
+                obj.Direccion = e.Direccion
+                obj.Telefono = e.Telefono
+                obj.Localidad = e.Localidad
+                obj.Provincia = e.Provincia
+                obj.Objetive = false
+                obj.Relevado = false
+
+                survey.forEach(f => {
+                    if (e.Codigo_Cliente == f.Codigo_Cliente) {
+
+                        if (f.Año == year && f.Mes == mounth) {
+                            obj.Objetive = true
+                        }
+
+                        if (f.Relevado == true) {
+                            obj.Relevado = true
+                        }
+                    }
+                })//end for2
+
+                arr.push(obj)
+            })//end for
+
+            res.status(200).json(arr)
+        }//end if seller
 
 
-       
+
 
 
 

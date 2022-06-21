@@ -34,10 +34,40 @@ const base = (v1, data) => {
     return filtrado
   }
 
+  const getDataMercha = (v1, data) => {
+    let filtrado = data.filter(function (v){
+      return v.Merchandising == v1})
+  
+    return filtrado
+  }
+
+  const filterByOneKey = (key1,v1,data) => {
+    return data.filter(function (v){return v[key1] == v1})
+  }
+  const filterByTwoKey = (key1,v1,key2,v2,data) => {
+    return data.filter(function (v){return v[key1] == v1 && v[key2] == v2})
+  }
+  const filterByThreeKey = (key1,v1,key2,v2,key3,v3,data) => {
+    return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3})
+  }
+  const filterByFourKey = (key1,v1,key2,v2,key3,v3,key4,v4,data) => {
+    return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] == v4})
+  }
+
+  function SortArrayDesc(a, b){
+    return (b.Date - a.Date)
+}
+
   module.exports = {
     base,
     objMes,
     relevados,
     getMerchaReleved,
-    getSellerReleved
+    getSellerReleved,
+    getDataMercha,
+    filterByOneKey,
+    filterByTwoKey,
+    filterByThreeKey,
+    filterByFourKey,
+    SortArrayDesc
   }

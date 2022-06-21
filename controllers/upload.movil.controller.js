@@ -13,25 +13,26 @@ let mounth = currentTime.getMonth() + 1
 
 router.post('/upload-img', async(req, res) => {
     try {
-        console.log(req.body)
+        
         if(req.body){
             //datos del movil
             let Codigo_Cliente = String(req.body.Codigo_Cliente.trim())
             let Id_user = Number(req.body.Id_user)
             let Pictures = req.body.Pictures
-            let Msg = String(req.body.Msg.trim())
+            let Msg = req.body.Msg
             let Total_Pictures = Number(req.body.Total_Pictures)
 
+            
             if(req.body.Type == 'MERCHA'){
                 let existe = await Survey.exists({Codigo_Cliente: Codigo_Cliente, 
-                    Merchandising: Id_user, Relevado: true})
+                    Merchandising: Id_user, type:'MERCHA',Relevado: true})
                 if(existe){
                     console.log('Actualizo Correctamente...')
                     res.status(200).json({msg:'Envio Exitoso...', status:200, type:'MERCHA'})
                 }else{
                     //almaceno
                     let update = await Survey.updateOne({ Codigo_Cliente: Codigo_Cliente, 
-                        Merchandising: Id_user }, { Relevado: true, 
+                        Merchandising: Id_user,type:'MERCHA' }, { Relevado: true, 
                         Pictures: Pictures, Msg: Msg,
                         Total_Pictures: Total_Pictures,
                         Date: moment().format('DD-MM-YYYY')})
@@ -66,7 +67,7 @@ router.post('/upload-img', async(req, res) => {
 
         }//end if body
     } catch (error) {
-        console.log('Error try/catch - no body - in /upload-img....')
+        console.log('Error try/catch - no body - in /upload-img....', error)
         res.status(400).end()
     }
 })//end

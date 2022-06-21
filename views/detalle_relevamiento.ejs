@@ -1,118 +1,424 @@
 <%- include('block_inicio')%>
-    <!--titulo-->
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-flex justify-content-center">
-                        <h3 style="font-size:25px;" class="page-title">Detalle Relevamiento</h3>
-                    </div>
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li id="link-previo" class="breadcrumb-item"><a href=""></a></li>
+                        <li id="link-actual" class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Dashboard</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="d-flex justify-content-center mt-3 mb-5">
+        <div class="col-10">
+            <div class="card">
+                <div class="card-body ">
+                    <div class="row ">
+                        <div class="col-lg-7">
+                            <!-- Product image -->
+                            <div class="mt-2 text-center d-block mb-4 p-2">
+
+                                <img id="img-zoom" src="assets/images/noimage2.jpg" class="img-fluid"
+                                    style="width:500px; max-height:400px; object-fit: cover; border-radius:15px"
+                                    alt="" />
+
+                            </div>
+
+                            <div class="mb-2 d-lg-flex d-none justify-content-center">
+                                <%if(dataMercha.fotos[0]){%>
+                                    <div href="javascript: void(0);">
+                                        <img id="img-1" src=<%="data:image/jpg;base64,"+dataMercha.fotos[0]%>
+                                        class="img-fluid
+                                        img-thumbnail p-1" style="max-width: 100px; object-fit: cover;
+                                        border-radius:15px" />
+                                    </div>
+                                    <%}else{%>
+                                        <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                            <div id="img-1" class="d-flex justify-content-center align-items-center"
+                                                href="javascript: void(0);"
+                                                style="background-color:grey;opacity:0.7;width:100%;height:100%;border-radius:15px">
+                                                <i class="fa fa-camera fa-lg" style="color: white;"
+                                                    aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                        <%}%>
+
+                                            <%if(dataMercha.fotos[1]){%>
+                                                <div href="javascript: void(0);">
+                                                    <img id="img-2" src=<%="data:image/jpg;base64,"
+                                                        +dataMercha.fotos[1]%> class="img-fluid
+                                                    img-thumbnail p-1" style="max-width: 100px; object-fit: cover;
+                                                    border-radius:15px" />
+                                                </div>
+                                                <%}else{%>
+                                                    <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                                        <div id="img-2"
+                                                            class="d-flex justify-content-center align-items-center"
+                                                            href="javascript: void(0);"
+                                                            style="background-color:grey;opacity:0.7;width:100%;height:100%;border-radius:15px">
+                                                            <i class="fa fa-camera fa-lg" style="color: white;"
+                                                                aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                    <%}%>
+
+                                                        <%if(dataMercha.fotos[2]){%>
+                                                            <div href="javascript: void(0);">
+                                                                <img id="img-3" src=<%="data:image/jpg;base64,"
+                                                                    +dataMercha.fotos[2]%> class="img-fluid
+                                                                img-thumbnail p-1" style="max-width: 100px; object-fit:
+                                                                cover;border-radius:15px" />
+                                                            </div>
+                                                            <%}else{%>
+                                                                <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                                                    <div id="img-3"
+                                                                        class="d-flex justify-content-center align-items-center"
+                                                                        href="javascript: void(0);"
+                                                                        style="background-color:grey;opacity:0.7;width:100%;height:100%;border-radius:15px">
+                                                                        <i class="fa fa-camera fa-lg"
+                                                                            style="color: white;"
+                                                                            aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <%}%>
+
+                                                                    <%if(dataMercha.fotos[3]){%>
+                                                                        <div href="javascript: void(0);">
+                                                                            <img id="img-4"
+                                                                                src=<%="data:image/jpg;base64,"
+                                                                                +dataMercha.fotos[3]%> class="img-fluid
+                                                                            img-thumbnail p-1" style="max-width: 100px;
+                                                                            object-fit: cover;border-radius:15px" />
+                                                                        </div>
+                                                                        <%}else{%>
+                                                                            <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                                                                <div id="img-4"
+                                                                                    class="d-flex justify-content-center align-items-center"
+                                                                                    href="javascript: void(0);"
+                                                                                    style="background-color:grey;opacity:0.7;width:100%;height:100%;border-radius:15px">
+                                                                                    <i class="fa fa-camera fa-lg"
+                                                                                        style="color: white;"
+                                                                                        aria-hidden="true"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            <%}%>
+                            </div>
+                        </div> <!-- end col -->
+                        <div class="col-lg-5">
+                            <form class="ps-lg-4">
+                                <br>
+                                <!-- Product title -->
+                                <h3 class="mt-0">
+                                    <u>Cliente</u>
+                                </h3>
+                                <h5 class="mt-0">
+                                    Id: <%=dataMercha.Id_cliente%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    <%=dataMercha.Comercio%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    Direccion: <%=dataMercha.Direccion%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    localidad: <%=dataMercha.Localidad%>
+                                </h5>
+
+                                <br><br>
+
+                                <h3 class="mt-0">
+                                    <u>Merchandising</u>
+                                </h3>
+                                <h5 class="mb-1">
+                                    Id: <%=dataMercha.Id_Mercha%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    Usuario: <%=dataMercha.Nombre%>
+
+                                </h5>
+                                <h5 class="mb-1">
+                                    Ultimo Relevamiento: <%=dataMercha.Date%>
+                                </h5>
+
+                                <br><br>
+                                <div class="">
+                                    <h3 class="mt-0">
+                                        <u>Mensaje</u>
+                                    </h3>
+                                    <p><%=dataMercha.Msg%></p>
+                                </div>
+
+                            </form>
+                        </div> <!-- end col -->
+                    </div> <!-- end row-->
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row d-flex justify-content-end mt-5">
-        <div style="background-color: rgb(157, 152, 184); width:100%; 
-            height:150px;display:flex; 
-            justify-content:start; align-items:center; 
-            border-top-left-radius:15px; border-bottom-left-radius:15px;">
+    <div class="d-flex justify-content-center mt-3 mb-5">
+        <div class="col-10">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <!-- Product image -->
+                            <div class="mt-2 text-center d-block mb-4">
+                                <img id="img-zoom2" src="assets/images/noimage2.jpg" class="img-fluid"
+                                    style="width:500px; max-height:400px; object-fit: cover; border-radius:15px"
+                                    alt="" />
+                            </div>
+                          
+                            <div class="mb-2 d-lg-flex d-none justify-content-center bt">
+                                
+                                <%if(dataSeller.fotos[0]){%>
+                                    <div href="javascript: void(0);">
+                                        <img id="img-5" src=<%="data:image/jpg;base64,"+dataSeller.fotos[0]%>
+                                        class="img-fluid
+                                        img-thumbnail p-1" style="max-width: 100px; object-fit: cover;
+                                        border-radius:15px" />
+                                    </div>
+                                    <%}else{%>
+                                        <div class="img-fluid
+                                        img-thumbnail p-1" >
+                                            <div id="img-5" class="d-flex justify-content-center align-items-center"
+                                                href="javascript: void(0);"
+                                                style="background-color:grey;opacity:0.7;width:80px;height:100px;border-radius:15px">
+                                                <i class="fa fa-camera fa-lg" style="color: white;"
+                                                    aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                        <%}%>
 
-            <div class="p-1" style="color:white">
-                <h5>ID CLIENTE: <%=dataMercha.Id_cliente%></h5>
-                <h5>CLIENTE: <%=dataMercha.Nombre%></h5>
-                <h5>DIRECCIÓN: <%=dataMercha.Direccion%></h5>
-                <h5>LOCALIDAD: <%=dataMercha.Localidad%></h5>
+                                            <%if(dataSeller.fotos[1]){%>
+                                                <div href="javascript: void(0);">
+                                                    <img id="img-6" src=<%="data:image/jpg;base64,"
+                                                        +dataSeller.fotos[1]%> class="img-fluid
+                                                    img-thumbnail p-1" style="max-width: 100px; object-fit: cover;
+                                                    border-radius:15px" />
+                                                </div>
+                                                <%}else{%>
+                                                    <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                                        <div id="img-6"
+                                                            class="d-flex justify-content-center align-items-center"
+                                                            href="javascript: void(0);"
+                                                            style="background-color:grey;opacity:0.7;width:80px;height:100px;border-radius:15px">
+                                                            <i class="fa fa-camera fa-lg" style="color: white;"
+                                                                aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                    <%}%>
+
+                                                        <%if(dataSeller.fotos[2]){%>
+                                                            <div href="javascript: void(0);">
+                                                                <img id="img-7" src=<%="data:image/jpg;base64,"
+                                                                    +dataMercha.fotos[2]%> class="img-fluid
+                                                                img-thumbnail p-1" style="max-width: 100px; object-fit:
+                                                                cover;border-radius:15px" />
+                                                            </div>
+                                                            <%}else{%>
+                                                                <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                                                    <div id="img-7"
+                                                                        class="d-flex justify-content-center align-items-center"
+                                                                        href="javascript: void(0);"
+                                                                        style="background-color:grey;opacity:0.7;width:80px;height:100px;border-radius:15px">
+                                                                        <i class="fa fa-camera fa-lg"
+                                                                            style="color: white;"
+                                                                            aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <%}%>
+
+                                                                    <%if(dataSeller.fotos[3]){%>
+                                                                        <div href="javascript: void(0);">
+                                                                            <img id="img-8"
+                                                                                src=<%="data:image/jpg;base64,"
+                                                                                +dataMercha.fotos[3]%> class="img-fluid
+                                                                            img-thumbnail p-1" style="max-width: 100px;
+                                                                            object-fit: cover;border-radius:15px" />
+                                                                        </div>
+                                                                        <%}else{%>
+                                                                            <div class="img-fluid
+                                        img-thumbnail p-1" style="width:100px">
+                                                                                <div id="img-8"
+                                                                                    class="d-flex justify-content-center align-items-center"
+                                                                                    href="javascript: void(0);"
+                                                                                    style="background-color:grey;opacity:0.7;width:80px;height:100px;border-radius:15px">
+                                                                                    <i class="fa fa-camera fa-lg"
+                                                                                        style="color: white;"
+                                                                                        aria-hidden="true"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            <%}%>
+                                                                       
+                            </div>
+                        </div> <!-- end col -->
+                        <div class="col-lg-5">
+                            <!-- end col-->
+                            <form class="ps-lg-4">
+                                <br>
+                                
+                                <h3 class="mt-0">
+                                    <u>Cliente</u>
+                                </h3>
+                                <h5 class="mt-0">
+                                    Id: <%=dataSeller.Id_cliente%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    <%=dataSeller.Comercio%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    Direccion: <%=dataSeller.Direccion%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    localidad: <%=dataSeller.Localidad%>
+                                </h5>
+
+                                <br><br>
+
+                                <h3 class="mt-0">
+                                    <u>Vendedor</u>
+                                </h3>
+                                <h5 class="mb-1">
+                                    Id: <%=dataSeller.Id_Vendedor%>
+                                </h5>
+                                <h5 class="mb-1">
+                                    Usuario: <%=dataSeller.Nombre%>
+
+                                </h5>
+                                <h5 class="mb-1">
+                                    Ultimo Relevamiento: <%=dataSeller.Date%>
+                                </h5>
+
+                                <br><br>
+                                <div class="">
+                                    <h3 class="mt-0">
+                                        <u>Mensaje</u>
+                                    </h3>
+                                    <p><%=dataSeller.Msg%></p>
+                                </div>
+
+                            </form>
+                        </div> <!-- end col -->
+                    </div> <!-- end row-->
+                </div>
             </div>
-
         </div>
     </div>
-
-    <div class="d-flex justify-content-center mt-5 mb-5">
-        <div style="width: 40%;">
-            <div>
-                <div style="border-radius:15px; background-color: white; padding:2%;height:auto">
-                    <h5>ID: <%=dataMercha.Id_Mercha%></h5>
-                    <h5>TIPO USUARIO: <%=dataMercha.Tipo%></h5>
-                    <h5>NOMBRE: <%=dataMercha.Nombre%></h5>
-                    <h5>FECHA RELEVAMIENTO: <%=dataMercha.Date%></h5>
-                </div>
-            </div>
-
-            <div class=" mt-3 d-flex flex-column justify-content-center align-items-center p-3"
-                style="background-color: white; padding:1%;border-radius:15px">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: grey; width:50%;height:180px;border-radius:10px">
-                    <i class="fa fa-search-plus fa-4x" style="color: white;" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div class="mt-3 d-flex justify-content-center align-items-center flex-wrap p-1"
-                style="background-color: white; border-radius:15px; height:200px">
-                <%dataMercha.fotos.forEach(e=>{%>
-                    <%if(e){%>
-                        
-                        <div class="d-flex justify-content-center align-items-center"
-                            style="background-color: grey; width:100px; margin-right:2%; height:100px;border-radius:10px">
-                            <img  style="width:100%; height:100%; object-fit: cover; border-radius:10px"  src=<%="data:image/jpg;base64,"+e%> alt="Red dot"  />
-                        </div>
-                    <%}%>
-                    <%})%>
-
-                                   
-            </div>
-
-            <div class="mt-3 p-1" style="background-color: white; border-radius:15px; height:100px">
-                <h5>MENSAJE: <%=dataMercha.Msg%></h5>
-            </div>
-        </div>
-
-        <div style="width: 40%; margin-left:10%">
-            <div>
-                <div style="border-radius:15px; background-color: white; padding:2%;height:auto">
-                    <h5>ID: <%=dataMercha.Id_Mercha%></h5>
-                    <h5>TIPO USUARIO: <%=dataMercha.Tipo%></h5>
-                    <h5>NOMBRE: <%=dataMercha.Nombre%></h5>
-                    <h5>FECHA RELEVAMIENTO: <%=dataMercha.Date%></h5>
-                </div>
-            </div>
-
-            <div class=" mt-3 d-flex flex-column justify-content-center align-items-center p-3"
-                style="background-color: white; padding:1%;border-radius:15px">
-                <div class="d-flex justify-content-center align-items-center"
-                    style="background-color: grey; width:50%;height:180px;border-radius:10px">
-                    <i class="fa fa-search-plus fa-4x" style="color: white;" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div class="mt-3 d-flex justify-content-center align-items-center flex-wrap p-1"
-                style="background-color: white; border-radius:15px; height:200px">
-                <%dataMercha.fotos.forEach(e=>{%>
-                    <%if(e){%>
-                        
-                        <div class="d-flex justify-content-center align-items-center"
-                            style="background-color: grey; width:100px; margin-right:2%; height:100px;border-radius:10px">
-                            <img  style="width:100%; height:100%; object-fit: cover; border-radius:10px"  src=<%="data:image/jpg;base64,"+e%> alt="Red dot"  />
-                        </div>
-                    <%}%>
-                    <%})%>
-
-                                   
-            </div>
-
-            <div class="mt-3 p-1" style="background-color: white; border-radius:15px; height:100px">
-                <h5>MENSAJE: <%=dataMercha.Msg%></h5>
-            </div>
-        </div>
-    </div>
-
 
 
     <%- include('block_end')%>
         <style>
-            img.resize {width:100%; height: 80px; }
+            .bt-select {
+                border: 2px solid blue;
+            }
         </style>
 
         <script>
+            let imgZoom = document.getElementById('img-zoom')
+            let imgZoom2 = document.getElementById('img-zoom2')
+            let img1 = document.getElementById('img-1')
+            let img2 = document.getElementById('img-2')
+            let img3 = document.getElementById('img-3')
+            let img4 = document.getElementById('img-4')
+            let img5 = document.getElementById('img-5')
+            let img6 = document.getElementById('img-6')
+            let img7 = document.getElementById('img-7')
+            let img8 = document.getElementById('img-8')
+
+            img1.onclick = () => {
+                let yu = img1.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect()
+                    img1.classList.toggle('bt-select')
+                    imgZoom.setAttribute('src', yu)
+                }
+            }
+            img2.onclick = () => {
+                let yu = img2.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect()
+                    img2.classList.toggle('bt-select')
+                    imgZoom.setAttribute('src', yu)
+                }
+            }
+            img3.onclick = () => {
+                let yu = img3.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect()
+                    img3.classList.toggle('bt-select')
+                    imgZoom.setAttribute('src', yu)
+                }
+            }
+            img4.onclick = () => {
+                let yu = img4.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect()
+                    img4.classList.toggle('bt-select')
+                    imgZoom.setAttribute('src', yu)
+                }
+            }
+
+            //Vendedor
+            img5.onclick = () => {
+                let yu = img5.getAttribute('src')
+                console.log(yu)
+                if (yu != null) {
+                    borrarSelect2()
+                    img5.classList.toggle('bt-select')
+                    imgZoom2.setAttribute('src', yu)
+                }
+            }
+            img6.onclick = () => {
+                let yu = img6.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect2()
+                    img6.classList.toggle('bt-select')
+                    imgZoom2.setAttribute('src', yu)
+                }
+            }
+            img7.onclick = () => {
+                let yu = img7.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect2()
+                    img7.classList.toggle('bt-select')
+                    imgZoom2.setAttribute('src', yu)
+                }
+            }
+            img8.onclick = () => {
+                let yu = img8.getAttribute('src')
+                if (yu != null) {
+                    borrarSelect2()
+                    img8.classList.toggle('bt-select')
+                    imgZoom2.setAttribute('src', yu)
+                }
+            }
+
+            function borrarSelect() {
+                img1.classList.remove('bt-select')
+                img2.classList.remove('bt-select')
+                img3.classList.remove('bt-select')
+                img4.classList.remove('bt-select')
+            }
+            function borrarSelect2() {
+                img5.classList.remove('bt-select')
+                img6.classList.remove('bt-select')
+                img7.classList.remove('bt-select')
+                img8.classList.remove('bt-select')
+            }
+
 
         </script>

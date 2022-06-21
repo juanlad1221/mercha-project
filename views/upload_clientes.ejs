@@ -1,16 +1,19 @@
 <%- include('block_inicio')%>
-    <!--titulo-->
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-flex justify-content-center">
-                        <h3 style="font-size:25px;" class="page-title">Cargar Archivo Clientes</h3>
-                    </div>
+    <!-- start page title -->
+    <div class="row bt">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li id="link-previo" class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Cargar Clientes</li>    
+                    </ol>
                 </div>
+                <h4 class="page-title">Cargar Clientes</h4>
             </div>
         </div>
     </div>
+    <!-- end page title -->
 
 
 
@@ -167,6 +170,15 @@
         <script>
             let input_ = document.getElementById('file')
             let btnSubir = document.getElementById('btn')
+
+            window.onload = () => {
+                let page = localStorage.getItem('page')
+                let title = document.getElementsByClassName('page-title')
+                let link = document.getElementById('link-previo')
+                localStorage.setItem('page', title)
+
+                link.innerText=page
+            }//end
 
             //deshabilito btn subir
             btnSubir.setAttribute('disabled', true)

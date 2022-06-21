@@ -11,12 +11,16 @@ const survey_schema = Schema({
     Zona: { type: String },
     Localidad: {type: String},
     Provincia: {type: String},
-    Vendedor:{type: Number},
-    Nombre_Vendedor:{type: String},
-    Merchandising:{type: Number},
-    Nombre_Merchandising:{type: String},
     Mes:{type:Number},
     Año:{type:Number},
+
+    Vendedor:{type: Number},
+    Nombre_Vendedor:{type:String},
+
+    Merchandising:{type: Number},
+    Nombre_Merchandising:{type: String},
+
+    type:{type:String, requerid:true,default:null},
     Date:{type:String, requerid:true,default:null},
     Pictures:[],
     Total_Pictures:{type:Number, default:0},
