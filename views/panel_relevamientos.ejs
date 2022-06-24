@@ -1,0 +1,203 @@
+<%- include('block_inicio')%>
+    <!-- start page title -->
+    <div class="d-flex justify-content-center">
+        <div class="col-10">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li id="link-previo" class="breadcrumb-item"><a href=""></a></li>
+                        <li id="link-actual" class="breadcrumb-item active">Panel Relevamientos</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Panel Relevamientos</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <!--contenido-->
+    <div class="d-flex justify-content-center bt">
+        <div class="col-10 d-flex justify-content-end bt">
+
+            <div class="bt" style="background-color: rgb(157, 152, 184);width:80%; 
+            height:100px;display:flex; 
+            justify-content:end; align-items:center; 
+            border-top-left-radius:15px; border-bottom-left-radius:15px;">
+
+                <div class="d-flex align-items-center p-2 bt" style="width: 90%;">
+                    <!-- select -->
+                    <div style="width:200px">
+                        <select id="sel1" class="form-select">
+                            <option selected>Merchandising</option>
+                            <%mercha_users.forEach(e => {%>
+                                <option value=<%=e.id%>><%=e.name%></option>
+                            <%})%>  
+                        </select>
+                    </div>
+
+                    <div style="width:200px">
+                        <select id="sel2" class="form-select" style="margin-left: 6%;">
+                            <option selected>Vendedor</option>
+                            <%seller_users.forEach(e => {%>
+                                <option value=<%=e.id%>><%=e.name%></option>
+                            <%})%>  
+                        </select>
+                    </div>
+
+
+                    <div style="margin-bottom: 4.5%; margin-left:3%">
+                        <label style="color:white" class="form-label">Mes</label>
+                        <input class="form-control" id="date" type="month" name="month">
+                    </div>
+
+                    <div style="margin-left: 3%;">
+                        <button class="btn btn-primary"  id="btn">Buscar</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="row bt mt-5">
+        <div class="card">
+            <div class="card-body">
+                <table id="basic-datatable" class="table table-striped nowrap"  style="width:auto">
+                    <thead>
+                        <tr>
+                            <th>Id Comercio</th>
+                            <th>Comercio</th>
+                            <th>Direccion</th>
+                            <th>Id Usuario</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Imagen 1</th>
+                            <th>Imagen 2</th>
+                            <th>Imagen 3</th>
+                            <th>Imagen 4</th>
+                        </tr>
+                    </thead>
+                    <tbody>  
+                    </tbody>
+                </table>
+            </div>
+           
+        </div>
+    </div>
+
+    <%- include('block_end')%>
+
+        <style>
+            .bt {
+                border: 1px solid blue;
+            }
+        </style>
+
+        <script>
+        $(document).ready(function () {
+            let btn = document.getElementById('btn')
+            let sel1 = document.getElementById('sel1')
+            let sel2 = document.getElementById('sel2')
+            let date = document.getElementById('date')
+            let user_id;
+            let typeUser;
+            let fecha;
+
+            sel1.onchange = () => {
+                user_id = sel1.value
+                typeUser = 'MERCHA'
+            }//end
+            sel2.onchange = () => {
+                user_id = sel2.value
+                typeUser = 'SELLER'
+            }//end
+            date.onchange = () => {
+                fecha = date.value + '-01'
+            }//end
+            btn.onclick = () =>{
+                loadTable('/consulta-relevamiento',{ 'user_id' : user_id,
+                'typeUser' : typeUser,
+                'fecha' : fecha},'POST')
+            }
+
+
+            function loadTable(url,data,verb){
+                $('#basic-datatable').DataTable({
+                    ajax: {
+                        'url': url,
+                        'data': data,
+                        'type': verb
+                    },
+                    language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+                    //order: [[1, "asc"]],
+                    bDestroy: true,
+                    scrollX: true,
+                    autoWidth: false,
+                    columnDefs: [
+                        { "className": "dt-center", "targets": "_all" }
+                    ],
+                    columns: [
+                        { "data": "Codigo_Cliente" },
+                        { "data": "Nombre" },
+                        { "data": "Direccion" }, 
+                        { "data": "Merchandising" },
+                        { "data": "Nombre_Merchandising" },
+                        { "data": "Type" },
+                        { "data": "Pictures",
+                            "render": function (data, type, row) {
+                                if (row) {
+                                    let imgsrc = 'data:image/jpg;base64,'
+                                    if(data[0]){
+                                        return '<img src="'+imgsrc+data[0]+'" width="100px" style="border-radius:15px"/>'
+                                    }else{
+                                        return '<div class="d-flex flex-column justify-content-center" style="width:100px;height:135px;background-color:grey;border-radius:15px"> <i class="fa fa-camera fa-2x" style="color: white;" aria-hidden="true"></i></div>'
+                                    }
+                                } 
+                            } 
+                        },
+                        { "data": "Pictures",
+                            "render": function (data, type, row) {
+                                if (row) {
+                                    let imgsrc = 'data:image/jpg;base64,'
+                                    if(data[1]){
+                                        return '<img src="'+imgsrc+data[1]+'" width="100px" style="border-radius:15px"/>'
+                                    }else{
+                                        return '<div class="d-flex flex-column justify-content-center" style="width:100px;height:135px;background-color:grey;border-radius:15px"> <i class="fa fa-camera fa-2x" style="color: white;" aria-hidden="true"></i></div>'
+                                    }
+                                } 
+                            } 
+                        },
+                        { "data": "Pictures",
+                            "render": function (data, type, row) {
+                                if (row) {
+                                    let imgsrc = 'data:image/jpg;base64,'
+                                    if(data[2]){
+                                        return '<img src="'+imgsrc+data[2]+'" width="100px" style="border-radius:15px"/>'
+                                    }else{
+                                        return '<div class="d-flex flex-column justify-content-center" style="width:100px;height:135px;background-color:grey;border-radius:15px"> <i class="fa fa-camera fa-2x" style="color: white;" aria-hidden="true"></i></div>'
+                                    }
+                                } 
+                            } 
+                        },
+                        { "data": "Pictures",
+                            "render": function (data, type, row) {
+                                if (row) {
+                                    let imgsrc = 'data:image/jpg;base64,'
+                                    if(data[3]){
+                                        return '<img src="'+imgsrc+data[3]+'" width="100px" style="border-radius:15px"/>'
+                                    }else{
+                                        return '<div class="d-flex flex-column justify-content-center" style="width:100px;height:135px;background-color:grey;border-radius:15px"> <i class="fa fa-camera fa-2x" style="color: white;" aria-hidden="true"></i></div>'
+                                    }
+                                } 
+                            } 
+                        }
+                        
+                    ],
+                });
+            }//end
+
+            
+        })//end documents
+        </script>

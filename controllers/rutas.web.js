@@ -5,10 +5,11 @@ const multer = require('multer')
 const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
-var moment = require('moment'); // require
+var moment = require('moment'); 
+const dayjs = require('dayjs')
 const { base, objMes, relevados,
   getMerchaReleved, getSellerReleved,
-  getDataMercha, filterByOneKey, filterByThreeKey, filterByFourKey,SortArrayDesc, filterByTwoKey } = require('./utils/filters')
+  getDataMercha, filterByOneKey, filterByThreeKey, filterByFourKey, SortArrayDesc, filterByTwoKey } = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 
@@ -81,7 +82,7 @@ router.get("/load_objetivos", isAuthenticated, async (req, res) => {
 })//end get
 
 
-router.get('/validar-clientes', isAuthenticated,async (req, res) => {
+router.get('/validar-clientes', isAuthenticated, async (req, res) => {
 
   try {
     let user = req.user.name
@@ -128,7 +129,7 @@ router.get('/validar-clientes', isAuthenticated,async (req, res) => {
 })//end get
 
 
-router.get('/validar-objetivos', isAuthenticated,async (req, res) => {
+router.get('/validar-objetivos', isAuthenticated, async (req, res) => {
   let update = await Xls.updateOne({ type: 'OBJETIVES' }, { validated: true })
 
   if (update.modifiedCount == 1) {
@@ -139,7 +140,7 @@ router.get('/validar-objetivos', isAuthenticated,async (req, res) => {
 
 
 //Cargo xls clientes en bd
-router.get('/procesar-clientes', isAuthenticated,async (req, res) => {
+router.get('/procesar-clientes', isAuthenticated, async (req, res) => {
   try {
     let user = req.user.name
     let url = await Xls.findOne({ type: 'CLIENTS' })
@@ -184,7 +185,7 @@ router.get('/procesar-clientes', isAuthenticated,async (req, res) => {
 
 
 //Procesar objetivos xls
-router.get('/procesar-objetivos', isAuthenticated,async (req, res) => {
+router.get('/procesar-objetivos', isAuthenticated, async (req, res) => {
   try {
     //traigo la url de objetivos
     let url = await Xls.findOne({ type: 'OBJETIVES' })
@@ -291,13 +292,13 @@ router.get('/administrador', isAuthenticated, (req, res) => {
   res.render('../views/administrador', { user })
 })
 
-router.get('/clientes', isAuthenticated,async (req, res) => {
+router.get('/clientes', isAuthenticated, async (req, res) => {
   let user = req.user.name
 
   res.render('../views/clientes', { user })
 })//end get
 
-router.get('/objetivos',isAuthenticated ,async (req, res) => {
+router.get('/objetivos', isAuthenticated, async (req, res) => {
   let user = req.user.name
 
   res.render('../views/objetivos', { user })
@@ -305,13 +306,13 @@ router.get('/objetivos',isAuthenticated ,async (req, res) => {
 
 
 //Relevamientos
-router.get('/control-relevamientos',isAuthenticated ,async (req, res) => {
+router.get('/control-relevamientos', isAuthenticated, async (req, res) => {
   let user = req.user.name
 
   res.render('../views/control_relevamientos', { user })
 })//end get
 
-router.get('/clientes-relevamientos:id&:tipo',isAuthenticated ,async (req, res) => {
+router.get('/clientes-relevamientos:id&:tipo', isAuthenticated, async (req, res) => {
   let id = req.params.id
   let tipo = req.params.tipo
   let user = req.user.name
@@ -321,24 +322,24 @@ router.get('/clientes-relevamientos:id&:tipo',isAuthenticated ,async (req, res) 
   res.render('../views/clientes_relevamientos', { user, id, tipo })
 })
 
-router.get('/detalle-relevamiento:cliente&:fecha',isAuthenticated ,async (req, res) => {
+router.get('/detalle-relevamiento:cliente&:fecha', isAuthenticated, async (req, res) => {
   try {
     let cliente = req.params.cliente
     let fecha = req.params.fecha
     let tipo = global.tipo
     let id_usuario = Number(global.id_usuario)
     let user = req.user.name
-    
-    const result = await Survey.where({ Codigo_Cliente: cliente})
+
+    const result = await Survey.where({ Codigo_Cliente: cliente })
     //consulto las fotos
     if (tipo == 'MERCHA') {
 
       //let result = await Survey.where({ Codigo_Cliente: cliente})
 
-      let mercha = filterByFourKey('Merchandising', id_usuario, 'Date', fecha, 'type', 'MERCHA','Relevado',true ,result)
-      let data = filterByTwoKey('type', 'SELLER','Relevado',true ,result)
+      let mercha = filterByFourKey('Merchandising', id_usuario, 'Date', fecha, 'type', 'MERCHA', 'Relevado', true, result)
+      let data = filterByTwoKey('type', 'SELLER', 'Relevado', true, result)
       let seller = data.sort(SortArrayDesc)[0]
-      
+
       let arr = []
       if (mercha.length > 0) {
         let dataMercha = {}
@@ -372,12 +373,12 @@ router.get('/detalle-relevamiento:cliente&:fecha',isAuthenticated ,async (req, r
           Msg: seller.Msg
         }
         arr.push(dataSeller)
-      }else{
+      } else {
         let dataSeller = {
           fotos: [],
           Nombre: 'no data',
           Id_cliente: 'no data',
-          Comercio:'no data',
+          Comercio: 'no data',
           Direccion: 'no data',
           Localidad: 'no data',
           Id_Vendedor: 'no data',
@@ -399,7 +400,7 @@ router.get('/detalle-relevamiento:cliente&:fecha',isAuthenticated ,async (req, r
       //let result = await Survey.where({ Codigo_Cliente: cliente, Relevado: true })
 
       let seller = filterByThreeKey('Vendedor', id_usuario, 'Date', fecha, 'type', 'SELLER', result)
-      let data = filterByTwoKey('type', 'MERCHA', 'Relevado',true,result)
+      let data = filterByTwoKey('type', 'MERCHA', 'Relevado', true, result)
       let mercha = data.sort(SortArrayDesc)[0]
 
       let arr = []
@@ -435,7 +436,7 @@ router.get('/detalle-relevamiento:cliente&:fecha',isAuthenticated ,async (req, r
           Msg: mercha.Msg
         }
         arr.push(dataMercha)
-      }else{
+      } else {
         let dataMercha = {
           fotos: [],
           Nombre: 'no data',
@@ -462,10 +463,18 @@ router.get('/detalle-relevamiento:cliente&:fecha',isAuthenticated ,async (req, r
   }
 })//end get
 
+router.get('/panel-relevamientos', isAuthenticated, async (req, res) => {
+  let user = req.user.name
+  let data = await Users.where({})
+  let mercha_users = filterByOneKey('type', 'MERCHA', data)
+  let seller_users = filterByOneKey('type', 'SELLER', data)
+
+  res.render('../views/panel_relevamientos', { user, mercha_users, seller_users })
+})//end get
 
 
 //apis internas tablas
-router.get('/api-clientes', isAuthenticated,async (req, res) => {
+router.get('/api-clientes', isAuthenticated, async (req, res) => {
   //traigo datos de la bd
   let clientes = await Clients.where({ active: true })
 
@@ -473,7 +482,7 @@ router.get('/api-clientes', isAuthenticated,async (req, res) => {
   res.status(200).json(data)
 })//end get
 
-router.get('/api-objetivos', isAuthenticated,async (req, res) => {
+router.get('/api-objetivos', isAuthenticated, async (req, res) => {
   //traigo datos de la bd
   let objetivos = await Objetives.where({ active: true })
 
@@ -481,7 +490,7 @@ router.get('/api-objetivos', isAuthenticated,async (req, res) => {
   res.status(200).json(data)
 })//end get
 
-router.get('/api-gestion', isAuthenticated,async (req, res) => {
+router.get('/api-gestion', isAuthenticated, async (req, res) => {
   try {
     //traigo datos de la bd
     let merchas = await Users.where({ type: 'MERCHA' })
@@ -526,8 +535,12 @@ router.get('/api-gestion', isAuthenticated,async (req, res) => {
   }
 })//end get
 
-router.post('/api-relevamientos', isAuthenticated,async (req, res) => {
-  
+
+
+
+
+router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
+
   if (req.body) {
     if (req.body.mes) {
       let año_solo = new Date(req.body.mes).getFullYear()
@@ -585,10 +598,10 @@ router.post('/api-relevamientos', isAuthenticated,async (req, res) => {
                     obj.Date_ultimo = 'no data'
                   }
 
-                  obj.total_base = filterByOneKey('Vendedor',e.id, surveys).length
-                  let objm = filterByThreeKey('Vendedor',e.id, 'Año',año_solo, 'Mes',mes_solo, surveys).length
+                  obj.total_base = filterByOneKey('Vendedor', e.id, surveys).length
+                  let objm = filterByThreeKey('Vendedor', e.id, 'Año', año_solo, 'Mes', mes_solo, surveys).length
                   obj.obj_mes = objm
-                  let rel = filterByFourKey('Vendedor',e.id, 'Año',año_solo,'Mes' ,mes_solo,'Relevado' ,true, surveys).length
+                  let rel = filterByFourKey('Vendedor', e.id, 'Año', año_solo, 'Mes', mes_solo, 'Relevado', true, surveys).length
                   obj.relevados = rel
                   obj.porcentaje = Math.round((100 * rel) / objm) || 0
 
@@ -672,10 +685,10 @@ router.post('/api-relevamientos', isAuthenticated,async (req, res) => {
                   }
                 }
 
-                obj.total_base = filterByOneKey('Vendedor',e.id, survey_seller).length
-                let objm = filterByThreeKey('Vendedor',e.id, 'Año',año_solo, 'Mes',mes_solo, survey_seller).length
+                obj.total_base = filterByOneKey('Vendedor', e.id, survey_seller).length
+                let objm = filterByThreeKey('Vendedor', e.id, 'Año', año_solo, 'Mes', mes_solo, survey_seller).length
                 obj.obj_mes = objm
-                let rel = filterByFourKey('Vendedor',e.id, 'Año',año_solo,'Mes' ,mes_solo,'Relevado' ,true, survey_seller).length
+                let rel = filterByFourKey('Vendedor', e.id, 'Año', año_solo, 'Mes', mes_solo, 'Relevado', true, survey_seller).length
                 obj.relevados = rel
                 obj.porcentaje = Math.round((100 * rel) / objm) || 0
                 arr3.push(obj)
@@ -691,7 +704,7 @@ router.post('/api-relevamientos', isAuthenticated,async (req, res) => {
   }//end if body
 })//end post
 
-router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
+router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
 
   if (req.body) {
     if (req.body.mes) {
@@ -707,7 +720,7 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
       switch (req.body.type) {
         case 'todos':
           if (type_user == 'MERCHA') {
-            let surveyAll = filterByTwoKey('Merchandising',user,'type','MERCHA',data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo })
+            let surveyAll = filterByTwoKey('Merchandising', user, 'type', 'MERCHA', data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo })
             let arr = []
 
             if (surveyAll) {
@@ -729,7 +742,7 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
             }
           }
           if (type_user == 'SELLER') {
-            let sellerAll = filterByTwoKey('Vendedor',user,'type','SELLER',data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo })
+            let sellerAll = filterByTwoKey('Vendedor', user, 'type', 'SELLER', data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo })
             let arr = []
 
             if (sellerAll) {
@@ -752,8 +765,8 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
           }
           break
         case 'relevados':
-           if (type_user == 'MERCHA') {
-            let surveyAll = filterByThreeKey('Merchandising',user,'type','MERCHA','Relevado',true,data) //await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo, Relevado: true })
+          if (type_user == 'MERCHA') {
+            let surveyAll = filterByThreeKey('Merchandising', user, 'type', 'MERCHA', 'Relevado', true, data) //await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo, Relevado: true })
             let arr = []
 
             if (surveyAll) {
@@ -776,7 +789,7 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
           }
 
           if (type_user == 'SELLER') {
-            let sellerAll = filterByThreeKey('Vendedor',user,'type','SELLER','Relevado',true,data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo, Relevado: true })
+            let sellerAll = filterByThreeKey('Vendedor', user, 'type', 'SELLER', 'Relevado', true, data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo, Relevado: true })
             let arr = []
 
             if (sellerAll) {
@@ -800,7 +813,7 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
           break
         case 'sin-relevar':
           if (type_user == 'MERCHA') {
-            let surveyAll = filterByThreeKey('Merchandising',user,'type','MERCHA','Relevado',false,data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo, Relevado: false })
+            let surveyAll = filterByThreeKey('Merchandising', user, 'type', 'MERCHA', 'Relevado', false, data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo, Relevado: false })
             let arr = []
 
             if (surveyAll) {
@@ -823,7 +836,7 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
           }
 
           if (type_user == 'SELLER') {
-            let sellerAll = filterByThreeKey('Vendedor',user,'type','SELLER','Relevado',false,data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo, Relevado: false })
+            let sellerAll = filterByThreeKey('Vendedor', user, 'type', 'SELLER', 'Relevado', false, data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo, Relevado: false })
             let arr = []
 
             if (sellerAll) {
@@ -852,6 +865,59 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
   }//end if body
 })//end post
 
+router.post('/consulta-relevamiento', async (req, res) => {
+  //obtengo los datos
+  try {
+    if (req.body) {
+      let today = new Date(req.body.fecha)
+      let lastDay = new Date(today.getFullYear(), (today.getMonth() + 2), 0).getDate()
+      
+      let fecha2 =today.getFullYear() +'-'+'0'(today.getMonth() + 2) +'-'+ lastDay
+      let fecha = today
+      let user_id = Number(req.body.user_id)
+      let typeUser = req.body.typeUser
+       console.log(fecha,(today.getMonth() + 2).length)
+      //let po = dayjs('2022-06-01').endOf('month')
+      //console.log(fecha, fecha2)
+      let data_ = await Survey.where({ Relevado: true })
+      //let data_ = await Survey.where({}).gte({Date:'01-06-2022'}).lte({Date:'30-06-2022'})
+     
+      
+      
+
+
+      if (data_) {
+        let data_mercha = filterByTwoKey('type', typeUser, 'Merchandising', user_id, data_)
+        
+        let arr = []
+        data_mercha.forEach(e => {
+          
+          if(data_mercha){
+            let obj = {
+              Codigo_Cliente:e.Codigo_Cliente,
+              Nombre:e.Nombre,
+              Direccion:e.Direccion,
+              Merchandising:e.Merchandising,
+              Nombre_Merchandising:e.Nombre_Merchandising,
+              Type:typeUser,
+              Pictures:e.Pictures 
+            }
+            arr.push(obj)
+            //console.log(arr)
+          }
+        })//end
+        //console.log(arr)
+        let data = { data: data_mercha }
+        res.status(200).json(data)
+      }
+    }//if body
+    }catch (error) {
+      console.log('Error in try catch... url:/consulta-relevamiento')
+    }
+
+    
+  
+})//end post
 
 
 
@@ -861,13 +927,14 @@ router.post('/api-clientes-relevamietos',isAuthenticated ,async (req, res) => {
 
 
 
-router.get('/download/clientes', isAuthenticated,async (req, res) => {
+
+router.get('/download/clientes', isAuthenticated, async (req, res) => {
   let xls = await Xls.where({ type: 'CLIENTS' })
 
   res.status(200).download(xls[0].url)
 })//end get
 
-router.get('/download/objetivos',isAuthenticated ,async (req, res) => {
+router.get('/download/objetivos', isAuthenticated, async (req, res) => {
   let xls = await Xls.where({ type: 'OBJETIVES' })
 
   res.status(200).download(xls[0].url)
@@ -879,7 +946,7 @@ router.get('/download/objetivos',isAuthenticated ,async (req, res) => {
 
 //Upload clientes
 const upload = multer({ storage: storagexls })
-router.post('/upload/clientes',isAuthenticated, upload.single('file') ,async (req, res) => {
+router.post('/upload/clientes', isAuthenticated, upload.single('file'), async (req, res) => {
 
   try {
     //inserto nvo documneto CLIENTS
@@ -908,7 +975,7 @@ router.post('/upload/clientes',isAuthenticated, upload.single('file') ,async (re
 })//end post
 
 //upload objetives
-router.post('/upload/objetives', isAuthenticated,upload.single('file'), async (req, res) => {
+router.post('/upload/objetives', isAuthenticated, upload.single('file'), async (req, res) => {
 
   try {
     //inserto nvo documneto CLIENTS
