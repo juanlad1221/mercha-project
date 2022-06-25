@@ -1,12 +1,12 @@
 <%- include('block_inicio')%>
     <!-- start page title -->
-    <div class="row bt">
-        <div class="col-12">
+    <div class="d-flex justify-content-center">
+        <div class="col-8">
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li id="link-previo" class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Cargar Clientes</li>    
+                        <li id="link-previo" class="breadcrumb-item"><a href=""></a></li>
+                        <li id="link-actual" class="breadcrumb-item active">Cargar Clientes</li>
                     </ol>
                 </div>
                 <h4 class="page-title">Cargar Clientes</h4>
@@ -17,152 +17,155 @@
 
 
 
-    <div class="d-flex justify-content-between mt-4">
-        <div class="card" style="width: 50%;">
-            <div class="card-body">
-                <div class="d-flex justify-content-center">
 
-                    <!--Upload-->
-                    <form action="/upload/clientes" enctype="multipart/form-data" method="POST">
-                        <div class="dz-message needsclick">
-                            <i class="h1 text-muted dripicons-cloud-upload"></i>
-                            <h3>Seleccione archivo excel a subir</h3>
+    <div class="d-flex justify-content-center mt-3">
+        <div class="col-8 d-flex justify-content-between">
+            <div class="card" style="width: 50%;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
 
-                        </div>
+                        <!--Upload-->
+                        <form action="/upload/clientes" enctype="multipart/form-data" method="POST">
+                            <div class="dz-message needsclick">
+                                <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                <h3>Seleccione archivo excel a subir</h3>
 
-                        <div class="fallback">
-                            <input name="file" type="file" id="file" />
-                        </div>
+                            </div>
 
-                        <button type="submit" id="btn" class="btn btn-info mt-3"><i class="mdi mdi-cloud me-1"></i>
-                            <span>Subir</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                            <div class="fallback">
+                                <input name="file" type="file" id="file" />
+                            </div>
 
-        <div class="card" style="width: 30%;">
-            <div class="card-body">
-                <!--download-->
-                <% if(flag){%>
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="dz-message needsclick">
-                            <i class="h1 text-muted dripicons-cloud-download"></i>
-                        </div>
-
-                        <form action="/download/clientes" method="GET">
-                            <button type="submit" class="btn btn-info mt-3"><i class="mdi mdi-cloud me-1"></i>
-                                <span>Descargar</span> </button>
+                            <button type="submit" id="btn" class="btn btn-info mt-3"><i class="mdi mdi-cloud me-1"></i>
+                                <span>Subir</span>
+                            </button>
                         </form>
                     </div>
-                    <%}%>
+                </div>
+            </div>
+
+            <div class="card" style="width: 30%;">
+                <div class="card-body">
+                    <!--download-->
+                    <% if(flag){%>
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <div class="dz-message needsclick">
+                                <i class="h1 text-muted dripicons-cloud-download"></i>
+                            </div>
+
+                            <form action="/download/clientes" method="GET">
+                                <button type="submit" class="btn btn-info mt-3"><i class="mdi mdi-cloud me-1"></i>
+                                    <span>Descargar</span> </button>
+                            </form>
+                        </div>
+                        <%}%>
+                </div>
             </div>
         </div>
     </div>
 
 
-    <div class="column mb-5 mt-5">
+    <div class="d-flex justify-content-center mb-5 mt-5">
+        <div class="col-8">
+            <!--Card 1-->
+            <div class="col-md-6 col-xxl-3 mt-2">
+                <!-- project card -->
+                <div class="card d-block">
+                    <div class="card-body">
 
-        <!--Card 1-->
-        <div class="col-md-6 col-xxl-3 mt-2">
-            <!-- project card -->
-            <div class="card d-block">
-                <div class="card-body">
-
-                    <!-- project title-->
-                    <h4 class="mt-0">
-                        <a href="apps-projects-details.html" class="text-title">Archivo excel
-                            clientes</a>
-                    </h4>
-                    <% if(flag){%>
-                        <div class="badge bg-success">Cargado</div>
-                        <%}else{%>
-                            <span class="badge bg-secondary">No Cargado</span>
-                            <%}%>
-
-
-
-                                <p class="text-muted font-13 my-3 font-18">Aqui se visualiza si el archivo excel
-                                    clientes esta cargado en el sistema...
-                                </p>
+                        <!-- project title-->
+                        <h4 class="mt-0">
+                            <a href="apps-projects-details.html" class="text-title">Archivo excel
+                                clientes</a>
+                        </h4>
+                        <% if(flag){%>
+                            <div class="badge bg-success">Cargado</div>
+                            <%}else{%>
+                                <span class="badge bg-secondary">No Cargado</span>
+                                <%}%>
 
 
-                </div> <!-- end card-body-->
 
-            </div> <!-- end card-->
+                                    <p class="text-muted font-13 my-3 font-18">Aqui se visualiza si el archivo excel
+                                        clientes esta cargado en el sistema...
+                                    </p>
+
+
+                    </div> <!-- end card-body-->
+
+                </div> <!-- end card-->
+            </div>
+
+            <!--Card 2-->
+            <div class="col-md-6 col-xxl-3 mt-3">
+                <!-- project card -->
+                <div class="card d-block">
+                    <div class="card-body">
+
+                        <!-- project title-->
+                        <h4 class="mt-0">
+                            <a href="apps-projects-details.html" class="text-title">Validar archivo excel
+                                Clientes</a>
+                        </h4>
+                        <% if(validated){%>
+                            <div class="badge bg-success">Validado</div>
+                            <%}else{%>
+                                <span class="badge bg-secondary">No Validado</span>
+                                <%}%>
+
+
+                                    <p class="text-muted font-13 my-3 font-18">Aqui se valida el formato del archivo
+                                        excel clientes, antes de ingresar al sistema...
+                                        <%=error%>
+                                    </p>
+
+                                    <% if(flag && !validated){ %>
+                                        <form action="/validar-clientes" method="GET">
+                                            <button type="submit" class="btn btn-info"><i
+                                                    class=" dripicons-checkmark me-1"></i> <span>Validar</span>
+                                            </button>
+                                        </form>
+                                        <%}%>
+                    </div> <!-- end card-body-->
+
+                </div> <!-- end card-->
+            </div>
+
+            <!--Card 3-->
+            <div class="col-md-6 col-xxl-3">
+                <!-- project card -->
+                <div class="card d-block">
+                    <div class="card-body">
+
+                        <!-- project title-->
+                        <h4 class="mt-0">
+                            <a href="apps-projects-details.html" class="text-title">Procesar archivo excel
+                                Clientes</a>
+                        </h4>
+                        <% if(processed){%>
+                            <div class="badge bg-success">Procesado</div>
+                            <%}else{%>
+                                <span class="badge bg-secondary">No Procesado</span>
+                                <%}%>
+
+
+
+                                    <p class="text-muted font-13 my-3 font-18">Aqui se procesa el archivo excel
+                                        clientes cargado en el sistema...
+                                    </p>
+
+                                    <% if(flag && validated && !processed){ %>
+                                        <form action="/procesar-clientes" method="GET">
+                                            <button type="submit" class="btn btn-info"><i
+                                                    class="dripicons-clockwise me-1"></i> <span>Procesar</span>
+                                            </button>
+                                        </form>
+                                        <%}%>
+                    </div> <!-- end card-body-->
+
+                </div> <!-- end card-->
+            </div>
         </div>
-
-        <!--Card 2-->
-        <div class="col-md-6 col-xxl-3 mt-3">
-            <!-- project card -->
-            <div class="card d-block">
-                <div class="card-body">
-
-                    <!-- project title-->
-                    <h4 class="mt-0">
-                        <a href="apps-projects-details.html" class="text-title">Validar archivo excel
-                            Clientes</a>
-                    </h4>
-                    <% if(validated){%>
-                        <div class="badge bg-success">Validado</div>
-                        <%}else{%>
-                            <span class="badge bg-secondary">No Validado</span>
-                            <%}%>
-
-
-                                <p class="text-muted font-13 my-3 font-18">Aqui se valida el formato del archivo
-                                    excel clientes, antes de ingresar al sistema...
-                                    <%=error%>
-                                </p>
-
-                                <% if(flag && !validated){ %>
-                                    <form action="/validar-clientes" method="GET">
-                                        <button type="submit" class="btn btn-info"><i
-                                                class=" dripicons-checkmark me-1"></i> <span>Validar</span>
-                                        </button>
-                                    </form>
-                                    <%}%>
-                </div> <!-- end card-body-->
-
-            </div> <!-- end card-->
-        </div>
-
-        <!--Card 3-->
-        <div class="col-md-6 col-xxl-3">
-            <!-- project card -->
-            <div class="card d-block">
-                <div class="card-body">
-
-                    <!-- project title-->
-                    <h4 class="mt-0">
-                        <a href="apps-projects-details.html" class="text-title">Procesar archivo excel
-                            Clientes</a>
-                    </h4>
-                    <% if(processed){%>
-                        <div class="badge bg-success">Procesado</div>
-                        <%}else{%>
-                            <span class="badge bg-secondary">No Procesado</span>
-                            <%}%>
-
-
-
-                                <p class="text-muted font-13 my-3 font-18">Aqui se procesa el archivo excel
-                                    clientes cargado en el sistema...
-                                </p>
-
-                                <% if(flag && validated && !processed){ %>
-                                    <form action="/procesar-clientes" method="GET">
-                                        <button type="submit" class="btn btn-info"><i
-                                                class="dripicons-clockwise me-1"></i> <span>Procesar</span>
-                                        </button>
-                                    </form>
-                                    <%}%>
-                </div> <!-- end card-body-->
-
-            </div> <!-- end card-->
-        </div>
-
     </div>
 
 
@@ -177,7 +180,7 @@
                 let link = document.getElementById('link-previo')
                 localStorage.setItem('page', title)
 
-                link.innerText=page
+                link.innerText = page
             }//end
 
             //deshabilito btn subir

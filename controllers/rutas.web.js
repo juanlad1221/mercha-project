@@ -5,11 +5,13 @@ const multer = require('multer')
 const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
-var moment = require('moment'); 
+var moment = require('moment');
 const dayjs = require('dayjs')
 const { base, objMes, relevados,
   getMerchaReleved, getSellerReleved,
-  getDataMercha, filterByOneKey, filterByThreeKey, filterByFourKey, SortArrayDesc, filterByTwoKey } = require('./utils/filters')
+  getDataMercha, filterByOneKey, filterByThreeKey,
+  filterByFourKey, SortArrayDesc, filterByTwoKey,
+  filterSpecial } = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 
@@ -871,52 +873,38 @@ router.post('/consulta-relevamiento', async (req, res) => {
     if (req.body) {
       let today = new Date(req.body.fecha)
       let lastDay = new Date(today.getFullYear(), (today.getMonth() + 2), 0).getDate()
-      
-      let fecha2 =today.getFullYear() +'-'+'0'(today.getMonth() + 2) +'-'+ lastDay
+
+      let fecha2 = new Date(today.getFullYear() + '-' + completeDate(today.getMonth() + 2) + '-' + lastDay)
       let fecha = today
       let user_id = Number(req.body.user_id)
       let typeUser = req.body.typeUser
-       console.log(fecha,(today.getMonth() + 2).length)
-      //let po = dayjs('2022-06-01').endOf('month')
-      //console.log(fecha, fecha2)
+      //console.log(req.body)
       let data_ = await Survey.where({ Relevado: true })
-      //let data_ = await Survey.where({}).gte({Date:'01-06-2022'}).lte({Date:'30-06-2022'})
-     
-      
-      
-
 
       if (data_) {
-        let data_mercha = filterByTwoKey('type', typeUser, 'Merchandising', user_id, data_)
-        
-        let arr = []
-        data_mercha.forEach(e => {
+        if (typeUser == 'MERCHA') {
+          //aplico filtros
+          let data_mercha = filterByTwoKey('type', typeUser, 'Merchandising', user_id, data_)
+          //aplico filtro sobre el date
+          let dataToSend = filterSpecial(data_mercha, fecha, fecha2, typeUser)
           
-          if(data_mercha){
-            let obj = {
-              Codigo_Cliente:e.Codigo_Cliente,
-              Nombre:e.Nombre,
-              Direccion:e.Direccion,
-              Merchandising:e.Merchandising,
-              Nombre_Merchandising:e.Nombre_Merchandising,
-              Type:typeUser,
-              Pictures:e.Pictures 
-            }
-            arr.push(obj)
-            //console.log(arr)
-          }
-        })//end
-        //console.log(arr)
-        let data = { data: data_mercha }
-        res.status(200).json(data)
+          let data = { data: dataToSend }
+          res.status(200).json(data)
+        } else {
+          //aplico filtros
+          let data_seller = filterByTwoKey('type', typeUser, 'Vendedor', user_id, data_)
+          //aplico filtro sobre el date
+          let dataToSend = filterSpecial(data_seller, fecha, fecha2, typeUser)
+          
+          let data = { data: dataToSend }
+          res.status(200).json(data)
+        }
       }
     }//if body
-    }catch (error) {
-      console.log('Error in try catch... url:/consulta-relevamiento')
-    }
+  } catch (error) {
+    console.log('Error in try catch... url:/consulta-relevamiento')
+  }
 
-    
-  
 })//end post
 
 
@@ -1104,6 +1092,12 @@ router.post('/login', passport.authenticate('local-login', {
 
 function isKeyExists(obj, key) {
   return obj.hasOwnProperty(key);
+}
+function completeDate(num) {
+  if (num == 10 || num == 11 || num == 12) {
+    return num
+  }
+  return String('0' + num)
 }
 
 

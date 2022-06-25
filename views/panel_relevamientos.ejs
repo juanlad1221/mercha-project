@@ -16,19 +16,19 @@
     <!-- end page title -->
 
     <!--contenido-->
-    <div class="d-flex justify-content-center bt">
-        <div class="col-10 d-flex justify-content-end bt">
+    <div class="d-flex justify-content-center">
+        <div class="col-10 d-flex justify-content-end">
 
-            <div class="bt" style="background-color: rgb(157, 152, 184);width:80%; 
+            <div style="background-color: rgb(157, 152, 184);width:80%; 
             height:100px;display:flex; 
             justify-content:end; align-items:center; 
             border-top-left-radius:15px; border-bottom-left-radius:15px;">
 
-                <div class="d-flex align-items-center p-2 bt" style="width: 90%;">
+                <div class="d-flex align-items-center p-2" style="width: 90%;">
                     <!-- select -->
                     <div style="width:200px">
                         <select id="sel1" class="form-select">
-                            <option selected>Merchandising</option>
+                            <option value="Merchandising" selected>Merchandising</option>
                             <%mercha_users.forEach(e => {%>
                                 <option value=<%=e.id%>><%=e.name%></option>
                             <%})%>  
@@ -37,7 +37,7 @@
 
                     <div style="width:200px">
                         <select id="sel2" class="form-select" style="margin-left: 6%;">
-                            <option selected>Vendedor</option>
+                            <option value="Vendedor" selected>Vendedor</option>
                             <%seller_users.forEach(e => {%>
                                 <option value=<%=e.id%>><%=e.name%></option>
                             <%})%>  
@@ -61,16 +61,16 @@
         </div>
     </div>
 
-    <div class="row bt mt-5">
+    <div class="row mt-5">
         <div class="card">
             <div class="card-body">
                 <table id="basic-datatable" class="table table-striped nowrap"  style="width:auto">
                     <thead>
                         <tr>
-                            <th>Id Comercio</th>
+                            <th>Id Com</th>
                             <th>Comercio</th>
                             <th>Direccion</th>
-                            <th>Id Usuario</th>
+                            <th>Id User</th>
                             <th>Nombre</th>
                             <th>Tipo</th>
                             <th>Imagen 1</th>
@@ -93,6 +93,9 @@
             .bt {
                 border: 1px solid blue;
             }
+            table.dataTable tbody td {
+                vertical-align: middle;
+              }
         </style>
 
         <script>
@@ -106,17 +109,29 @@
             let fecha;
 
             sel1.onchange = () => {
+                let seleccion = sel1.options[sel1.selectedIndex].text
+                if(seleccion == 'Merchandising'){typeUser;user_id;return}
                 user_id = sel1.value
                 typeUser = 'MERCHA'
             }//end
             sel2.onchange = () => {
+                let seleccion = sel2.options[sel2.selectedIndex].text
+                if(seleccion == 'Vendedor'){typeUser;user_id;return}
                 user_id = sel2.value
-                typeUser = 'SELLER'
+                typeUser = 'SELLER'      
             }//end
             date.onchange = () => {
                 fecha = date.value + '-01'
             }//end
             btn.onclick = () =>{
+                let op1 = sel1.options[sel1.selectedIndex].text
+                let op2 = sel2.options[sel2.selectedIndex].text
+                //console.log(op1,op2,fecha)
+                if(date.value == '' || date.value == null|| date.value == undefined){alert('DEBE SELECCIONAR FECHA...');return}
+                if(op1 == 'Merchandising' && op2 == 'Vendedor' || op1 != 'Merchandising' && op2 != 'Vendedor'){
+                    alert('DEBE SELECCIONAR SOLO UN USUARIO...');return
+                }
+                
                 loadTable('/consulta-relevamiento',{ 'user_id' : user_id,
                 'typeUser' : typeUser,
                 'fecha' : fecha},'POST')
@@ -142,8 +157,8 @@
                         { "data": "Codigo_Cliente" },
                         { "data": "Nombre" },
                         { "data": "Direccion" }, 
-                        { "data": "Merchandising" },
-                        { "data": "Nombre_Merchandising" },
+                        { "data": "User" },
+                        { "data": "Nombre_User" },
                         { "data": "Type" },
                         { "data": "Pictures",
                             "render": function (data, type, row) {

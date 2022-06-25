@@ -1,3 +1,5 @@
+const dayjs = require("dayjs")
+
 const base = (v1, data) => {
     let filtrado = data.filter(function (v){return v.Merchandising == v1})
   
@@ -54,6 +56,46 @@ const base = (v1, data) => {
     return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] == v4})
   }
 
+  const filterSpecial = (data,f1,f2,type) => {
+    let arr = []
+    data.forEach(e => {
+      if(new Date(formatoFecha(e.Date)) >= f1 && new Date(formatoFecha(e.Date)) <= f2){
+        let obj = {
+          Codigo_Cliente:e.Codigo_Cliente,
+          Nombre:e.Nombre,
+          Direccion:e.Direccion,
+          Type: type,
+          Pictures:e.Pictures
+        }
+       
+        if(type == 'MERCHA'){
+          obj.User = e.Merchandising
+          obj.Nombre_User= e.Nombre_Merchandising
+        }
+        if(type == 'SELLER'){
+          obj.User = e.Vendedor
+          obj.Nombre_User= e.Nombre_Vendedor
+        }
+        
+        arr.push(obj)
+      }
+    })//end
+    return arr
+  }
+
+  function formatoFecha(fecha) {
+    let arr =  fecha.split('-')
+    return arr[2]+'-'+arr[1]+'-'+arr[0]
+  }
+
+  function completeDate(num){
+    if(num == 10 || num == 11 || num == 12){
+      return num
+    }
+    return String('0'+num)
+  }
+
+
   function SortArrayDesc(a, b){
     return (b.Date - a.Date)
 }
@@ -69,5 +111,6 @@ const base = (v1, data) => {
     filterByTwoKey,
     filterByThreeKey,
     filterByFourKey,
-    SortArrayDesc
+    SortArrayDesc,
+    filterSpecial
   }
