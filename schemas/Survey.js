@@ -27,7 +27,7 @@ const survey_schema = Schema({
     Msg:{String},
     Relevado:{type:Boolean, requerid: true, default: false },
     active:{ type: Boolean, requerid: true, default: true }
-});
+},{ timestamps: true });
 
 //Exporto modelo
 module.exports = mongoose.model('survey', survey_schema);

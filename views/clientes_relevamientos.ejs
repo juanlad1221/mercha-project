@@ -78,8 +78,9 @@
             .ver:hover {
                 cursor: pointer;
             }
+            
         </style>
-        <script>
+        <script>          
             $(document).ready(function () {
                 let user = document.getElementById('id-user')
                 let type_User = document.getElementById('type-user')
@@ -147,7 +148,7 @@
 
                 //funcion crea tabla
                 function loadTable(url, verb, data) {
-                    $('#basic-datatable').DataTable({
+                    $('#basic-datatable').removeAttr('width').DataTable({
                         ajax: {
                             'url': url,
                             'data': data,
@@ -160,8 +161,11 @@
                         scrollX: true,
                         autoWidth: false,
                         columnDefs: [
-                            { "className": "dt-center", "targets": "_all" }
+                           
+                            { "className": "dt-center", "targets": "_all" },
+                            
                         ],
+                        
                         columns: [
                             { "data": "id" },
                             {

@@ -1,0 +1,453 @@
+<%- include('block_inicio')%>
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li id="link-previo" class="breadcrumb-item"><a href=""></a></li>
+                        <li id="link-actual" class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Mensajes</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="mb-2 d-flex justify-content-end">
+        <div>
+            <button onclick=limpiarAll() type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bs-example-modal-lg"> <i class="dripicons-message"></i> </button>
+        </div>      
+    </div>
+    
+    
+    <div class=" row">
+        <div class="card" style="border-radius: 15px;">
+            <div class="card-body">
+                <table id="basic-datatable" class="table table-centered table-nowrap mb-0">
+                    <thead>
+                        <tr>
+                            <th>ACCION</th>
+                            <th>ID COM</th>
+                            <th>CLIENTE</th>
+                            <th>ORIGEN</th>
+                            <th>DESTINO</th>
+                            <th>MOTIVO</th>
+                            <th>AREA</th>
+                            <th>FECHA</th>
+                            <th>STATUS</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal-->
+    <div class="modal fade" id="bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-colored-header bg-primary">
+                    <h4 class="modal-title" id="myLargeModalLabel">Mensaje Nuevo</h4>
+                    <button style="color: white;" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                   <div class="d-flex">
+                    <div  style="width: 50%; padding-left:1%">
+
+                        <label  class="" for="">Tipo Usuario</label>
+                        <select id="tipo-usuario" class="form-select mb-3">
+                            <option selected>Tipo Usuario</option>
+                            <option value="MERCHA">Merchandising</option>
+                            <option value="SELLER">Vendedor</option>
+                        </select>
+
+                        <label class="mt-1" for="">Destinatario</label>
+                        <select id="destinatario" class="form-select mb-3">
+                        </select>
+
+                        <label class="mt-4" for="">Cliente</label>
+                        <select  id="cliente" class="form-select mb-3" >
+                        </select>
+
+                        <label class="mt-1" for="">Motivo</label>
+                        <select id="motivo" class="form-select mb-3">
+                        </select>        
+
+                    </div>
+
+                    <div style="width: 50%; height:auto; margin-left:3%">
+                        <div class="form-floating" style="margin-left: 2%;">
+                            <textarea id="msg" style="height:200px; border-radius:15px" class="form-control"
+                                placeholder="Leave a comment here" id="floatingTextarea" style="height: 100px;"></textarea>
+                            <label for="floatingTextarea">Mensaje</label>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-2">
+                            <div class="form-check form-checkbox-danger" style="margin-right: 2%;">
+                                <input  type="checkbox" class="form-check-input" id="check1" checked>
+                                <label class="form-check-label" for="customCheckcolor5">Pendiente</label>
+                            </div>
+                            <div class="form-check form-checkbox-info" style="margin-right: 2%;">
+                                <input type="checkbox" class="form-check-input" id="check2" disabled>
+                                <label class="form-check-label" for="customCheckcolor3">Activo</label>
+                            </div>
+                            <div class="form-check form-checkbox-success ">
+                                <input type="checkbox" class="form-check-input" id="check3" disabled>
+                                <label class="form-check-label" for="customCheckcolor2">Finalizado</label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end mt-3">
+                            <button id="btn" type="submit" style="width: 20%; margin-right:10px" class="btn btn-primary">Enviar</button>
+                            <button class="btn btn-secondary" data-bs-dismiss="modal" onclick=limpiarAll()>Cancelar</button>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    
+
+    <%- include('block_end')%>
+
+        <style>
+            .bt {
+                border: 1px solid blue;
+            }
+           .ver{
+            cursor: pointer;
+           }
+           .ver2{
+            cursor: pointer;
+           }
+           .color-1{
+            color: blue;
+           }
+        </style>
+
+        <script>
+            $(document).ready(function () {
+                let btn = document.getElementById('btn')
+                let sel_cliente = document.getElementById('cliente')
+                let sel_motivo = document.getElementById('motivo')
+                let sel_tipo = document.getElementById('tipo-usuario')
+                let sel_destinatario = document.getElementById('destinatario')
+                let msg = document.getElementById('msg')
+                let check1 = document.getElementById('check1')
+                let check2 = document.getElementById('check2')
+                let check3 = document.getElementById('check3')
+
+                let tabla = $('#basic-datatable').DataTable({
+                    ajax: {
+                        'url': '/api-msg',
+                        'type': 'GET'
+                    },
+                    language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+                    bDestroy: true,
+                    scrollX: true,
+                    columnDefs: [
+                        { "className": "dt-center", "targets": "_all" },
+                    ],
+                    columns: [
+                        //{"data": "_id" },
+                        { "data": "status" ,
+                        "render": function(data, type, row){
+                            if (row.status == 'activo' || row.status == 'pendiente') {
+                                if(row.cant_msg != 0){
+                                    return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver color-1" aria-hidden="true"></i> <i style='margin-left:8px' class='fa fa-reply fa-lg ver2' aria-hidden="true"></i> </div>`
+                                }
+                                return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver" aria-hidden="true"></i> <i style='margin-left:8px' class='fa fa-reply fa-lg ver2' aria-hidden="true"></i> </div>`
+                            } else {
+                                return `<i id=${row._id} class="fa fa-eye fa-lg ver" aria-hidden="true"></i>`
+                            }
+                        }},
+                        { "data": "Codigo_Cliente" },
+                        { "data": "Nombre" },
+                        { "data": "Type_user_emisor" },
+                        { "data": "Type_user_destino" },
+                        { "data": "Motivo" },
+                        { "data": "Area" },
+                        { "data": "Date" ,
+                        "render": function (data, type, row) {
+                            if (row) {
+                                return new Date(row.Date).toLocaleString('es-AR')
+                            } else {
+                                return 'no data'
+                            }
+                        }},
+                        { "data": "status",
+                        "render": function (data, type, row) {
+                            //console.log(row.status)
+                            if (row) {
+                               if(row.status == 'pendiente'){return "<span class='badge badge-danger-lighten'>Pendiente</span>"}
+                               if(row.status == 'activo'){return "<span class='badge badge-info-lighten'>Activo</span>"}
+                               if(row.status == 'terminado'){return "<span class='badge badge-success-lighten'>Terminado</span>"}
+                            } else {
+                                return 'no data'
+                            }
+                        }},
+                        //{"data":"_id", "visible":false}
+                    ],
+                    order: [[7, "desc"]]
+                });//end table
+
+                window.onload = () => {
+                    tabla.draw()
+                    loadMotivos('/api-select-3',sel_motivo)
+                }
+
+                sel_tipo.onchange = () => {
+                    loadSelect('/api-select',sel_tipo.value, sel_destinatario)
+                }
+
+                sel_destinatario.onchange = () => {
+                     loadSelect2('/api-select-2',sel_tipo.value, sel_destinatario.value, sel_cliente)
+                }
+                
+                btn.onclick = () => {
+                    if(sel_cliente.value == 'Cliente' || sel_motivo.value == 'Motivo' || sel_tipo.value == 'Tipo Usuario' || sel_destinatario.value == 'Destinatario' || msg.value == ''){alert('DEBE SELECCIONAR TODAS LAS OPCIONES...');return}
+                    if (!$('#check1').is(':checked')) {
+                        alert("DEBE SELECCIONAR UN ESTADO DEL MENSAJE...")
+                        return
+                    }
+
+                    //armo data a enviar
+                    let obj = {
+                        codigo_cliente:sel_cliente.options[sel_cliente.selectedIndex].value,
+                        nombre:sel_cliente.options[sel_cliente.selectedIndex].text,
+                        type_user_destino:sel_tipo.value,
+                        user_id_destino:sel_destinatario.value,
+                        motivo:sel_motivo.options[sel_motivo.selectedIndex].text,
+                        motivo_id:'',
+                        msg:msg.value,
+                        area_id : sel_motivo.value,
+                        type_user_emisor:'ADMIN',
+                        user_id_emisor:String(1)
+                    }
+                    
+                    fetch('/mensaje-nuevo',{
+                        method:'POST',
+                        body:JSON.stringify(obj),
+                        headers: {"Content-type": "application/json"}
+                    }).then(res => res.json())
+                    .then(data => {
+                        $('#bs-example-modal-lg').modal('hide')
+                        if(data.status == 200){
+                            loadTable('/api-msg', 'GET')
+                            toastr["success"]("El Chat fue iniciado correctamente...")
+                        }
+                        if(data.status == 400){
+                            toastr["warning"]("Ya existe un Chat activo con el mismo destinatario y mismo cliente...")
+                        }         
+                    })
+                    .catch(e => {
+                        console.log(e)
+                        //toastr["warning"]("Ya existe un Chat activo con el mismo destinatario y mismo cliente...")
+                    })
+                }//end click
+
+                check1.onclick = () => {
+                    limpiarCheck()
+                    check1.checked = true
+                }
+            
+               
+                //Selecciona elementos en tabla Ver
+                $('#basic-datatable tbody').on('click', '.ver2', function () {
+                    alert(8)
+                    //cliente = $(this).parents("tr").find("td").eq(0).text()
+                    //let fecha = $(this).parents("tr").find("td").eq(1).text()
+                    //window.location.href = '/detalle-relevamiento' + cliente + '&' + fecha
+                })
+
+                let chat;
+                $('#basic-datatable tbody').on('click', '.ver', function () {
+                    chat = $(this).attr('id')      
+                    window.location.href = '/mensajes-detalle' + chat
+                })
+
+            
+            })//end ready
+
+            function loadMotivos(url,sel){
+                for (let i = sel.options.length; i >= 0; i--) {
+                    sel.remove(i);
+                }
+                fetch(url, {
+                    method:'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    cargaSelect3('motivo',data)
+                    //console.log(data)
+                })
+                .catch(e => console.log(e))
+            }
+            
+            function cargaSelect(elem, categorias){
+                select = document.getElementById(elem)
+
+                let opt2 = document.createElement('option');
+                    opt2.value = 'destinatario'
+                    opt2.innerHTML = 'destinatario'
+                    select.appendChild(opt2);
+                //select.appendChild()
+                for (var i = 0; i<categorias.length; i++){
+                    var opt = document.createElement('option');
+                    opt.value = categorias[i].id;
+                    opt.innerHTML = categorias[i].name;
+                    select.appendChild(opt);
+                }
+            }
+
+            function cargaSelect2(elem, categorias){
+                select = document.getElementById(elem)
+
+                let opt2 = document.createElement('option');
+                    opt2.value = 'cliente'
+                    opt2.innerHTML = 'cliente'
+                    select.appendChild(opt2);
+                for (var i = 0; i<categorias.length; i++){
+                    var opt = document.createElement('option');
+                    opt.value = categorias[i].Codigo_Cliente;
+                    opt.innerHTML = categorias[i].Nombre;
+                    select.appendChild(opt);     
+                }
+                
+            }
+            
+            function cargaSelect3(elem, categorias){
+                select = document.getElementById(elem)
+                let opt2 = document.createElement('option');
+                    opt2.value = 'motivo'
+                    opt2.innerHTML = 'motivo'
+                    select.appendChild(opt2);
+                for (var i = 0; i<categorias.length; i++){
+                    var opt = document.createElement('option');
+                    opt.value = categorias[i].area_id;
+                    opt.innerHTML = categorias[i].name_motivo;
+                    select.appendChild(opt);     
+                    
+                }         
+            }
+
+            function loadSelect(url,value,sel){
+                for (let i = sel.options.length; i >= 0; i--) {
+                    sel.remove(i);
+                }
+                fetch(url, {
+                    method:'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      },
+                    body:JSON.stringify({type:value})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    cargaSelect('destinatario',data)
+                })
+                .catch(e => console.log(e))
+            }//end
+
+            function loadSelect2(url,value1,value2,sel){
+                for (let i = sel.options.length; i >= 0; i--) {
+                    sel.remove(i);
+                }
+
+                fetch(url, {
+                    method:'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      },
+                    body:JSON.stringify({tipo:value1, id:value2})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    cargaSelect2('cliente',data)
+                })
+                .catch(e => console.log(e))
+            }//end
+
+            function limpiarAll(){
+                $('#cliente').val('Cliente')
+                $('#motivo').val('Motivo')
+                $('#tipo-usuario').val('Tipo Usuario')
+                $('#destinatario').val('Destinatario')
+                msg.value = ''
+            }
+
+            function limpiarCheck(){
+                check1.checked = false
+                check2.checked = false
+                check3.checked = false
+            }
+
+            function loadTable(url, verb) {
+                let tabla = $('#basic-datatable').DataTable({
+                    ajax: {
+                        'url': url,
+                        'type': verb
+                    },
+                    language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+                    bDestroy: true,
+                    scrollX: true,
+                    columnDefs: [
+                        { "className": "dt-center", "targets": "_all" },
+                    ],
+                    columns: [
+                        
+                        { "data": "status" ,
+                        "render": function(data, type, row){
+                            if (row.status == 'activo' || row.status == 'pendiente') {
+                                if(row.cant_msg != 0){
+                                    return `<div> <i data-geomet='jjj' class="fa fa-eye fa-lg ver color-1" aria-hidden="true"></i> <i style='margin-left:8px' class='fa fa-reply fa-lg ver2' aria-hidden="true"></i> </div>`
+                                }
+                                return `<div> <i class="fa fa-eye fa-lg ver" aria-hidden="true"></i> <i style='margin-left:8px' class='fa fa-reply fa-lg ver2' aria-hidden="true"></i> </div>`
+                            } else {
+                                return `<i class="fa fa-eye fa-lg ver" aria-hidden="true"></i>`
+                            }
+                        }},
+                        { "data": "Codigo_Cliente" },
+                        { "data": "Nombre" },
+                        { "data": "Type_user_emisor" },
+                        { "data": "Type_user_destino" },
+                        { "data": "Motivo" },
+                        { "data": "Area" },
+                        { "data": "Date" ,
+                        "render": function (data, type, row) {
+                            if (row) {
+                                return new Date(row.Date).toLocaleString('es-AR')
+                            } else {
+                                return 'no data'
+                            }
+                        }},
+                        { "data": "status",
+                        "render": function (data, type, row) {
+                            //console.log(row.status)
+                            if (row) {
+                               if(row.status == 'pendiente'){return "<span class='badge badge-danger-lighten'>Pendiente</span>"}
+                               if(row.status == 'activo'){return "<span class='badge badge-info-lighten'>Activo</span>"}
+                               if(row.status == 'terminado'){return "<span class='badge badge-success-lighten'>Terminado</span>"}
+                            } else {
+                                return 'no data'
+                            }
+                        }},
+                        {"data":"_id"}
+                    ],
+                    order: [[7, "desc"]]
+                });//end table
+                tabla.draw()
+            }//end loadtable
+        </script>

@@ -56,6 +56,10 @@ const base = (v1, data) => {
     return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] == v4})
   }
 
+  const filterCuntNoObjetive = (key1,v1,key2,v2,key3,v3,key4,v4,key5,v5,data) => {
+    return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] >= v4 &&  v[key5] <= v5})
+  }
+
   const filterSpecial = (data,f1,f2,type) => {
     let arr = []
     data.forEach(e => {
@@ -100,6 +104,10 @@ const base = (v1, data) => {
     return (b.Date - a.Date)
 }
 
+const filterByThreeKeyOR = (key1,v1,key2,v2,key3,v3,data) => {
+  return data.filter(function (v){return v[key1] == v1 || v[key2] == v2 || v[key3] == v3})
+}
+
   module.exports = {
     base,
     objMes,
@@ -112,5 +120,7 @@ const base = (v1, data) => {
     filterByThreeKey,
     filterByFourKey,
     SortArrayDesc,
-    filterSpecial
+    filterSpecial,
+    filterCuntNoObjetive,
+    filterByThreeKeyOR
   }

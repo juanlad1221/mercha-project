@@ -1,0 +1,147 @@
+<%- include('block_inicio')%>
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li id="link-previo" class="breadcrumb-item"><a href=""></a></li>
+                        <li id="link-actual" class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Detalle Mensaje</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+
+    <div class="d-flex justify-content-center bt">
+        <div class="col-xxl-6 col-xl-10">
+            <div class="card">
+                <div class="card-body px-0 pb-0">
+                    <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
+                        <li class="clearfix">
+                            <div class="chat-avatar">
+                                <img src="assets/images/users/avatar-5.jpg" class="rounded" alt="Shreyu N" />
+                                <i>10:00</i>
+                            </div>
+                            <div class="conversation-text">
+                                <div class="ctext-wrap">
+                                    <i>Shreyu N</i>
+                                    <p>
+                                        Hello!
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="conversation-actions dropdown">
+                                <button class="btn btn-sm btn-link" data-bs-toggle="dropdown"
+                                    aria-expanded="false"><i class='uil uil-ellipsis-v'></i></button>
+    
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" href="#">Copy Message</a>
+                                    <a class="dropdown-item" href="#">Edit</a>
+                                    <a class="dropdown-item" href="#">Delete</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clearfix odd">
+                            <div class="chat-avatar">
+                                <img src="assets/images/users/avatar-1.jpg" class="rounded" alt="dominic" />
+                                <i>10:01</i>
+                            </div>
+                            <div class="conversation-text">
+                                <div class="ctext-wrap">
+                                    <i>Dominic</i>
+                                    <p>
+                                        Hi, How are you? What about our next meeting?
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="conversation-actions dropdown">
+                                <button class="btn btn-sm btn-link" data-bs-toggle="dropdown"
+                                    aria-expanded="false"><i class='uil uil-ellipsis-v'></i></button>
+    
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Copy Message</a>
+                                    <a class="dropdown-item" href="#">Edit</a>
+                                    <a class="dropdown-item" href="#">Delete</a>
+                                </div>
+                            </div>
+                        </li>
+                        
+                    </ul>
+    
+                    <div class="row px-3 pb-3">
+                        <div class="col">
+                            <div class="mt-2 bg-light p-3 rounded">
+                                <form class="needs-validation" novalidate="" name="chat-form"
+                                    id="chat-form">
+                                    <div class="row">
+                                        <div class="col mb-2 mb-sm-0">
+                                            <input type="text" class="form-control border-0" placeholder="Enter your text" required="">
+                                            <div class="invalid-feedback">
+                                                Please enter your messsage
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <div class="btn-group">
+                                                <a href="#" class="btn btn-light"><i class="uil uil-paperclip"></i></a>
+                                                <a href="#" class="btn btn-light"> <i class='uil uil-smile'></i> </a>
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-success chat-send"><i class='uil uil-message'></i></button>
+                                                </div>
+                                            </div>
+                                        </div> <!-- end col -->
+                                    </div> <!-- end row-->
+                                </form>
+                            </div> 
+                        </div> <!-- end col-->
+                    </div>
+                    <!-- end row -->
+                </div> <!-- end card-body -->
+            </div> <!-- end card -->
+        </div>
+    </div>
+    <!-- end chat area-->
+    <input value=<%=id_chat%> type="text" id="chat" >
+
+
+
+
+    <%- include('block_end')%>
+
+        <style>
+            .bt {
+                border: 1px solid blue;
+            }
+           .ver{
+            cursor: pointer;
+           }
+        </style>
+    
+        <script>
+            let id_chat = document.getElementById('chat')
+            let list_chat = document.getElementById('list-chat')
+
+
+            window.onload = () => {
+                fetch('/api-chat', {
+                    method:'POST',
+                    body:JSON.stringify({id_chat:id_chat.value}),
+                    headers: {"Content-type": "application/json"}
+                })
+                .then(res => res.json())
+                .then(data => {
+                   // let list_chat = document.getElementById('list-chat')
+                    for (var i = 0; i<data.Mensajes.length; i++){
+                        console.log(data.Mensajes[i])
+                        let yu = `<li class="clearfix">jojo</li>`
+                        list_chat.appendChild(yu)
+                    }
+                })
+                .catch(e => {
+                    console.log(e)
+                })
+            }
+        </script>

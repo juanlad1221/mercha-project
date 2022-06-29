@@ -5,13 +5,14 @@ const multer = require('multer')
 const path = require('path');
 const XLSN = require('xlsx')
 let bcrypt = require('bcryptjs')
-var moment = require('moment');
+let moment = require('moment');
 const dayjs = require('dayjs')
+let ObjectId = require('mongoose').Types.ObjectId;
 const { base, objMes, relevados,
   getMerchaReleved, getSellerReleved,
   getDataMercha, filterByOneKey, filterByThreeKey,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
-  filterSpecial } = require('./utils/filters')
+  filterSpecial, filterCuntNoObjetive,filterByThreeKeyOR } = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 
@@ -19,8 +20,11 @@ const { storage, storagexls } = require('./utils/multer.config')
 const Users = require('../schemas/Users')
 const Xls = require('../schemas/xls')
 const Clients = require('../schemas/Clients')
-const Objetives = require('../schemas/Objetives');
-const Survey = require("../schemas/Survey");
+const Objetives = require('../schemas/Objetives')
+const Survey = require("../schemas/Survey")
+const chats = require("../schemas/Chats");
+const Chats = require("../schemas/Chats");
+const Areas = require('../schemas/Area')
 /*const { type } = require("os");
 const { route } = require("./upload.movil.controller");
 const { clearScreenDown } = require("readline");
@@ -34,12 +38,11 @@ let mounth = currentTime.getMonth() + 1
 
 
 router.get('', function (req, res) {
-
   res.render('../views/login')
 })//end get
 
 
-router.get('/dashboard', isAuthenticated, function (req, res) {
+router.get('/dashboard', isAuthenticated, async function (req, res) {
   res.render('../views/dashboard', { user: req.user.name })
 })//end get
 
@@ -307,6 +310,9 @@ router.get('/objetivos', isAuthenticated, async (req, res) => {
 })//end get
 
 
+
+
+
 //Relevamientos
 router.get('/control-relevamientos', isAuthenticated, async (req, res) => {
   let user = req.user.name
@@ -475,6 +481,34 @@ router.get('/panel-relevamientos', isAuthenticated, async (req, res) => {
 })//end get
 
 
+
+//msg
+router.get('/mensajes-detalle:chat', isAuthenticated, async (req, res) => {
+  let user = req.user.name
+  let id_chat = req.params.chat
+  
+    res.render('../views/msg_detalle', { user,id_chat })
+})//end get
+
+router.get('/mensajes', isAuthenticated, async (req, res) => {
+  let user = req.user.name
+  res.render('../views/dashboard_msj', { user })
+})//end get
+
+router.post('/api-chat', isAuthenticated, async (req, res) => {
+if(req.body){
+  let id = req.body.id_chat
+
+  let data = await Chats.findOne({_id:ObjectId(id)})
+  if(data){
+    res.status(200).json(data)
+  }
+}
+  console.log(req.body)
+})//end get
+
+
+
 //apis internas tablas
 router.get('/api-clientes', isAuthenticated, async (req, res) => {
   //traigo datos de la bd
@@ -492,7 +526,104 @@ router.get('/api-objetivos', isAuthenticated, async (req, res) => {
   res.status(200).json(data)
 })//end get
 
-router.get('/api-gestion', isAuthenticated, async (req, res) => {
+router.get('/api-msg', isAuthenticated, async (req, res) => {
+  try {
+    let msg = await Chats.where({})
+
+    let yu = filterByThreeKeyOR('status', 'pendiente','status','activo','status','terminado', msg)
+    let arr=[]
+    yu.forEach(e => {
+      let obj = {}
+      obj._id = e._id
+      obj.Codigo_Cliente= e.Codigo_Cliente
+      obj.Nombre = e.Nombre
+      obj.Type_user_destino = e.Type_user_destino
+      obj.User_id_destino = e.User_id_destino
+      obj.Motivo = e.Motivo
+      obj.Motivo_id = e.Motivo_id
+      obj.Area = e.Area
+      obj.Area_id = e.Area_id
+      obj.Type_user_emisor = e.Type_user_emisor
+      obj.User_id_emisor = e.User_id_emisor
+      obj.Date = e.Date
+      obj.status = e.status
+      obj.cant_msg = filterByOneKey('leido', false, e.Mensajes).length
+      
+      arr.push(obj)
+    })
+   
+    let data = { data: arr }
+    res.status(200).json(data)
+  } catch (error) {
+    console.log('error in /api-msg...')
+  }
+})//end get
+
+router.post('/api-select', isAuthenticated, async (req, res) => {
+  let data = await Users.where({ type: req.body.type })
+
+  res.status(200).json(data)
+})//end post
+
+router.post('/api-select-2', isAuthenticated, async (req, res) => {
+  let data = await Clients.where({}).sort({ Nombre: 1 })
+
+  if (req.body.tipo == 'MERCHA') {
+    let data_ = filterByOneKey('Merchandising', Number(req.body.id), data)
+
+    if (data_) {
+      res.status(200).json(data_)
+    }
+  }
+
+  if (req.body.tipo == 'SELLER') {
+    //let data = await Clients.where({type:req.body.tipo, Vendedor:Number(req.body.id)})
+    let data_ = filterByOneKey('Vendedor', Number(req.body.id), data)
+    if (data_) {
+      res.status(200).json(data_)
+    }
+  }
+
+})//end post
+
+router.get('/api-select-3', isAuthenticated, async (req, res) => {
+  let data = await Areas.where({})
+  if (data) {
+    let arr = []
+
+    data.forEach(e => {
+      e.motivo.forEach(f => {
+        let obj = {}
+        obj.name_motivo = f.name_motivo
+        obj.area_id = e._id
+        obj.name_area = e.name_area
+        arr.push(obj)
+      })
+    })
+    res.status(200).json(arr)
+  }
+
+})//end get
+
+
+
+
+
+
+
+router.get('/apis', async (req, res) => {
+  let data = new Areas({ name_area: 'Productos' })
+  data.save()
+  data.motivo.push({ name_motivo: 'Producto Defectuoso' }, { name_motivo: 'Calidad' })
+
+})//end 
+
+
+
+
+
+
+/*router.get('/api-gestion', isAuthenticated, async (req, res) => {
   try {
     //traigo datos de la bd
     let merchas = await Users.where({ type: 'MERCHA' })
@@ -535,21 +666,24 @@ router.get('/api-gestion', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.log(error)
   }
-})//end get
+})//end get*/
 
 
 
 
 
 router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
-
   if (req.body) {
     if (req.body.mes) {
       let año_solo = new Date(req.body.mes).getFullYear()
       let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
       let mes_solo = Number(oneDate.format('MM'))
+      let f1 = new Date('2022-06-01')
+      let f2 = new Date('2022-06-30')
 
       let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
+      let noObjetive = await Survey.where({ Año: null, Mes: null })
+
 
       switch (req.body.type) {
         case 'todos':
@@ -585,6 +719,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
                   let rel = relevados(e.id, año_solo, mes_solo, true, surveys)
                   obj.relevados = rel
                   obj.porcentaje = Math.round((100 * rel) / objm) || 0
+                  obj.no_objetive = filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', e.id, 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
                 }
 
                 if (e.type == 'SELLER') {
@@ -606,13 +741,14 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
                   let rel = filterByFourKey('Vendedor', e.id, 'Año', año_solo, 'Mes', mes_solo, 'Relevado', true, surveys).length
                   obj.relevados = rel
                   obj.porcentaje = Math.round((100 * rel) / objm) || 0
+                  obj.no_objetive = filterCuntNoObjetive('type', 'SELLER', 'Vendedor', e.id, 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
 
                 }
 
                 arr.push(obj)
               }
             })//end for
-            //console.log(arr)
+
             let data = { data: arr }
             res.status(200).json(data)
           }
@@ -651,6 +787,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
                 let rel = relevados(e.id, año_solo, mes_solo, true, survey_mercha)
                 obj.relevados = rel
                 obj.porcentaje = Math.round((100 * rel) / objm) || 0
+                obj.no_objetive = filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', e.id, 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
                 arr2.push(obj)
               }
             })//end for
@@ -693,6 +830,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
                 let rel = filterByFourKey('Vendedor', e.id, 'Año', año_solo, 'Mes', mes_solo, 'Relevado', true, survey_seller).length
                 obj.relevados = rel
                 obj.porcentaje = Math.round((100 * rel) / objm) || 0
+                obj.no_objetive = filterCuntNoObjetive('type', 'SELLER', 'Vendedor', e.id, 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
                 arr3.push(obj)
               }
             })//end for
@@ -706,9 +844,11 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
   }//end if body
 })//end post
 
+
 router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
 
   if (req.body) {
+    console.log(req.body)
     if (req.body.mes) {
       //obtengo los datos
       let año_solo = new Date(req.body.mes).getFullYear()
@@ -867,6 +1007,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
   }//end if body
 })//end post
 
+
 router.post('/consulta-relevamiento', async (req, res) => {
   //obtengo los datos
   try {
@@ -887,7 +1028,7 @@ router.post('/consulta-relevamiento', async (req, res) => {
           let data_mercha = filterByTwoKey('type', typeUser, 'Merchandising', user_id, data_)
           //aplico filtro sobre el date
           let dataToSend = filterSpecial(data_mercha, fecha, fecha2, typeUser)
-          
+
           let data = { data: dataToSend }
           res.status(200).json(data)
         } else {
@@ -895,7 +1036,7 @@ router.post('/consulta-relevamiento', async (req, res) => {
           let data_seller = filterByTwoKey('type', typeUser, 'Vendedor', user_id, data_)
           //aplico filtro sobre el date
           let dataToSend = filterSpecial(data_seller, fecha, fecha2, typeUser)
-          
+
           let data = { data: dataToSend }
           res.status(200).json(data)
         }
@@ -905,6 +1046,66 @@ router.post('/consulta-relevamiento', async (req, res) => {
     console.log('Error in try catch... url:/consulta-relevamiento')
   }
 
+})//end post
+
+router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
+  try {
+    if (req.body) {
+      let Codigo_Cliente = req.body.codigo_cliente
+      let Nombre = req.body.nombre
+      let Type_user_destino = req.body.type_user_destino
+      let User_id_destino = req.body.user_id_destino
+      let Motivo = req.body.motivo
+      let Motivo_id = req.body.motivo_id
+      let Area = ''
+      let Area_id = req.body.area_id
+      let User_id_emisor = req.body.user_id_emisor
+      let Type_user_emisor = req.body.type_user_emisor
+      //let Date = new Date()
+      //let Mensajes = req.body.msg
+
+      let obj = {
+        Codigo_Cliente,
+        Nombre,
+        Type_user_destino,
+        User_id_destino,
+        Motivo,
+        Motivo_id,
+        Area,
+        Area_id,
+        User_id_emisor,
+        Type_user_emisor,
+        status: 'pendiente',
+        Date: new Date(),
+        Mensajes: [{ msg: req.body.msg }]
+      }
+      //obj.Mensajes.push({msg:req.body.msg})
+
+      //let datauser = await Users.findOne({id:Number(User_id_destino)})
+      /*if(datauser){
+        obj.Type_user_destino = type_user_destino + ' | ' + datauser.name
+      }*/
+      //nuevoChat = await Chats.create(obj)
+      let result = await Chats.where({})
+      if (result) {
+        let existe_pen = filterByFourKey('Codigo_Cliente', Codigo_Cliente, 'User_id_destino', User_id_destino, 'User_id_emisor', User_id_emisor, 'status', 'pendiente', result).length
+        let existe_act = filterByFourKey('Codigo_Cliente', Codigo_Cliente, 'User_id_destino', User_id_destino, 'User_id_emisor', User_id_emisor, 'status', 'activo', result).length
+
+        if (existe_pen == 0 && existe_act == 0) {
+          nuevoChat = await Chats.create(obj)
+          console.log('Se grabó nuevo correctamente...')
+          res.status(200).json({ status: 200 })
+        } else {
+          console.log('ya existe el chat...')
+          res.status(400).json({ status: 400 })
+        }
+      }
+      //console.log(existe_act,'jjjj')
+
+    }//ens body
+  } catch (error) {
+    console.log('Error in post: /mensaje-nuevo...')
+  }
 })//end post
 
 
