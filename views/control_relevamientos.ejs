@@ -43,7 +43,7 @@
 
         </div>
 
-        
+
         <!--tabla-->
         <div class="mt-4 mb-5">
             <div class="card">
@@ -67,14 +67,14 @@
                         </tbody>
                     </table>
                 </div>
-            </div>   
+            </div>
         </div>
 
     </div>
     <%- include('block_end')%>
 
         <style>
-            .ver:hover{
+            .ver:hover {
                 cursor: pointer;
             }
         </style>
@@ -94,24 +94,25 @@
                 let year = currentTime.getFullYear()
                 let mounth = currentTime.getMonth() + 1
                 let day = currentTime.getDate()
-                let mes = `${year + "-" + mounth + "-" + day}`
-                let type = 'todos'
 
-                
-                //se carga el mes actual
-                date.value = String(`${year + "-" + "0" + mounth}`)
+                //armo fecha con2 digitos
+                let mes = `${year + "-" + complateDate(mounth) + "-" + complateDate(day)}`
+                let type = 'todos'
+               
                 //se carga el boton por defto
                 borrarClassButton()
                 btnTodos.classList.add('active')
 
-                window.onload = () => { 
+                window.onload = () => {
+                    //se carga el mes actual
+                    date.value = String(`${year + "-" + complateDate(mounth)}`)
                     loadTable('/api-relevamientos', 'POST', { 'type': type, 'mes': mes })
                 }
 
                 //extrae mes cuando se carga el input
                 date.onchange = () => {
                     mes = String(date.value + '-01')
-                    if(mes === '-01'){alert('DEBE SELECCIONAR UN MES...');return}
+                    //if (mes === '-01') { alert('DEBE SELECCIONAR UN MES...'); return }
                 }//end
 
 
@@ -162,19 +163,20 @@
                             { "data": "no_objetive" },
                             { "data": "obj_mes" },
                             { "data": "relevados" },
-                            { "data": "porcentaje",
-                            "render": function (data, type, row) {
+                            {
+                                "data": "porcentaje",
+                                "render": function (data, type, row) {
                                     if (row) {
                                         return row.porcentaje + " %"
-                                    } 
-                                } 
+                                    }
+                                }
                             },
                             {
                                 "defaultContent": "Pictures",
                                 "render": function (data, type, row) {
                                     if (row) {
                                         return "<i class='fa fa-eye fa-lg ver' aria-hidden='true'></i>"
-                                    } 
+                                    }
                                 }
                             }
 
@@ -184,34 +186,35 @@
 
 
                 btn.onclick = () => {
-                    if (type == '' || mes == '' || mes == '-01') { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
+                    if (type == '' || mes == '' || mes == null) { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
                     loadTable('/api-relevamientos', 'POST', { 'type': type, 'mes': mes })
                 }
 
+                //Selecciona elementos en tabla Ver
+                let id;
+                let tipo;
+                $('#basic-datatable tbody').on('click', '.ver', function () {
+                    tipo = $(this).parents("tr").find("td").eq(3).text()
+                    id = $(this).parents("tr").find("td").eq(0).text()
 
+                    window.location.href = '/clientes-relevamientos' + id + '&' + tipo
+                })
 
                 function borrarClassButton() {
                     btnTodos.classList.remove('active')
                     btnMercha.classList.remove('active')
                     btnSeller.classList.remove('active')
                 }
+
+
             });//end ready
 
-
-            
-            //Selecciona elementos en tabla Ver
-            let id;
-            let tipo;
-            $('#basic-datatable tbody').on('click', '.ver', function () {
-                tipo = $(this).parents("tr").find("td").eq(3).text()
-                id = $(this).parents("tr").find("td").eq(0).text()
-
-                window.location.href = '/clientes-relevamientos'+id+'&'+tipo
-            })
-
-
-
-
+            function complateDate(dato) {
+                if (String(dato).length == 1) {
+                    return String('0' + dato)
+                }
+                return dato
+            }
 
 
         </script>

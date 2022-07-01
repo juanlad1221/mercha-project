@@ -15,7 +15,9 @@ const chat_schema = Schema({
     User_id_emisor:{type:String},
     Date:{type:Date},
     status:{type:String},
-    Mensajes:[{msg:{type:String}, Date_msg:{type:Date, default:new Date()}, leido:{type:Boolean, default:false}}]
+    Mensajes:[{msg:{type:String}, Date_msg:{type:Date, default:new Date()}, 
+        leido:{type:Boolean, default:false}, name:{type:String}, 
+        type:{type:String}}]
 });
 
 //Exporto modelo

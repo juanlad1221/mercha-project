@@ -23,7 +23,7 @@
                     <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
                         <li class="clearfix">
                             <div class="chat-avatar">
-                                <img src="assets/images/users/avatar-5.jpg" class="rounded" alt="Shreyu N" />
+                                <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
                                 <i>10:00</i>
                             </div>
                             <div class="conversation-text">
@@ -34,20 +34,11 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="conversation-actions dropdown">
-                                <button class="btn btn-sm btn-link" data-bs-toggle="dropdown"
-                                    aria-expanded="false"><i class='uil uil-ellipsis-v'></i></button>
-    
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="#">Copy Message</a>
-                                    <a class="dropdown-item" href="#">Edit</a>
-                                    <a class="dropdown-item" href="#">Delete</a>
-                                </div>
-                            </div>
                         </li>
+                        
                         <li class="clearfix odd">
                             <div class="chat-avatar">
-                                <img src="assets/images/users/avatar-1.jpg" class="rounded" alt="dominic" />
+                                <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
                                 <i>10:01</i>
                             </div>
                             <div class="conversation-text">
@@ -56,16 +47,6 @@
                                     <p>
                                         Hi, How are you? What about our next meeting?
                                     </p>
-                                </div>
-                            </div>
-                            <div class="conversation-actions dropdown">
-                                <button class="btn btn-sm btn-link" data-bs-toggle="dropdown"
-                                    aria-expanded="false"><i class='uil uil-ellipsis-v'></i></button>
-    
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Copy Message</a>
-                                    <a class="dropdown-item" href="#">Edit</a>
-                                    <a class="dropdown-item" href="#">Delete</a>
                                 </div>
                             </div>
                         </li>
@@ -122,7 +103,8 @@
     
         <script>
             let id_chat = document.getElementById('chat')
-            let list_chat = document.getElementById('list-chat')
+            //let list_chat = document.getElementById('list-chat')
+            
 
 
             window.onload = () => {
@@ -133,11 +115,16 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                   // let list_chat = document.getElementById('list-chat')
+                    console.log('po',data)
+                    //let ul = document.querySelector('ul')
+                    console.log(888)
+                   let list_chat = document.getElementById('list-chat')
                     for (var i = 0; i<data.Mensajes.length; i++){
-                        console.log(data.Mensajes[i])
-                        let yu = `<li class="clearfix">jojo</li>`
-                        list_chat.appendChild(yu)
+                        
+                        let li = document.createElement('li')
+                        li.textContent = 'utyyty'
+                        list_chat.appendChild(li)
+                        console.log(888)
                     }
                 })
                 .catch(e => {

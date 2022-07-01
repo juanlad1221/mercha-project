@@ -219,7 +219,7 @@ router.get('/procesar-objetivos', isAuthenticated, async (req, res) => {
         //traigo los objetivos del mes a insertar en survey
         let objetives = await Objetives.where({ Año: year, Mes: mounth })
 
-        //Borro por las dudas de survey lo q haya de objetivos para el mes.
+        //Borro por las dudas de survey lo q haya de objetivos para el mes y año.
         let status_delete = await Survey.deleteMany({ Año: year, Mes: mounth, Relevado: false })
 
         //Creo el array con 2 obj por cliente. uno mercha y otro seller
@@ -265,7 +265,7 @@ router.get('/procesar-objetivos', isAuthenticated, async (req, res) => {
           arr.push(obj2)
 
         })//end
-
+        
         //Inserto los objetivos del año y mes
         let status_insert_survey = await Survey.insertMany(arr)
         if (status_insert_survey) {
@@ -674,22 +674,24 @@ router.get('/apis', async (req, res) => {
 
 router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
   if (req.body) {
+    console.log(req.body)
     if (req.body.mes) {
       let año_solo = new Date(req.body.mes).getFullYear()
       let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
       let mes_solo = Number(oneDate.format('MM'))
-      let f1 = new Date('2022-06-01')
-      let f2 = new Date('2022-06-30')
+
+      let f1 = new Date(req.body.mes)
+      let f3 = new Date(new Date(req.body.mes).getFullYear(), new Date(req.body.mes).getMonth() + 2, 0).getDate()
+      let f2 = new Date(año_solo, (mes_solo - 1),f3)
 
       let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
       let noObjetive = await Survey.where({ Año: null, Mes: null })
-
-
+      
       switch (req.body.type) {
         case 'todos':
           //let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
           let all_users = await Users.where({})
-
+        console.log(surveys, año_solo, mes_solo)
           if (all_users && surveys) {
             let arr = []
 
@@ -719,9 +721,10 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
                   let rel = relevados(e.id, año_solo, mes_solo, true, surveys)
                   obj.relevados = rel
                   obj.porcentaje = Math.round((100 * rel) / objm) || 0
-                  obj.no_objetive = filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', e.id, 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
+                  obj.no_objetive = filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', Number(e.id), 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
                 }
-
+                //console.log(f1,f2)
+                //console.log(filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', 4, 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length)
                 if (e.type == 'SELLER') {
                   let lista = getSellerReleved(e.id, surveys)
 

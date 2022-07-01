@@ -14,7 +14,7 @@ let mounth = currentTime.getMonth() + 1
 
 router.post('/upload-img', async (req, res) => {
     try {
-
+        console.log(req.body)
         if (req.body) {
             //datos del movil
             let Codigo_Cliente = String(req.body.Codigo_Cliente.trim())
@@ -73,6 +73,8 @@ router.post('/upload-img', async (req, res) => {
                                 Total_Pictures: Total_Pictures,
                                 Date: moment().format('DD-MM-YYYY'),
                                 active: true,
+                                Año:null,
+                                Mes:null,
                                 Merchandising: dataClient.Merchandising,
                                 Nombre_Merchandising: dataClient.Nombre_Merchandising,
                                 type: 'MERCHA',
@@ -90,6 +92,8 @@ router.post('/upload-img', async (req, res) => {
                                 Nombre_Vendedor: dataClient.Nombre_Vendedor,
                                 type: 'SELLER',
                                 Relevado: false,
+                                Año:null,
+                                Mes:null,
                                 Pictures: [],
                                 Total_Pictures: 0,
                                 active: true
@@ -134,7 +138,7 @@ router.post('/upload-img', async (req, res) => {
                             res.status(200).json({ msg: 'Envio Exitoso...', status: 200, type: 'SELLER' })
                         }
                     } else {
-                        //Si objetive s false
+                        //Si objetive es false
                         dataClient = await Clients.findOne({ Codigo_Cliente: Codigo_Cliente })
                         if (dataClient) {
                             let obj = {
@@ -148,6 +152,8 @@ router.post('/upload-img', async (req, res) => {
                                 Provincia: dataClient.Provincia,
                                 Relevado: false,
                                 Pictures: [],
+                                Año:null,
+                                Mes:null,
                                 Msg: '',
                                 Total_Pictures: 0,
                                 active: true,
@@ -169,6 +175,8 @@ router.post('/upload-img', async (req, res) => {
                                 Nombre_Vendedor: dataClient.Nombre_Vendedor,
                                 type: 'SELLER',
                                 Relevado: true,
+                                Año:null,
+                                Mes:null,
                                 Pictures: Pictures,
                                 Msg: Msg,
                                 Total_Pictures: Total_Pictures,
