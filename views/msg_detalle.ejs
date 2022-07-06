@@ -1,7 +1,7 @@
 <%- include('block_inicio')%>
     <!-- start page title -->
-    <div class="row">
-        <div class="col-12">
+    <div class="d-flex justify-content-center">
+        <div class="col-10">
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
@@ -9,68 +9,91 @@
                         <li id="link-actual" class="breadcrumb-item active">Dashboard</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Detalle Mensaje</h4>
+                <h4 class="page-title">Detalle Mensaje <%=user.id%></h4>
             </div>
         </div>
     </div>
     <!-- end page title -->
 
 
-    <div class="d-flex justify-content-center bt">
+    <div class="d-flex justify-content-center">
         <div class="col-xxl-6 col-xl-10">
             <div class="card">
                 <div class="card-body px-0 pb-0">
                     <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
-                        <li class="clearfix">
-                            <div class="chat-avatar">
-                                <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
-                                <i>10:00</i>
-                            </div>
-                            <div class="conversation-text">
-                                <div class="ctext-wrap">
-                                    <i>Shreyu N</i>
-                                    <p>
-                                        Hello!
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
+                        <%data.Mensajes.forEach(e =>{%>
+                            <%if(e.type == 'SELLER' || e.type == 'MERCHA'){%>
+                                <li class="clearfix">
+                                    <div class="chat-avatar">
+                                        <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
+                                        <i><%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%></i>
+                                    </div>
+                                    <div class="conversation-text">
+                                        <div class="ctext-wrap">
+                                            <i><%=e.name%></i>
+                                            <p>
+                                               <%=e.msg%>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            <%}else{%>
+                                <li class="clearfix odd">
+                                    <div class="chat-avatar">
+                                        <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
+                                        <i><%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%></i>
+                                    </div>
+                                    <div class="conversation-text">
+                                        <div class="ctext-wrap">
+                                            <i><%=e.name%></i>
+                                            <p>
+                                                <%=e.msg%>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            <%}%>
                         
-                        <li class="clearfix odd">
-                            <div class="chat-avatar">
-                                <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
-                                <i>10:01</i>
-                            </div>
-                            <div class="conversation-text">
-                                <div class="ctext-wrap">
-                                    <i>Dominic</i>
-                                    <p>
-                                        Hi, How are you? What about our next meeting?
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        
+                        <%})%>
                     </ul>
-    
+
+                    <% if(data.status != 'terminado'){ %>
                     <div class="row px-3 pb-3">
                         <div class="col">
                             <div class="mt-2 bg-light p-3 rounded">
-                                <form class="needs-validation" novalidate="" name="chat-form"
+
+                                <div class="d-flex justify-content-center">
+                                    <div class="form-check form-checkbox-danger" style="margin-right: 2%;">
+                                        <input  type="checkbox" class="form-check-input" id="check1" disabled>
+                                        <label class="form-check-label" for="customCheckcolor5">Pendiente</label>
+                                    </div>
+                                    <div class="form-check form-checkbox-info" style="margin-right: 2%;">
+                                        <input type="checkbox" class="form-check-input" id="check2" >
+                                        <label class="form-check-label" for="customCheckcolor3">Activo</label>
+                                    </div>
+                                    <div class="form-check form-checkbox-success ">
+                                        <input type="checkbox" class="form-check-input" id="check3" >
+                                        <label class="form-check-label" for="customCheckcolor2">Finalizado</label>
+                                    </div>
+                                </div>
+
+
+                                <form class="needs-validation mt-2" novalidate="" name="chat-form"
                                     id="chat-form">
                                     <div class="row">
                                         <div class="col mb-2 mb-sm-0">
-                                            <input type="text" class="form-control border-0" placeholder="Enter your text" required="">
+                                            <input id="msg" type="text" class="form-control border-0" placeholder="Ingrese su mensaje" required="">
                                             <div class="invalid-feedback">
-                                                Please enter your messsage
+                                               Debe Escribir su Mensaje...
+                                               
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
                                             <div class="btn-group">
-                                                <a href="#" class="btn btn-light"><i class="uil uil-paperclip"></i></a>
-                                                <a href="#" class="btn btn-light"> <i class='uil uil-smile'></i> </a>
+                                                <!--<a href="#" class="btn btn-light"><i class="uil uil-paperclip"></i></a>
+                                                <a href="#" class="btn btn-light"> <i class='uil uil-smile'></i> </a>-->
                                                 <div class="d-grid">
-                                                    <button type="submit" class="btn btn-success chat-send"><i class='uil uil-message'></i></button>
+                                                    <button id="btn" class="btn btn-success chat-send"><i class='uil uil-message'></i></button>
                                                 </div>
                                             </div>
                                         </div> <!-- end col -->
@@ -79,16 +102,26 @@
                             </div> 
                         </div> <!-- end col-->
                     </div>
+                    <%}else{%>
+                        <div class="d-flex justify-content-end p-2" style="margin-top:5%; background-color:grey">
+                            <a href="/mensajes" class="btn btn-primary">Volver</a>
+                        </div>
+                    <%}%>
                     <!-- end row -->
                 </div> <!-- end card-body -->
             </div> <!-- end card -->
         </div>
     </div>
     <!-- end chat area-->
-    <input value=<%=id_chat%> type="text" id="chat" >
-
-
-
+    <input value=<%=id_chat%> type="text" id="chat" hidden>
+    <input value=<%=user_id%> type="text" id="user_id"  hidden>
+    <input value=<%=data.Codigo_Cliente%> type="text" id="codigo_cliente"  hidden>
+    <input value=<%=user_id%> type="text" id="user_id"  hidden>
+    <input value=<%=user%> type="text" id="user"  hidden>
+    <input value=<%=data.Type_user_destino%> type="text" id="destino_type"  hidden>
+    <input value=<%=data.User_id_destino%> type="text" id="destino_id"  hidden>
+    <input value=<%=data.Area_id%> type="text" id="area_id"  hidden>
+    <input value=<%=data.Nombre%> type="text" id="nombre" hidden >
 
     <%- include('block_end')%>
 
@@ -103,32 +136,83 @@
     
         <script>
             let id_chat = document.getElementById('chat')
-            //let list_chat = document.getElementById('list-chat')
+            let msg = document.getElementById('msg')
+            let codigo_cliente = document.getElementById('codigo_cliente')
+            let user_id = document.getElementById('user_id')
+            let user = document.getElementById('user')
+            let destino_type = document.getElementById('destino_type')
+            let destino_id = document.getElementById('destino_id')
+            let area_id = document.getElementById('area_id')
+            let nombre = document.getElementById('nombre')
+            let btn = document.getElementById('btn')
+
+            let check1 = document.getElementById('check1')
+            let check2 = document.getElementById('check2')
+            let check3 = document.getElementById('check3')
+            let status = ''
+
+
+            check2.onclick = () => {
+                limpiarCheck()
+                status = 'activo'
+                check2.checked = true
+            }
+            check3.onclick = () => {
+                limpiarCheck()
+                status = 'terminado'
+                check3.checked = true
+            }
             
 
+            btn.onclick = () => {
+                event.preventDefault()
+               
+                if(msg.value == '' ||msg.value == null){alert('DEBE COMPLETAR TODOS LOS CAMPOS...');return}
+                if(!check2.checked && !check3.checked ){alert('DEBE COMPLETAR TODOS LOS CAMPOS...');return}
+                limpiarCheck()
 
-            window.onload = () => {
-                fetch('/api-chat', {
+                //obj a enviar
+                let obj = {
+                    id_chat:id_chat.value,
+                    Codigo_Cliente:codigo_cliente.value,
+                    msg:msg.value,
+                    Type_user_emisor:'ADMIN',
+                    User_id_emisor:user_id.value,
+                    Type_user_destino:destino_type.value,
+                    User_id_destino:destino_id.value,
+                    Area_id:area_id.value,
+                    Nombre:nombre.value,
+                    status
+                }
+
+                fetch('/update-msg', {
                     method:'POST',
-                    body:JSON.stringify({id_chat:id_chat.value}),
+                    body:JSON.stringify(obj),
                     headers: {"Content-type": "application/json"}
                 })
                 .then(res => res.json())
                 .then(data => {
-                    console.log('po',data)
-                    //let ul = document.querySelector('ul')
-                    console.log(888)
-                   let list_chat = document.getElementById('list-chat')
-                    for (var i = 0; i<data.Mensajes.length; i++){
-                        
-                        let li = document.createElement('li')
-                        li.textContent = 'utyyty'
-                        list_chat.appendChild(li)
-                        console.log(888)
-                    }
+                    console.log(data.status)
+                    limpiarDespuesDeEnviar()
+                    toastr["success"]("El mensaje fue enviado correctamente...")
+                    window.location.reload()
                 })
                 .catch(e => {
                     console.log(e)
+                    toastr["danger"]("No se pudo enviar el mensaje...")
                 })
+            }
+
+            function limpiarCheck(){
+                check1.checked = false
+                check2.checked = false
+                check3.checked = false
+            }
+            
+            function limpiarDespuesDeEnviar(){
+                limpiarCheck()
+                status = ''
+                msg.value = ''
+                msg.innerHTML = ''
             }
         </script>

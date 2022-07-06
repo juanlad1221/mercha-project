@@ -49,12 +49,12 @@
                     <table id="basic-datatable" class="table table-striped nowrap">
                         <thead>
                             <tr>
+                                <th>FOTOS</th>
                                 <th>ID CLIENTE</th>
                                 <th>FECHA</th>
                                 <th>CLIENTE</th>
                                 <th>DIRECCION</th>
-                                <th>LOCALIDAD</th>
-                                <th>FOTOS</th>
+                                <th>LOCALIDAD</th>                               
                             </tr>
                         </thead>
                         <tbody>
@@ -78,9 +78,8 @@
             .ver:hover {
                 cursor: pointer;
             }
-            
         </style>
-        <script>          
+        <script>
             $(document).ready(function () {
                 let user = document.getElementById('id-user')
                 let type_User = document.getElementById('type-user')
@@ -156,17 +155,27 @@
                         },
                         //data:{json},
                         language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
-                        //processing: true,
                         bDestroy: true,
                         scrollX: true,
                         autoWidth: false,
+                        order: [[2, "desc"]],
                         columnDefs: [
-                           
+
                             { "className": "dt-center", "targets": "_all" },
-                            
+
                         ],
-                        
+
                         columns: [
+                            {
+                                "defaultContent": "Total_Pictures",
+                                "render": function (data, type, row) {
+                                    if (row.Total_Pictures) {
+                                        return `<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:15%'>${row.Total_Pictures}</h5> <i class="fa fa-camera fa-lg ver" aria-hidden="true"></i> </div>`
+                                    } else {
+                                        return `<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:15%'>0</h5> </div>`
+                                    }
+                                }
+                            },
                             { "data": "id" },
                             {
                                 "data": "Date_ultimo",
@@ -180,18 +189,7 @@
                             },
                             { "data": "name" },
                             { "data": "direccion" },
-                            { "data": "localidad" },
-                            {
-                                "defaultContent": "Total_Pictures",
-                                "render": function (data, type, row) {
-                                    if (row.Total_Pictures) {
-                                        return `<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:15%'>${row.Total_Pictures}</h5> <i class="fa fa-camera fa-lg ver" aria-hidden="true"></i> </div>`
-                                    } else {
-                                        return `<div class='d-flex align-items-center justify-content-center' > <h5 style='margin-right:15%'>0</h5> </div>`
-                                    }
-                                }
-                            }
-
+                            { "data": "localidad" }
                         ],
                     });//end table
                 }//end loadtable
@@ -206,8 +204,8 @@
                 //Selecciona elementos en tabla Ver
                 let cliente;
                 $('#basic-datatable tbody').on('click', '.ver', function () {
-                    cliente = $(this).parents("tr").find("td").eq(0).text()
-                    let fecha = $(this).parents("tr").find("td").eq(1).text()
+                    cliente = $(this).parents("tr").find("td").eq(1).text()
+                    let fecha = $(this).parents("tr").find("td").eq(2).text()
                     window.location.href = '/detalle-relevamiento' + cliente + '&' + fecha
                 })
 

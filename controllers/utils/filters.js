@@ -57,6 +57,7 @@ const base = (v1, data) => {
   }
 
   const filterCuntNoObjetive = (key1,v1,key2,v2,key3,v3,key4,v4,key5,v5,data) => {
+    
     return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] >= v4 &&  v[key5] <= v5})
   }
 
@@ -108,6 +109,10 @@ const filterByThreeKeyOR = (key1,v1,key2,v2,key3,v3,data) => {
   return data.filter(function (v){return v[key1] == v1 || v[key2] == v2 || v[key3] == v3})
 }
 
+const filterByTwoKeyOR = (key1,v1,key2,v2,data) => {
+  return data.filter(function (v){return v[key1] == v1 || v[key2] == v2})
+}
+
   module.exports = {
     base,
     objMes,
@@ -122,5 +127,6 @@ const filterByThreeKeyOR = (key1,v1,key2,v2,key3,v3,data) => {
     SortArrayDesc,
     filterSpecial,
     filterCuntNoObjetive,
-    filterByThreeKeyOR
+    filterByThreeKeyOR,
+    filterByTwoKeyOR
   }

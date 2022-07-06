@@ -51,16 +51,16 @@
                     <table id="basic-datatable" class="table table-striped nowrap">
                         <thead>
                             <tr>
+                                <th>ACCION</th>
                                 <th>ID</th>
                                 <th>ULTMO. RELEVAMIENTO</th>
                                 <th>USUARIO</th>
                                 <th>TIPO</th>
                                 <th>TOTAL BASE</th>
-                                <th>NO OBJ</th>
+                                <th>NO OBJ.</th>
                                 <th>OBJ. MES</th>
                                 <th>RELEVADOS</th>
-                                <th>% AVANCE</th>
-                                <th>VER</th>
+                                <th>% AVANCE</th>                              
                             </tr>
                         </thead>
                         <tbody>
@@ -112,7 +112,6 @@
                 //extrae mes cuando se carga el input
                 date.onchange = () => {
                     mes = String(date.value + '-01')
-                    //if (mes === '-01') { alert('DEBE SELECCIONAR UN MES...'); return }
                 }//end
 
 
@@ -145,16 +144,23 @@
                             'data': data,
                             'type': verb
                         },
-                        //data:{json},
                         language: { url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
-                        //processing: true,
                         bDestroy: true,
                         scrollX: true,
                         autoWidth: false,
+                        order: [[ 1, "desc" ]],
                         columnDefs: [
                             { "className": "dt-center", "targets": "_all" }
                         ],
                         columns: [
+                        {
+                            "defaultContent": "Pictures",
+                            "render": function (data, type, row) {
+                                if (row) {
+                                    return "<i class='fa fa-eye fa-lg ver' aria-hidden='true'></i>"
+                                }
+                            }
+                        },
                             { "data": "id" },
                             { "data": "Date_ultimo" },
                             { "data": "name" },
@@ -170,16 +176,7 @@
                                         return row.porcentaje + " %"
                                     }
                                 }
-                            },
-                            {
-                                "defaultContent": "Pictures",
-                                "render": function (data, type, row) {
-                                    if (row) {
-                                        return "<i class='fa fa-eye fa-lg ver' aria-hidden='true'></i>"
-                                    }
-                                }
                             }
-
                         ],
                     });//end table
                 }//end loadtable
@@ -194,8 +191,8 @@
                 let id;
                 let tipo;
                 $('#basic-datatable tbody').on('click', '.ver', function () {
-                    tipo = $(this).parents("tr").find("td").eq(3).text()
-                    id = $(this).parents("tr").find("td").eq(0).text()
+                    tipo = $(this).parents("tr").find("td").eq(4).text()
+                    id = $(this).parents("tr").find("td").eq(1).text()
 
                     window.location.href = '/clientes-relevamientos' + id + '&' + tipo
                 })

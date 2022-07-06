@@ -14,10 +14,12 @@
         </div>
     </div>
     <!-- end page title -->
+    <p id="name" hidden><%=user%></p>
 
     <div class="mb-2 d-flex justify-content-end">
         <div>
             <button onclick=limpiarAll() type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bs-example-modal-lg"> <i class="dripicons-message"></i> </button>
+            <button onclick={reload()} type="button" class="btn btn-primary"> <i class="dripicons-clockwise"></i> </button>
         </div>      
     </div>
     
@@ -129,11 +131,15 @@
            .color-1{
             color: blue;
            }
+           .color-2{
+            color:rgb(103, 248, 103);
+           }
         </style>
 
         <script>
             $(document).ready(function () {
                 let btn = document.getElementById('btn')
+                let name = document.getElementById('name')
                 let sel_cliente = document.getElementById('cliente')
                 let sel_motivo = document.getElementById('motivo')
                 let sel_tipo = document.getElementById('tipo-usuario')
@@ -160,11 +166,11 @@
                         "render": function(data, type, row){
                             if (row.status == 'activo' || row.status == 'pendiente') {
                                 if(row.cant_msg != 0){
-                                    return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver color-1" aria-hidden="true"></i> <i style='margin-left:8px' class='fa fa-reply fa-lg ver2' aria-hidden="true"></i> </div>`
+                                    return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver color-1" aria-hidden="true"></i> </div>`
                                 }
-                                return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver" aria-hidden="true"></i> <i style='margin-left:8px' class='fa fa-reply fa-lg ver2' aria-hidden="true"></i> </div>`
+                                return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver" aria-hidden="true"></i></div>`
                             } else {
-                                return `<i id=${row._id} class="fa fa-eye fa-lg ver" aria-hidden="true"></i>`
+                                return `<i id=${row._id} class="fa fa-eye fa-lg ver color-2" aria-hidden="true"></i>`
                             }
                         }},
                         { "data": "Codigo_Cliente" },
@@ -211,7 +217,7 @@
                 }
                 
                 btn.onclick = () => {
-                    if(sel_cliente.value == 'Cliente' || sel_motivo.value == 'Motivo' || sel_tipo.value == 'Tipo Usuario' || sel_destinatario.value == 'Destinatario' || msg.value == ''){alert('DEBE SELECCIONAR TODAS LAS OPCIONES...');return}
+                    if(sel_cliente.value == 'Cliente' || sel_motivo.value == 'Motivo' || sel_motivo.value == '' || sel_tipo.value == 'Tipo Usuario' || sel_destinatario.value == 'Destinatario' || msg.value == ''){alert('DEBE SELECCIONAR TODAS LAS OPCIONES...');return}
                     if (!$('#check1').is(':checked')) {
                         alert("DEBE SELECCIONAR UN ESTADO DEL MENSAJE...")
                         return
@@ -225,7 +231,7 @@
                         user_id_destino:sel_destinatario.value,
                         motivo:sel_motivo.options[sel_motivo.selectedIndex].text,
                         motivo_id:'',
-                        msg:msg.value,
+                        msg:{msg:msg.value, type:'ADMIN',name:name.innerHTML},
                         area_id : sel_motivo.value,
                         type_user_emisor:'ADMIN',
                         user_id_emisor:String(1)
@@ -239,7 +245,8 @@
                     .then(data => {
                         $('#bs-example-modal-lg').modal('hide')
                         if(data.status == 200){
-                            loadTable('/api-msg', 'GET')
+                            //loadTable('/api-msg', 'GET')
+                            window.location.reload()
                             toastr["success"]("El Chat fue iniciado correctamente...")
                         }
                         if(data.status == 400){
@@ -257,14 +264,6 @@
                     check1.checked = true
                 }
             
-               
-                //Selecciona elementos en tabla Ver
-                $('#basic-datatable tbody').on('click', '.ver2', function () {
-                    alert(8)
-                    //cliente = $(this).parents("tr").find("td").eq(0).text()
-                    //let fecha = $(this).parents("tr").find("td").eq(1).text()
-                    //window.location.href = '/detalle-relevamiento' + cliente + '&' + fecha
-                })
 
                 let chat;
                 $('#basic-datatable tbody').on('click', '.ver', function () {
@@ -275,24 +274,7 @@
             
             })//end ready
 
-            function loadMotivos(url,sel){
-                for (let i = sel.options.length; i >= 0; i--) {
-                    sel.remove(i);
-                }
-                fetch(url, {
-                    method:'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                      }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    cargaSelect3('motivo',data)
-                    //console.log(data)
-                })
-                .catch(e => console.log(e))
-            }
+            
             
             function cargaSelect(elem, categorias){
                 select = document.getElementById(elem)
@@ -320,7 +302,7 @@
                 for (var i = 0; i<categorias.length; i++){
                     var opt = document.createElement('option');
                     opt.value = categorias[i].Codigo_Cliente;
-                    opt.innerHTML = categorias[i].Nombre;
+                    opt.innerHTML = categorias[i].Nombre + ':   ' + categorias[i].Direccion
                     select.appendChild(opt);     
                 }
                 
@@ -328,10 +310,11 @@
             
             function cargaSelect3(elem, categorias){
                 select = document.getElementById(elem)
-                let opt2 = document.createElement('option');
+                
+                /*let opt2 = document.createElement('option');
                     opt2.value = 'motivo'
                     opt2.innerHTML = 'motivo'
-                    select.appendChild(opt2);
+                    select.appendChild(opt2);*/
                 for (var i = 0; i<categorias.length; i++){
                     var opt = document.createElement('option');
                     opt.value = categorias[i].area_id;
@@ -380,6 +363,24 @@
                 .catch(e => console.log(e))
             }//end
 
+            function loadMotivos(url,sel){
+                for (let i = sel.options.length; i >= 0; i--) {
+                    sel.remove(i);
+                }
+                fetch(url, {
+                    method:'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    cargaSelect3('motivo',data)
+                })
+                .catch(e => console.log(e))
+            }
+            
             function limpiarAll(){
                 $('#cliente').val('Cliente')
                 $('#motivo').val('Motivo')
@@ -450,4 +451,8 @@
                 });//end table
                 tabla.draw()
             }//end loadtable
+        
+            function reload(){
+                location.reload()
+            }
         </script>
