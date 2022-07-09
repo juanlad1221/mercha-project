@@ -47,7 +47,7 @@ router.post("/msg-new-movil", async (req, res) => {
                                 name:req.body.name_origen,type:req.body.type_origen})
                             nuevoChat.save()
                             console.log('Se grabó nuevo correctamente...')
-                            let allChats = await Chats.where({})
+                            let allChats = await Chats.where({Type_user_emisor:req.body.type_origen, User_id_emisor:String(req.body.id_origen)}).sort({ status: 1 })
                             if(allChats){
                                 res.status(200).json({ status: 200, allChats })
                             }      
