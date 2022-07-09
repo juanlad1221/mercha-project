@@ -164,8 +164,9 @@
                         //{"data": "_id" },
                         { "data": "status" ,
                         "render": function(data, type, row){
+                            console.log(row)
                             if (row.status == 'activo' || row.status == 'pendiente') {
-                                if(row.cant_msg != 0){
+                                if(row.cant_msg != 0 && row.Type_user_destino == 'ADMIN'){
                                     return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver color-1" aria-hidden="true"></i> </div>`
                                 }
                                 return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver" aria-hidden="true"></i></div>`

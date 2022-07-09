@@ -26,11 +26,6 @@ const Survey = require("../schemas/Survey")
 const chats = require("../schemas/Chats");
 const Chats = require("../schemas/Chats");
 const Areas = require('../schemas/Area')
-/*const { type } = require("os");
-const { route } = require("./upload.movil.controller");
-const { clearScreenDown } = require("readline");
-const { collection } = require("../schemas/Users");
-const e = require("express");*/
 
 //Time
 let currentTime = new Date();
@@ -1316,27 +1311,6 @@ router.post('/upload/objetives', isAuthenticated, upload.single('file'), async (
 
 
 })//end post
-
-/*router.get('/api-objetivos', async (req, res) => {
-  //traigo datos de la bd
-  let objetivos = await Objetives.where({ active: true })
-
-  let data = { data: objetivos }
-  res.status(200).json(data)
-})//end get
-
-router.get('/api-admin-relevacion', async (req, res) => {
-  //traigo datos de la bd
-  let objetivos = await Survey.where({ active: true })
-
-  //let data = { data: objetivos }
-  res.status(200).json(data)
-})//end get*/
-
-
-
-
-
 
 
 

@@ -40,6 +40,7 @@ app.use('/api', require('./controllers/allListUser.movil.controller'))
 app.use('/api', require('./controllers/upload.movil.controller'))
 app.use('/api', require('./controllers/merchalist.movil.controller'))
 app.use('/api', require('./controllers/list.movil.controller'))
+app.use('/api', require('./controllers/msg.controller'))
 //rutas web
 app.use('/', require('./controllers/rutas.web'))
 
