@@ -37,7 +37,7 @@ router.post("/msg-new-movil", async (req, res) => {
                             Area_id: req.body.motivo.area_id,
                             Type_user_emisor:req.body.type_origen,
                             User_id_emisor: req.body.id_origen,
-                            Date: new Date(),
+                            Date: req.body.date,
                             status: req.body.status
                         }
 

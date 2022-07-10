@@ -529,6 +529,7 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
       let Area_id = req.body.area_id
       let User_id_emisor = req.body.user_id_emisor
       let Type_user_emisor = req.body.type_user_emisor
+      let Date = req.body.Date
       
       //msg obj para almacenar
       let obj = {
@@ -543,7 +544,7 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
         User_id_emisor,
         Type_user_emisor,
         status: 'pendiente',
-        Date: new Date(),
+        Date,
         Mensajes: req.body.msg 
       }
       
@@ -588,7 +589,9 @@ router.post('/update-msg',async (req, res) => {
         }
 
         result.status = obj.status
-        result.Mensajes.push({msg:obj.msg,type:obj.Type_user_emisor, name:user_.name})
+        result.Mensajes.push({msg:obj.msg,type:obj.Type_user_emisor, 
+          name:user_.name,Date_msg:req.body.Date})
+        //console.log(new Date())
         result.save()
         console.log('Se grabó nuevo correctamente...')
         res.status(200).json({ status: 200 })

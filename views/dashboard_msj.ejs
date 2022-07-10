@@ -161,10 +161,8 @@
                         { "className": "dt-center", "targets": "_all" },
                     ],
                     columns: [
-                        //{"data": "_id" },
                         { "data": "status" ,
                         "render": function(data, type, row){
-                            console.log(row)
                             if (row.status == 'activo' || row.status == 'pendiente') {
                                 if(row.cant_msg != 0 && row.Type_user_destino == 'ADMIN'){
                                     return `<div> <i id=${row._id} class="fa fa-eye fa-lg ver color-1" aria-hidden="true"></i> </div>`
@@ -235,7 +233,8 @@
                         msg:{msg:msg.value, type:'ADMIN',name:name.innerHTML},
                         area_id : sel_motivo.value,
                         type_user_emisor:'ADMIN',
-                        user_id_emisor:String(1)
+                        user_id_emisor:String(1),
+                        Date:new Date()
                     }
                     
                     fetch('/mensaje-nuevo',{

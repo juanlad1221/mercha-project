@@ -11,11 +11,11 @@ const chat_schema = Schema({
     Motivo_id:{type:Object},
     Area:{type:String},
     Area_id:{type:Object},
-    Type_user_emisor:{type:String},
+    Type_user_emisor:{type:String}, 
     User_id_emisor:{type:String},
     Date:{type:Date},
     status:{type:String},
-    Mensajes:[{msg:{type:String}, Date_msg:{type:Date, default:new Date()}, 
+    Mensajes:[{msg:{type:String}, Date_msg:{type:Date}, 
         leido:{type:Boolean, default:false}, name:{type:String}, 
         type:{type:String}}]
 });
