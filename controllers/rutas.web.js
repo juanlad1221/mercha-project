@@ -579,7 +579,7 @@ router.post('/update-msg',async (req, res) => {
      
       if(area && user_){
         obj.Area = area.name_area
-        obj.Date = new Date()
+        obj.Date =  req.body.Date
         
         //encuentro el chat
         let result = await Chats.findOne({_id:ObjectId(obj.id_chat)})
