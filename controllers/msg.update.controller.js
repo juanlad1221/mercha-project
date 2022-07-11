@@ -12,7 +12,7 @@ const Clients = require('../schemas/Clients')
 
 router.put("/msg-update-movil", async (req, res) => {
     if (req.body) {
-    console.log(req.body)
+    
        let data = await Chats.findOne({_id:ObjectId(req.body.dataChat.id_chat)})
        if(data.status == 'finalizado'){
         res.status(400).end
@@ -27,7 +27,11 @@ router.put("/msg-update-movil", async (req, res) => {
        let result = await data.Mensajes.push(obj)
        if(result){
         await data.save()
-        res.status(200).json({status:200})
+        let data2 = await Chats.findOne({_id:ObjectId(req.body.dataChat.id_chat)})
+        if(data2){
+            res.status(200).json({status:200,chats:data2.Mensajes})
+        }
+       
        }
 
     }//end if
