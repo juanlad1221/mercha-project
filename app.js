@@ -42,6 +42,7 @@ app.use('/api', require('./controllers/merchalist.movil.controller'))
 app.use('/api', require('./controllers/list.movil.controller'))
 app.use('/api', require('./controllers/msg.controller'))
 app.use('/api', require('./controllers/msg.update.controller'))
+app.use('/api', require('./controllers/msg.detail.chat.controller'))
 //rutas web
 app.use('/', require('./controllers/rutas.web'))
 
