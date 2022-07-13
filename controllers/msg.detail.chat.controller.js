@@ -19,22 +19,24 @@ router.post("/msg-detail-movil", async (req, res) => {
 
             if(e.type == type){
                 let obj = {
-                    _id: e._id,
+                    //_id: e._id,
+                    _id:Math.round(Math.random() * 1000000),
                     text: e.msg,
                     createdAt: new Date(e.Date_msg),
                     user: {
-                      _id: 2,
+                      _id: 1,
                       name: e.name
                     },
                   }
                 arr.push(obj)
             }else{
                 let obj = {
-                    _id: e._id,
+                    //_id: e._id,
+                    _id:Math.round(Math.random() * 1000000),
                     text: e.msg,
                     createdAt: new Date(e.Date_msg),
                     user: {
-                      _id: 1,
+                      _id: 2,
                       name: e.name
                     },
                   }

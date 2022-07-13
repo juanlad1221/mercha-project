@@ -12,7 +12,7 @@ const Clients = require('../schemas/Clients')
 
 router.put("/msg-update-movil", async (req, res) => {
     if (req.body) {
-    
+        console.log(req.body)
        let data = await Chats.findOne({_id:ObjectId(req.body.dataChat.id_chat)})
        if(data.status == 'finalizado'){
         res.status(400).end
