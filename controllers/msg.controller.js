@@ -12,7 +12,7 @@ const Clients = require('../schemas/Clients')
 
 router.post("/msg-new-movil", async (req, res) => {
     if (req.body) {
-        
+        console.log(req.body)
         let result3 = await Chats.where({})
         let result2 = await Clients.findOne({Codigo_Cliente:String(req.body.id_cliente)})
         let data = await Area.findById({ _id: ObjectId(req.body.motivo.area_id) })
@@ -44,7 +44,7 @@ router.post("/msg-new-movil", async (req, res) => {
                         let nuevoChat = await Chats.create(obj)
                         if(nuevoChat){
                             nuevoChat.Mensajes.push({msg:req.body.msg, 
-                                name:req.body.name_origen,type:req.body.type_origen})
+                                name:req.body.name_origen,type:req.body.type_origen,Date_msg:req.body.date})
                             nuevoChat.save()
                             console.log('Se grabó nuevo correctamente...')
                             let allChats = await Chats.where({Type_user_emisor:req.body.type_origen, User_id_emisor:String(req.body.id_origen)}).sort({ status: 1 })
