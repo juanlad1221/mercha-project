@@ -24,8 +24,9 @@ router.put("/msg-update-movil", async (req, res) => {
         type:req.body.dataChat.type_origen
        }
 
+       data.status = req.body.status
        let result = await data.Mensajes.push(obj)
-       if(result){
+       if(result && data){
         await data.save()
         let data2 = await Chats.findOne({_id:ObjectId(req.body.dataChat.id_chat)})
         if(data2){
