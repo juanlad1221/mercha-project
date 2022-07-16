@@ -1,6 +1,8 @@
 const express = require("express");
+const { find } = require("../schemas/Chats");
 const router = express.Router()
-//const { PrismaClient } = require('@prisma/client')
+const { personalFilter } = require('./utils/filters')
+
 
 //models
 const Chats = require('../schemas/Chats')
@@ -14,10 +16,12 @@ let mounth = currentTime.getMonth() + 1
 router.post("/chats-movil", async (req, res) => {
     try {
         const { id, type } = req.body
-        
-        let allChats = await Chats.where({Type_user_emisor:type, User_id_emisor:String(id)}).sort({ status: 1 })
-        if(allChats ){
-            res.status(200).json(allChats)
+        console.log(req.body)
+        let allChats = await Chats.where({}).sort({status:1})
+        let misChats = personalFilter('User_id_emisor',String(id),'Type_user_emisor',type,'User_id_destino',String(id),'Type_user_destino',type,allChats)
+        if(misChats ){              
+            //console.log(allChats)
+            res.status(200).json(misChats)
         }    
        
     } catch (error) {

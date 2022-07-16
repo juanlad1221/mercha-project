@@ -223,6 +223,7 @@
                     }
 
                     //armo data a enviar
+                    let fechaYHora = new Date()
                     let obj = {
                         codigo_cliente:sel_cliente.options[sel_cliente.selectedIndex].value,
                         nombre:sel_cliente.options[sel_cliente.selectedIndex].text,
@@ -230,11 +231,12 @@
                         user_id_destino:sel_destinatario.value,
                         motivo:sel_motivo.options[sel_motivo.selectedIndex].text,
                         motivo_id:'',
-                        msg:{msg:msg.value, type:'ADMIN',name:name.innerHTML},
+                        msg:{msg:msg.value, type:'ADMIN',name:name.innerHTML,Date_msg:fechaYHora},
                         area_id : sel_motivo.value,
                         type_user_emisor:'ADMIN',
                         user_id_emisor:String(1),
-                        Date:new Date()
+                        status:'pendiente',
+                        Date:fechaYHora
                     }
                     
                     fetch('/mensaje-nuevo',{

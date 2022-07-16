@@ -113,6 +113,10 @@ const filterByTwoKeyOR = (key1,v1,key2,v2,data) => {
   return data.filter(function (v){return v[key1] == v1 || v[key2] == v2})
 }
 
+const personalFilter = (key1,v1,key2,v2,key3,v3,key4,v4,data) => {
+  return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 || v[key3] == v3 && v[key4] == v4})
+}
+
   module.exports = {
     base,
     objMes,
@@ -128,5 +132,6 @@ const filterByTwoKeyOR = (key1,v1,key2,v2,data) => {
     filterSpecial,
     filterCuntNoObjetive,
     filterByThreeKeyOR,
-    filterByTwoKeyOR
+    filterByTwoKeyOR,
+    personalFilter
   }
