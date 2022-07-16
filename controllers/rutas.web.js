@@ -39,7 +39,8 @@ router.get('', function (req, res) {
 
 
 router.get('/dashboard', isAuthenticated, async function (req, res) {
-  global.all_users = await Users.where({})
+  global.all_users = await Users.find({})
+  console.log('first', global.all_users)
   res.render('../views/dashboard', { user: req.user.name })
 })//end get
 
@@ -798,7 +799,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
         
           if (all_users && surveys) {
             let arr = []
-
+            console.log('po',all_users)
             all_users.forEach(e => {
               if (e.type != 'ADMIN') {
                 let obj = {}
@@ -865,6 +866,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
             })//end for
 
             let data = { data: arr }
+            console.log(data)
             res.status(200).json(data)
           }
           break
