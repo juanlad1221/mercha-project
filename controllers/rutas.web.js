@@ -778,7 +778,7 @@ router.get('/apis', async (req, res) => {
 
 router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
   if (req.body) {
-    console.log(req.body)
+    
     if (req.body.mes) {
       let año_solo = new Date(req.body.mes).getFullYear()
       let oneDate = moment(req.body.mes, 'DD-MM-YYYY')

@@ -117,6 +117,34 @@ const personalFilter = (key1,v1,key2,v2,key3,v3,key4,v4,data) => {
   return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 || v[key3] == v3 && v[key4] == v4})
 }
 
+const personalFliter2 = (f1,f2,data) => {
+  //return data.filter(function (v){v.createdAt >= f1 && v.createdAt <= f2 && v.Relevado == true})
+  let arr = []
+  let c = 0
+  data.forEach(e => {
+      if(e.createdAt >= f1 && e.createdAt <= f2 && e.Relevado == true){
+        c = c + 1
+      }
+  })
+  return c
+}
+
+const personalFliter4 = (f1,f2,data) => {
+  let arr = []
+  let c = 0
+  data.forEach(e => {
+      if(e.Date >= f1 && e.Date <= f2){
+        c = c + 1
+      }
+  })
+  return c
+}
+
+
+const personalFilter3 = (key1,v1,key2,v2,key3,v3,data) => {
+  return data.filter(function (v){return v[key1] != v1 && v[key2] != v2 && v[key3] == v3})
+}
+
   module.exports = {
     base,
     objMes,
@@ -133,5 +161,8 @@ const personalFilter = (key1,v1,key2,v2,key3,v3,key4,v4,data) => {
     filterCuntNoObjetive,
     filterByThreeKeyOR,
     filterByTwoKeyOR,
-    personalFilter
+    personalFilter,
+    personalFliter2,
+    personalFilter3,
+    personalFliter4
   }

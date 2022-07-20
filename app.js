@@ -43,6 +43,8 @@ app.use('/api', require('./controllers/list.movil.controller'))
 app.use('/api', require('./controllers/msg.controller'))
 app.use('/api', require('./controllers/msg.update.controller'))
 app.use('/api', require('./controllers/msg.detail.chat.controller'))
+app.use('/api', require('./controllers/dash.movil.controller'))
+app.use('/api', require('./controllers/dash.movil.controller2'))
 //rutas web
 app.use('/', require('./controllers/rutas.web'))
 
