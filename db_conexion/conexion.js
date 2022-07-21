@@ -9,7 +9,12 @@ const mongoose = require('mongoose');
 })*/
 
 
-mongoose.connect('mongodb://164.92.118.90:27017/db_survey',{useNewUrlParser: true},(err, res)=>{
+/*mongoose.connect('mongodb://164.92.118.90:27017/db_survey',{useNewUrlParser: true},(err, res)=>{
+	if(err){console.log('Error: En consulta...',err)};
+	console.log('Data Base ok...');
+})*/
+
+mongoose.connect('mongodb://localhost:27017/db_survey',{useNewUrlParser: true},(err, res)=>{
 	if(err){console.log('Error: En consulta...',err)};
 	console.log('Data Base ok...');
 })
