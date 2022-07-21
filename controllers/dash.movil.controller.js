@@ -14,13 +14,17 @@ let mounth = currentTime.getMonth() + 1
 
 router.post("/dash-movil", async (req, res) => {
     if (req.body) {
+        console.log(req.body)
         let date = new Date(req.body.fecha)
         let f1 = new Date(date.getFullYear(), date.getMonth(), 1)
         let f2 = new Date(date.getFullYear(), date.getMonth() + 1, 0)
         
         if (req.body.type == 'MERCHA') {
+            
             let surveys = await Survey.where({type: req.body.type, Merchandising:Number(req.body.id) })
+            console.log('hola', surveys.length)
             if (surveys) {
+                
                 let totalRelevado = personalFliter2(f1,f2, surveys)
                 let aRelevar = filterByTwoKey('Año',year,'Mes',mounth,surveys).length
                 let objetivosMes = filterByThreeKey('Año',year,'Mes',mounth,'Relevado',true,surveys).length
