@@ -32,20 +32,22 @@ router.post("/dash-movil", async (req, res) => {
                 
                 if (ultimo_.length == 0) {
                     let fecha_ultimo = 'no data'
-                    let ultimo_relevamiento = { Codigo_Cliente: 'no data', Nombre: 'no data' }
+                    let codigo_cliente= 'no data'
+                    let nombre= 'no data' 
                     res.status(200).json({
                         totalRelevado,
                         aRelevar, objetivosMes,
-                        avance, fecha_ultimo, ultimo_relevamiento
+                        avance, fecha_ultimo, codigo_cliente,nombre
                     })
                 } else {
                     let ultimo = ultimo_.sort(SortArrayDesc)[0]
                     let fecha_ultimo = ultimo.Date
-                    let ultimo_relevamiento = { Codigo_Cliente: ultimo.Codigo_Cliente, Nombre: ultimo.Nombre }
+                    let codigo_cliente = ultimo.Codigo_Cliente
+                    let nombre = ultimo.Nombre 
                     res.status(200).json({
                         totalRelevado,
                         aRelevar, objetivosMes,
-                        avance, fecha_ultimo, ultimo_relevamiento
+                        avance, fecha_ultimo, codigo_cliente,nombre
                     })
                 }
             }
@@ -61,20 +63,22 @@ router.post("/dash-movil", async (req, res) => {
 
                 if (ultimo_.length == 0) {
                     let fecha_ultimo = 'no data'
-                    let ultimo_relevamiento = { Codigo_Cliente: 'no data', Nombre: 'no data' }
+                    let codigo_cliente= 'no data'
+                    let nombre= 'no data' 
                     res.status(200).json({
                         totalRelevado,
                         aRelevar, objetivosMes,
-                        avance, fecha_ultimo, ultimo_relevamiento
+                        avance, fecha_ultimo, codigo_cliente,nombre
                     })
                 } else {
                     let ultimo = ultimo_.sort(SortArrayDesc)[0]
                     let fecha_ultimo = ultimo.Date
-                    let ultimo_relevamiento = { Codigo_Cliente: ultimo.Codigo_Cliente, Nombre: ultimo.Nombre }
+                    let codigo_cliente = ultimo.Codigo_Cliente
+                    let nombre = ultimo.Nombre 
                     res.status(200).json({
                         totalRelevado,
                         aRelevar, objetivosMes,
-                        avance, fecha_ultimo, ultimo_relevamiento
+                        avance, fecha_ultimo, codigo_cliente,nombre
                     })
                 }
             }
