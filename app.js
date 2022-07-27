@@ -55,8 +55,9 @@ require('./db_conexion/conexion');
 
 
 //Server
+let host = '164.92.118.90'
 app.set('port', process.env.PORT || 3001);
-app.listen(app.get('port'), () => {
+app.listen(app.get('port'), host,() => {
     console.log(`Server corriendo en ${app.get('port')}...`)
 
 })
