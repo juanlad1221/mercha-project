@@ -1,0 +1,134 @@
+<%- include('block_inicio')%>
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li id="link-previo" class="breadcrumb-item"><a href=""></a></li>
+                        <li id="link-actual" class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Dashboard 2</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <!--contenido-->
+    <div class=" row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-4">Donut Chart 2</h4>
+
+                    <div>
+                        <div class="mt-3 chartjs-chart" >
+                            <canvas id="myChart" ></canvas>
+                        </div>
+                    </div>
+
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </div><!-- end col-->
+
+
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-4">Donut Chart</h4>
+
+                    <div>
+                        <div class="mt-3 chartjs-chart" >
+                            <canvas id="myChart2" width="250"></canvas>
+                        </div>
+                    </div>
+
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+
+    <%- include('block_end')%>
+
+        <style>
+            .bt {
+                border: 1px solid blue;
+            }
+        </style>
+
+        <script>
+            window.onload = () => {
+                let title = document.getElementsByName('page-title')
+                localStorage.setItem('page', title)
+            }//end
+
+          
+            const ctx = document.getElementById('myChart');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            
+            
+            const ctx2 = document.getElementById('myChart2');
+            var myChart2 = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                  labels: ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN'],
+                  datasets: [{
+                    //label: '# of Tomatoes',
+                    data: [12, 19, 3, 5],
+                    backgroundColor: [
+                      'rgba(255, 99, 132, 0.5)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                      'rgba(255,99,132,1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                  }]
+                },
+                options: {
+                     //cutoutPercentage: 40,
+                  responsive: false,
+              
+                }
+              });
+        </script>

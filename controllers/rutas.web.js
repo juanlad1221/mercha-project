@@ -40,8 +40,8 @@ router.get('', function (req, res) {
 
 router.get('/dashboard', isAuthenticated, async function (req, res) {
   global.all_users = await Users.find({})
-  console.log('first', global.all_users)
-  res.render('../views/dashboard', { user: req.user.name })
+ 
+  res.render('../views/dashboard2', { user: req.user.name })
 })//end get
 
 

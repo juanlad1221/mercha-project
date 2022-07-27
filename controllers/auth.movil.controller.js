@@ -54,8 +54,8 @@ router.post("/auth-movil", async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({msg:'Error in Server...'})
+        console.log('error',error)
+        res.status(500).json({msg:error})
     }
 })//end
 
