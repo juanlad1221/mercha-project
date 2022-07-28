@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const chat_schema = Schema({
     Codigo_Cliente: { type: String },
     Nombre: { type: String },
+    Direccion: { type: String },
     Type_user_destino: { type: String },
     User_id_destino: { type: String },
     Motivo:{type:String},

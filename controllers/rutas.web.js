@@ -550,11 +550,15 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
       }
       
       let result = await Chats.where({})
-      if (result) {
+      let dataCliente = await Clients.findOne({Codigo_Cliente:req.body.codigo_cliente})
+
+
+      if (result && dataCliente) {
         let existe_pen = filterByFourKey('Codigo_Cliente', Codigo_Cliente, 'User_id_destino', User_id_destino, 'User_id_emisor', User_id_emisor, 'status', 'pendiente', result).length
         let existe_act = filterByFourKey('Codigo_Cliente', Codigo_Cliente, 'User_id_destino', User_id_destino, 'User_id_emisor', User_id_emisor, 'status', 'activo', result).length
 
         if (existe_pen == 0 && existe_act == 0) {
+          obj.Direccion = dataCliente.Direccion
           nuevoChat = await Chats.create(obj)
           console.log('Se grabó nuevo correctamente...')
           res.status(200).json({ status: 200 })
@@ -563,8 +567,7 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
           res.status(400).json({ status: 400 })
         }
       }
-      //console.log(existe_act,'jjjj')
-
+      
     }//ens body
   } catch (error) {
     console.log('Error in post: /mensaje-nuevo...')
