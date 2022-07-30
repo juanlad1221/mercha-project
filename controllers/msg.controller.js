@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router()
 let ObjectId = require('mongoose').Types.ObjectId;
-const { filterByOneKey, filterByFourKey } = require('../controllers/utils/filters')
+const { filterByOneKey, filterByFourKey, filterByTwoKey } = require('../controllers/utils/filters')
 
 
 //models
@@ -49,9 +49,11 @@ router.post("/msg-new-movil", async (req, res) => {
                                 name:req.body.name_origen,type:req.body.type_origen,Date_msg:req.body.date})
                             nuevoChat.save()
                             console.log('Se grabó nuevo correctamente...')
-                            let allChats = await Chats.where({Type_user_emisor:req.body.type_origen, User_id_emisor:String(req.body.id_origen)}).sort({ status: 1 })
-                            if(allChats){
-                                res.status(200).json({ status: 200, allChats })
+                            
+                            let myChats = filterByTwoKey('Type_user_emisor',req.body.type_origen,'User_id_emisor',String(req.body.id_origen),result3)
+                            let myChats2 = filterByTwoKey('Type_user_destino',req.body.type_origen,'User_id_destino',String(req.body.id_origen),result3)
+                            if(myChats && myChats2){
+                                res.status(200).json({ status: 200, allChats:myChats.concat(myChats2) })
                             }      
                         }
                         

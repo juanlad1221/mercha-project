@@ -19,8 +19,8 @@ router.post("/msg-detail-movil", async (req, res) => {
 
             if(e.type == type){
                 let obj = {
-                    //_id: e._id,
-                    _id:Math.round(Math.random() * 1000000),
+                    _id: e._id,
+                    //_id:Math.round(Math.random() * 1000000),
                     text: e.msg,
                     createdAt: new Date(e.Date_msg),
                     user: {
@@ -31,8 +31,8 @@ router.post("/msg-detail-movil", async (req, res) => {
                 arr.push(obj)
             }else{
                 let obj = {
-                    //_id: e._id,
-                    _id:Math.round(Math.random() * 1000000),
+                    _id: e._id,
+                    //_id:Math.round(Math.random() * 1000000),
                     text: e.msg,
                     createdAt: new Date(e.Date_msg),
                     user: {
@@ -47,8 +47,6 @@ router.post("/msg-detail-movil", async (req, res) => {
         res.status(200).json(arr)
     }//end if
 })//end
-
-
 
 
 module.exports = router
