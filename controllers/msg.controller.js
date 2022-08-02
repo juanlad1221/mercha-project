@@ -17,7 +17,7 @@ router.post("/msg-new-movil", async (req, res) => {
         let result2 = await Clients.findOne({ Codigo_Cliente: String(req.body.id_cliente) })
         let data = await Area.findById({ _id: ObjectId(req.body.motivo.area_id) })
 
-        if (data && result2) {
+        if (data && result2 && result3) {
             let result = filterByOneKey('name_motivo', req.body.motivo.name_motivo, data.motivo)
             if (result.length == 1) {
 
