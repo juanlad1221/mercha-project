@@ -19,6 +19,7 @@ router.post("/chats-movil", async (req, res) => {
         
         let allChats = await Chats.where({})
         let misChats = personalFilter('User_id_emisor',String(id),'Type_user_emisor',type,'User_id_destino',String(id),'Type_user_destino',type,allChats)
+
         if(misChats ){              
             res.status(200).json(misChats)
         }    

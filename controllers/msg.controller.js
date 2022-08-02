@@ -49,7 +49,8 @@ router.post("/msg-new-movil", async (req, res) => {
                                 msg: req.body.msg,
                                 name: req.body.name_origen, type: req.body.type_origen, Date_msg: req.body.date
                             })
-                            let msg_nuevo = nuevoChat.save()
+                            let msg_nuevo = await nuevoChat.save()
+
                             if (msg_nuevo) {
                                 console.log('Se grabó nuevo correctamente...')
 
@@ -58,6 +59,7 @@ router.post("/msg-new-movil", async (req, res) => {
                                     let myChats = filterByTwoKey('Type_user_emisor', req.body.type_origen, 'User_id_emisor', String(req.body.id_origen), result)
                                     let myChats2 = filterByTwoKey('Type_user_destino', req.body.type_origen, 'User_id_destino', String(req.body.id_origen), result)
                                     if (myChats && myChats2) {
+                                        //console.log(myChats.concat(myChats2))
                                         res.status(200).json({ status: 200, allChats: myChats.concat(myChats2) })
                                     }
                                 }
