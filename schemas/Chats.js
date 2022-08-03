@@ -15,6 +15,7 @@ const chat_schema = Schema({
     Type_user_emisor:{type:String}, 
     User_id_emisor:{type:String},
     Date:{type:Date},
+    Asunto:{type:String || null}
     status:{type:String},
     Mensajes:[{msg:{type:String}, Date_msg:{type:Date}, 
         leido:{type:Boolean, default:false}, name:{type:String}, 

@@ -40,6 +40,7 @@ router.post("/msg-new-movil", async (req, res) => {
                             Type_user_emisor: req.body.type_origen,
                             User_id_emisor: req.body.id_origen,
                             Date: req.body.date,
+                            Asunto:req.body.asunto
                             status: req.body.status
                         }
 
