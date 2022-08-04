@@ -22,7 +22,7 @@ router.post("/list-movil", async (req, res) => {
 
         if (type == 'MERCHA') {
             let clientes = await Clients.where({ Merchandising: id })
-            let survey = await Survey.where({ Merchandising: id, type: type })
+            let survey = await Survey.where({ Merchandising: id, type: type,Año:year,Mes:mounth })
 
             let arr = []
             clientes.forEach(e => {
