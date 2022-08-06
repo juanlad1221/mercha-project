@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router()
 let ObjectId = require('mongoose').Types.ObjectId;
-const { filterByOneKey, filterByFourKey } = require('./utils/filters')
+const { filterByOneKey, filterByFourKey,personalFilter } = require('./utils/filters')
 
 
 //models
