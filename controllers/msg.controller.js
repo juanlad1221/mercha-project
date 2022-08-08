@@ -12,7 +12,7 @@ const Clients = require('../schemas/Clients')
 
 router.post("/msg-new-movil", async (req, res) => {
     if (req.body) {
-
+        console.log(req.body)
         let result3 = await Chats.where({})
         let result2 = await Clients.findOne({ Codigo_Cliente: String(req.body.id_cliente) })
         let data = await Area.findById({ _id: ObjectId(req.body.motivo.area_id) })

@@ -25,10 +25,8 @@ router.put("/msg-update-movil", async (req, res) => {
       Date_msg: new Date(req.body.date_msg),
       name: req.body.name,
       type: req.body.dataChat.type_origen,
-      //status: req.body.status
     }
 
-    //data.status = req.body.status
     let result = await data.Mensajes.push(obj)
     if (result && data) {
       if (req.body.status == 'terminado') {
