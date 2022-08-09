@@ -21,7 +21,7 @@ function SortArray(x, y){
 
 router.post("/msg-new-movil", async (req, res) => {
     if (req.body) {
-        console.log(req.body)
+        
         let result3 = await Chats.where({})
         let result2 = await Clients.findOne({ Codigo_Cliente: String(req.body.id_cliente) })
         let data = await Area.findById({ _id: ObjectId(req.body.motivo.area_id) })
@@ -71,6 +71,7 @@ router.post("/msg-new-movil", async (req, res) => {
                                     if (myChats && myChats2) {
                                         //console.log(myChats.concat(myChats2))
                                         res.status(200).json({ status: 200, allChats: myChats.concat(myChats2) })
+                                    }
                                 }
 
 
@@ -89,8 +90,8 @@ router.post("/msg-new-movil", async (req, res) => {
             }
         }
 
-    }//end if
-})//end
+    }//end if body
+})//end post
 
 
 
