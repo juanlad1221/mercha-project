@@ -1,13 +1,22 @@
 const express = require("express");
 const router = express.Router()
 let ObjectId = require('mongoose').Types.ObjectId;
-const { filterByOneKey, filterByFourKey, filterByTwoKey } = require('../controllers/utils/filters')
+const { filterByOneKey, filterByFourKey, filterByTwoKey,personalFilter } = require('../controllers/utils/filters')
 
 
 //models
 const Area = require('../schemas/Area')
 const Chats = require('../schemas/Chats')
 const Clients = require('../schemas/Clients')
+
+function SortArray(x, y){
+    if (new Date(x.Mensajes[indice(x.Mensajes)].Date_msg) > new Date(y.Mensajes[indice(y.Mensajes)].Date_msg)) {return -1;}
+    if (new Date(x.Mensajes[indice(x.Mensajes)].Date_msg) < new Date(y.Mensajes[indice(y.Mensajes)].Date_msg)) {return 1;}
+    return 0;
+  }
+  const indice = (val) => {
+    return val.length - 1
+  }
 
 
 router.post("/msg-new-movil", async (req, res) => {
@@ -62,7 +71,6 @@ router.post("/msg-new-movil", async (req, res) => {
                                     if (myChats && myChats2) {
                                         //console.log(myChats.concat(myChats2))
                                         res.status(200).json({ status: 200, allChats: myChats.concat(myChats2) })
-                                    }
                                 }
 
 

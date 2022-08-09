@@ -14,7 +14,7 @@ let mounth = currentTime.getMonth() + 1
 
 router.post('/upload-img', async (req, res) => {
     try {
-        console.log(req.body)
+       
         if (req.body) {
             //datos del movil
             let Codigo_Cliente = String(req.body.Codigo_Cliente.trim())
@@ -28,7 +28,7 @@ router.post('/upload-img', async (req, res) => {
 
             if (req.body.Type == 'MERCHA') {
                 let existe = await Survey.exists({
-                    Codigo_Cliente: Codigo_Cliente,
+                    Codigo_Cliente: Codigo_Cliente,Año:year,Mes:mounth,
                     Merchandising: Id_user, type: 'MERCHA', Relevado: true
                 })
                 if (existe) {
@@ -37,9 +37,9 @@ router.post('/upload-img', async (req, res) => {
                 } else {
 
                     if (Objetive) {
-                        //almaceno
+                        //almaceno como objetivo
                         let update = await Survey.updateOne({
-                            Codigo_Cliente: Codigo_Cliente,
+                            Codigo_Cliente: Codigo_Cliente,Año:year,Mes:mounth,
                             Merchandising: Id_user, type: 'MERCHA'
                         }, {
                             Relevado: true,
@@ -53,10 +53,10 @@ router.post('/upload-img', async (req, res) => {
                             res.status(200).json({ msg: 'Envio Exitoso...', status: 200, type: req.body.Type })
                         } else {
                             console.log('No se pudo Actualizar...')
-                            res.status(400).json({ msg: 'Envio Exitoso...', status: 400, type: req.body.Type })
+                            res.status(400).json({ msg: 'Error', status: 400, type: req.body.Type })
                         }
                     } else {
-                        //Si objetive s false
+                        //almaceno como no objetive
                         dataClient = await Clients.findOne({ Codigo_Cliente: Codigo_Cliente })
                         if (dataClient) {
                             let obj = {

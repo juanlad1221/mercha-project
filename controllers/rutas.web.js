@@ -593,8 +593,8 @@ router.post('/update-msg',async (req, res) => {
         }
 
         result.status = obj.status
-        result.Mensajes.push({msg:obj.msg,type:obj.Type_user_emisor, 
-          name:user_.name,Date_msg:req.body.Date})
+        result.Mensajes.push({msg:obj.msg, type:obj.Type_user_emisor, 
+          name:user_.name, Date_msg:req.body.Date, leido:false})
         //console.log(new Date())
         result.save()
         console.log('Se grabó nuevo correctamente...')
