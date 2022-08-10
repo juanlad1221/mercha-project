@@ -24,6 +24,7 @@ router.put("/msg-update-movil", async (req, res) => {
       msg: req.body.msg,
       Date_msg: new Date(req.body.date_msg),
       name: req.body.name,
+      leido:req.body.leido,
       type: req.body.dataChat.type_origen,
     }
 

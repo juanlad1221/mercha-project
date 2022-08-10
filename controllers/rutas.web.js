@@ -12,7 +12,7 @@ const { base, objMes, relevados,
   getMerchaReleved, getSellerReleved,
   getDataMercha, filterByOneKey, filterByThreeKey,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
-  filterSpecial, filterCuntNoObjetive,filterByThreeKeyOR,
+  filterSpecial, filterCuntNoObjetive, filterByThreeKeyOR,
   filterByTwoKeyOR } = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
@@ -40,7 +40,7 @@ router.get('', function (req, res) {
 
 router.get('/dashboard', isAuthenticated, async function (req, res) {
   global.all_users = await Users.find({})
- 
+
   res.render('../views/dashboard', { user: req.user.name })
 })//end get
 
@@ -263,7 +263,7 @@ router.get('/procesar-objetivos', isAuthenticated, async (req, res) => {
           arr.push(obj2)
 
         })//end
-        
+
         //Inserto los objetivos del año y mes
         let status_insert_survey = await Survey.insertMany(arr)
         if (status_insert_survey) {
@@ -486,17 +486,17 @@ router.get('/mensajes-detalle:chat', isAuthenticated, async (req, res) => {
   let user_id = req.user.id
   let id_chat = req.params.chat
 
-  let data = await Chats.findOne({_id:ObjectId(id_chat)})
-  if(data){
-    data.Mensajes.forEach(e =>{
-      if(!e.leido){
+  let data = await Chats.findOne({ _id: ObjectId(id_chat) })
+  if (data) {
+    data.Mensajes.forEach(e => {
+      if (!e.leido) {
         e.leido = true
       }
     })//end
     data.save()
   }
-  
-    res.render('../views/msg_detalle', { user,id_chat,data, user_id })
+
+  res.render('../views/msg_detalle', { user, id_chat, data, user_id })
 })//end get
 
 router.get('/mensajes', isAuthenticated, async (req, res) => {
@@ -506,20 +506,21 @@ router.get('/mensajes', isAuthenticated, async (req, res) => {
 })//end get
 
 router.post('/api-chat', isAuthenticated, async (req, res) => {
-if(req.body){
-  let id = req.body.id_chat
+  if (req.body) {
+    let id = req.body.id_chat
 
-  let data = await Chats.findOne({_id:ObjectId(id)})
-  if(data){
-    res.status(200).json(data)
+    let data = await Chats.findOne({ _id: ObjectId(id) })
+    if (data) {
+      res.status(200).json(data)
+    }
   }
-}
   console.log(req.body)
 })//end get
 
 router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
   try {
     if (req.body) {
+      console.log(req.body)
       let Codigo_Cliente = req.body.codigo_cliente
       let Nombre = req.body.nombre
       let Type_user_destino = req.body.type_user_destino
@@ -531,7 +532,7 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
       let User_id_emisor = req.body.user_id_emisor
       let Type_user_emisor = req.body.type_user_emisor
       let Date = req.body.Date
-      
+
       //msg obj para almacenar
       let obj = {
         Codigo_Cliente,
@@ -546,11 +547,11 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
         Type_user_emisor,
         status: 'pendiente',
         Date,
-        Mensajes: req.body.msg 
+        Mensajes: req.body.msg
       }
-      
+
       let result = await Chats.where({})
-      let dataCliente = await Clients.findOne({Codigo_Cliente:req.body.codigo_cliente})
+      let dataCliente = await Clients.findOne({ Codigo_Cliente: req.body.codigo_cliente })
 
 
       if (result && dataCliente) {
@@ -567,40 +568,52 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
           res.status(400).json({ status: 400 })
         }
       }
-      
+
     }//ens body
   } catch (error) {
     console.log('Error in post: /mensaje-nuevo...')
   }
 })//end post
 
-router.post('/update-msg',async (req, res) => {
-  
-    if (req.body) {
-      let obj = req.body
-      let area = await Areas.findOne({_id:ObjectId(req.body.Area_id)})
-      let user_ = await Users.findOne({id:Number(obj.User_id_emisor)})
-     
-      if(area && user_){
-        obj.Area = area.name_area
-        obj.Date =  req.body.Date
-        
-        //encuentro el chat
-        let result = await Chats.findOne({_id:ObjectId(obj.id_chat)})
-        if(result.status == 'terminado'){
-          console.log('ERROR: chat terminado...')
-          res.status(400).json({ status: 400 })
-        }
+router.post('/update-msg', async (req, res) => {
 
-        result.status = obj.status
-        result.Mensajes.push({msg:obj.msg, type:obj.Type_user_emisor, 
-          name:user_.name, Date_msg:req.body.Date, leido:false})
-        //console.log(new Date())
-        result.save()
+  if (req.body) {
+    console.log(req.body)
+    let obj = req.body
+    let area = await Areas.findOne({ _id: ObjectId(req.body.Area_id) })
+    let user_ = await Users.findOne({ id: Number(obj.User_id_emisor) })
+
+    if (area && user_) {
+      obj.Area = area.name_area
+      obj.Date = req.body.Date
+
+      //encuentro el chat
+      let result = await Chats.findOne({ _id: ObjectId(obj.id_chat) })
+      if (result.status == 'terminado') {
+        console.log('ERROR: chat terminado...')
+        res.status(400).json({ status: 400 })
+      }
+
+      result.status = obj.status
+      /*result.Mensajes.push({
+        msg: obj.msg, type: obj.Type_user_emisor,
+        name: user_.name, Date_msg: req.body.Date, leido: false
+      })*/
+      let obj2 = {
+        msg: obj.msg, type: obj.Type_user_emisor,
+        name: user_.name, Date_msg: req.body.Date, leido:obj.leido
+      }
+      result.Mensajes = [...result.Mensajes,obj2]
+      
+      let grabado = await result.save()
+      if (grabado) {
+        console.log(grabado)
         console.log('Se grabó nuevo correctamente...')
         res.status(200).json({ status: 200 })
-      }//area
-    }//body
+      }
+
+    }//area
+  }//body
 })//end post
 
 
@@ -627,13 +640,13 @@ router.get('/api-msg', async (req, res) => {
   try {
     let msg = await Chats.where({})
 
-    let yu = filterByThreeKeyOR('status', 'pendiente','status','activo','status','terminado', msg)
-    let arr=[]
+    let yu = filterByThreeKeyOR('status', 'pendiente', 'status', 'activo', 'status', 'terminado', msg)
+    let arr = []
     //console.log(yu)
     yu.forEach(e => {
       let obj = {}
       obj._id = e._id
-      obj.Codigo_Cliente= e.Codigo_Cliente
+      obj.Codigo_Cliente = e.Codigo_Cliente
       obj.Nombre = e.Nombre
       obj.Type_user_destino = e.Type_user_destino
       obj.User_id_destino = e.User_id_destino
@@ -645,18 +658,18 @@ router.get('/api-msg', async (req, res) => {
       obj.User_id_emisor = e.User_id_emisor
       obj.Date = e.Date
       obj.status = e.status
-      if(obj.cant_msg != 0){
+      if (obj.cant_msg != 0) {
         let yu = filterByOneKey('leido', false, e.Mensajes)
-        let cant = filterByTwoKeyOR('type', 'MERCHA','type','SELLER' ,yu).length
-        if(cant != 0){
+        let cant = filterByTwoKeyOR('type', 'MERCHA', 'type', 'SELLER', yu).length
+        if (cant != 0) {
           obj.cant_msg = cant
-        }else{
+        } else {
           obj.cant_msg = 0
-        }      
+        }
       }
       arr.push(obj)
     })
-   
+
     let data = { data: arr }
     res.status(200).json(data)
   } catch (error) {
@@ -781,7 +794,7 @@ router.get('/apis', async (req, res) => {
 
 router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
   if (req.body) {
-    
+
     if (req.body.mes) {
       let año_solo = new Date(req.body.mes).getFullYear()
       let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
@@ -790,19 +803,19 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
       let fecha = new Date(req.body.mes)
       let f1 = new Date(fecha.getFullYear(), fecha.getMonth(), 1)
       let f3 = new Date(new Date(req.body.mes).getFullYear(), new Date(req.body.mes).getMonth() + 2, 0).getDate()
-      let f2 = new Date(año_solo, (mes_solo - 1),f3)
-      
+      let f2 = new Date(año_solo, (mes_solo - 1), f3)
+
       let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
       let noObjetive = await Survey.where({ Año: null, Mes: null })
-     
+
       switch (req.body.type) {
         case 'todos':
           //let surveys = await Survey.where({ Año: año_solo, Mes: mes_solo })
           let all_users = global.all_users
-        
+
           if (all_users && surveys) {
             let arr = []
-            console.log('po',all_users)
+            console.log('po', all_users)
             all_users.forEach(e => {
               if (e.type != 'ADMIN') {
                 let obj = {}
@@ -834,9 +847,9 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
                   //%
                   obj.porcentaje = Math.round((100 * rel) / objm) || 0
                   //no objetivos
-                  obj.no_objetive = filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', Number(e.id), 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length  
+                  obj.no_objetive = filterCuntNoObjetive('type', 'MERCHA', 'Merchandising', Number(e.id), 'Relevado', true, 'createdAt', f1, 'createdAt', f2, noObjetive).length
                 }
-                
+
                 //fecha ultima
                 if (e.type == 'SELLER') {
                   let lista = getSellerReleved(e.id, surveys)
@@ -874,8 +887,8 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
           }
           break
         case 'mercha':
-          let survey_mercha = surveys 
-          let all_users_mercha = filterByOneKey('type','MERCHA',global.all_users)
+          let survey_mercha = surveys
+          let all_users_mercha = filterByOneKey('type', 'MERCHA', global.all_users)
 
           if (all_users_mercha && survey_mercha) {
             let arr2 = []
@@ -918,7 +931,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
           break
         case 'seller':
           let survey_seller = surveys
-          let all_users_seller = filterByOneKey('type','SELLER',global.all_users)
+          let all_users_seller = filterByOneKey('type', 'SELLER', global.all_users)
 
           if (all_users_seller && survey_seller) {
             let arr3 = []

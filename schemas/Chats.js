@@ -18,7 +18,7 @@ const chat_schema = Schema({
     Asunto:{type:String},
     status:{type:String},
     Mensajes:[{msg:{type:String}, Date_msg:{type:Date}, 
-        leido:{type:Boolean, default:false}, name:{type:String}, 
+        leido:{type:Boolean}, name:{type:String}, 
         type:{type:String}}]
 });
 

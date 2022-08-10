@@ -56,7 +56,7 @@ router.post("/msg-new-movil", async (req, res) => {
                         let nuevoChat = await Chats.create(obj)
                         if (nuevoChat) {
                             nuevoChat.Mensajes.push({
-                                msg: req.body.msg,
+                                msg: req.body.msg, leido:false,
                                 name: req.body.name_origen, type: req.body.type_origen, Date_msg: req.body.date
                             })
                             let msg_nuevo = await nuevoChat.save()
