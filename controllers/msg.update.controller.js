@@ -12,23 +12,24 @@ const Clients = require('../schemas/Clients')
 
 router.put("/msg-update-movil", async (req, res) => {
   if (req.body) {
-    //console.log(req.body)
-    let data = await Chats.findOne({ _id: ObjectId(req.body.dataChat.id_chat) })
+   
+    let data = await Chats.findOne({ _id: ObjectId(req.body.id_chat) })
     if (data.status == 'terminado') {
       console.log('El chat está finalizado...')
       res.status(400).end
     }
 
     //armo obj a actualizar
-    let obj = {
+    /*let obj = {
       msg: req.body.msg,
       Date_msg: new Date(req.body.date_msg),
       name: req.body.name,
       leido:req.body.leido,
-      type: req.body.dataChat.type_origen,
-    }
+      type_origen: req.body.dataChat.type_origen,
+      type_destino:req.body.dataChat.type_destino
+    }*/
 
-    let result = await data.Mensajes.push(obj)
+    let result = await data.Mensajes.push(req.body.msg)
     if (result && data) {
       if (req.body.status == 'terminado') {
         data.status = 'terminado'
@@ -44,7 +45,7 @@ router.put("/msg-update-movil", async (req, res) => {
 
       if (update) {
         let allChats = await Chats.where({})
-        let misChats = personalFilter('User_id_emisor', String(req.body.dataChat.id_origen), 'Type_user_emisor', req.body.dataChat.type_origen, 'User_id_destino', String(req.body.dataChat.id_origen), 'Type_user_destino', req.body.dataChat.type_origen, allChats)
+        let misChats = personalFilter('User_id_emisor', String(req.body.id_origen), 'Type_user_emisor', req.body.type_origen, 'User_id_destino', String(req.body.id_origen), 'Type_user_destino', req.body.type_origen, allChats)
 
         if (misChats) {
           res.status(200).json(misChats)

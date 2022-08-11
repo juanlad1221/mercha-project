@@ -13,7 +13,8 @@ const { base, objMes, relevados,
   getDataMercha, filterByOneKey, filterByThreeKey,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
   filterSpecial, filterCuntNoObjetive, filterByThreeKeyOR,
-  filterByTwoKeyOR } = require('./utils/filters')
+  filterByTwoKeyOR, 
+  personalFilter5} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 
@@ -25,7 +26,8 @@ const Objetives = require('../schemas/Objetives')
 const Survey = require("../schemas/Survey")
 const chats = require("../schemas/Chats");
 const Chats = require("../schemas/Chats");
-const Areas = require('../schemas/Area')
+const Areas = require('../schemas/Area');
+const { findOneAndUpdate } = require("../schemas/Users");
 
 //Time
 let currentTime = new Date();
@@ -487,17 +489,35 @@ router.get('/mensajes-detalle:chat', isAuthenticated, async (req, res) => {
   let id_chat = req.params.chat
 
   let data = await Chats.findOne({ _id: ObjectId(id_chat) })
+  if(data){
+    console.log(data)
+    res.render('../views/msg_detalle', { user, id_chat, data, user_id })
+  } 
+})
+
+
+router.post('/update-leido', isAuthenticated, async (req, res) => {
+  //let user = req.user.name
+  //let user_id = req.user.id
+  let id_chat = req.body.id_chat
+  console.log(id_chat)
+  let data = await Chats.findOne({ _id: ObjectId(id_chat) })
   if (data) {
+
     data.Mensajes.forEach(e => {
-      if (!e.leido) {
+      if (e.type != 'ADMIN') {
         e.leido = true
       }
     })//end
-    data.save()
-  }
 
-  res.render('../views/msg_detalle', { user, id_chat, data, user_id })
-})//end get
+    let grabado = await data.save()
+    if(grabado){
+      res.status(200).json({status:200})
+    }
+  }  
+})
+
+
 
 router.get('/mensajes', isAuthenticated, async (req, res) => {
   let user = req.user.name
@@ -520,7 +540,7 @@ router.post('/api-chat', isAuthenticated, async (req, res) => {
 router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
   try {
     if (req.body) {
-      console.log(req.body)
+     
       let Codigo_Cliente = req.body.codigo_cliente
       let Nombre = req.body.nombre
       let Type_user_destino = req.body.type_user_destino
@@ -578,41 +598,17 @@ router.post('/mensaje-nuevo', isAuthenticated, async (req, res) => {
 router.post('/update-msg', async (req, res) => {
 
   if (req.body) {
-    console.log(req.body)
-    let obj = req.body
-    let area = await Areas.findOne({ _id: ObjectId(req.body.Area_id) })
-    let user_ = await Users.findOne({ id: Number(obj.User_id_emisor) })
+   
+    let result = await Chats.findOne({ _id: ObjectId(req.body.id_chat) })
+    result.status = req.body.status
+    result.Mensajes = [...result.Mensajes, req.body.msg]
+    let grabado = await result.save()
 
-    if (area && user_) {
-      obj.Area = area.name_area
-      obj.Date = req.body.Date
+    if (grabado) {
+      console.log('Se actualizó correctamente...')
+      res.status(200).json({ status: 200 })
+    }
 
-      //encuentro el chat
-      let result = await Chats.findOne({ _id: ObjectId(obj.id_chat) })
-      if (result.status == 'terminado') {
-        console.log('ERROR: chat terminado...')
-        res.status(400).json({ status: 400 })
-      }
-
-      result.status = obj.status
-      /*result.Mensajes.push({
-        msg: obj.msg, type: obj.Type_user_emisor,
-        name: user_.name, Date_msg: req.body.Date, leido: false
-      })*/
-      let obj2 = {
-        msg: obj.msg, type: obj.Type_user_emisor,
-        name: user_.name, Date_msg: req.body.Date, leido:obj.leido
-      }
-      result.Mensajes = [...result.Mensajes,obj2]
-      
-      let grabado = await result.save()
-      if (grabado) {
-        console.log(grabado)
-        console.log('Se grabó nuevo correctamente...')
-        res.status(200).json({ status: 200 })
-      }
-
-    }//area
   }//body
 })//end post
 
@@ -640,10 +636,10 @@ router.get('/api-msg', async (req, res) => {
   try {
     let msg = await Chats.where({})
 
-    let yu = filterByThreeKeyOR('status', 'pendiente', 'status', 'activo', 'status', 'terminado', msg)
+    let fitrado = filterByThreeKeyOR('status', 'pendiente', 'status', 'activo', 'status', 'terminado', msg)
     let arr = []
-    //console.log(yu)
-    yu.forEach(e => {
+    
+    fitrado.forEach(e => {
       let obj = {}
       obj._id = e._id
       obj.Codigo_Cliente = e.Codigo_Cliente
@@ -658,20 +654,21 @@ router.get('/api-msg', async (req, res) => {
       obj.User_id_emisor = e.User_id_emisor
       obj.Date = e.Date
       obj.status = e.status
-      if (obj.cant_msg != 0) {
-        let yu = filterByOneKey('leido', false, e.Mensajes)
-        let cant = filterByTwoKeyOR('type', 'MERCHA', 'type', 'SELLER', yu).length
-        if (cant != 0) {
+     
+      let cant = filterByTwoKey('leido',false,'type_destino','ADMIN',e.Mensajes).length
+       
+      if (cant != 0) {
           obj.cant_msg = cant
-        } else {
+      } else {
           obj.cant_msg = 0
-        }
       }
+      //}
       arr.push(obj)
     })
 
     let data = { data: arr }
     res.status(200).json(data)
+    
   } catch (error) {
     console.log('error in /api-msg...')
   }
@@ -727,8 +724,6 @@ router.get('/api-select-3', isAuthenticated, async (req, res) => {
 
 
 
-
-
 router.get('/apis', async (req, res) => {
   let data = new Areas({ name_area: 'Productos' })
   data.save()
@@ -736,57 +731,6 @@ router.get('/apis', async (req, res) => {
 
 })//end 
 
-
-
-
-
-
-
-
-/*router.get('/api-gestion', isAuthenticated, async (req, res) => {
-  try {
-    //traigo datos de la bd
-    let merchas = await Users.where({ type: 'MERCHA' })
-    let Vendedores = await Users.where({ type: 'SELLER' })
-    //let survey = await Survey.where({})
-    //console.log(merchas)
-    //console.log('uno',await Survey.where({Merchandising:1}).sort({ _id: -1 }))
-    //console.log(await Survey.where({Merchandising:e.id}).sort({ _id: -1 }).limit(5))
-    let arr = []
-    let yu = [1]
-    let obj = {}
-    yu.forEach(async e => {
-
-      //obj.id = e.id
-
-      let ultima_fecha = await Survey.where({ Merchandising: e.id }).sort({ _id: -1 })
-      //obj.date = ultima_fecha[0].Date
-
-      let total_base = await Clients.where({ Merchandising: e.id }).count()
-      //obj.total_base = total_base
-
-      let objetivos_mes = await Objetives.where({ Merchandising: e.id, Año: year, Mes: mounth }).count()
-      //obj.objetivos_mes = objetivos_mes
-
-      let relevados_mes = await Survey.where({ Merchandising: e.id, Año: year, Mes: mounth, Status: true }).count()
-      //obj.relevados_mes = relevados_mes
-
-      let porcentaje = (100 * Number(relevados_mes)) / Number(objetivos_mes)
-      //obj.porcentaje = porcentaje
-
-
-      arr.push(relevados_mes)
-
-    })
-
-
-    console.log(arr)
-    let data = { data: arr }
-    res.status(200).json(data)
-  } catch (error) {
-    console.log(error)
-  }
-})//end get*/
 
 
 

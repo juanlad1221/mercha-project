@@ -22,22 +22,7 @@
                 <div class="card-body px-0 pb-0">
                     <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
                         <%data.Mensajes.forEach(e =>{%>
-                            <%if(e.type == 'SELLER' || e.type == 'MERCHA'){%>
-                                <li class="clearfix">
-                                    <div class="chat-avatar">
-                                        <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
-                                        <i><%=e.Date_msg.getHours().toLocaleString()+':'+e.Date_msg.getMinutes()%></i>
-                                    </div>
-                                    <div class="conversation-text">
-                                        <div class="ctext-wrap">
-                                            <i><%=e.name%></i>
-                                            <p>
-                                               <%=e.msg%>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </li>
-                            <%}else{%>
+                            <%if( e.type_origen == 'ADMIN'){%>
                                 <li class="clearfix odd">
                                     <div class="chat-avatar">
                                         <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
@@ -48,6 +33,22 @@
                                             <i><%=e.name%></i>
                                             <p>
                                                 <%=e.msg%>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            <%}else{%>
+                               
+                                <li class="clearfix">
+                                    <div class="chat-avatar">
+                                        <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
+                                        <i><%=e.Date_msg.getHours().toLocaleString()+':'+e.Date_msg.getMinutes()%></i>
+                                    </div>
+                                    <div class="conversation-text">
+                                        <div class="ctext-wrap">
+                                            <i><%=e.name%></i>
+                                            <p>
+                                               <%=e.msg%>
                                             </p>
                                         </div>
                                     </div>
@@ -119,6 +120,7 @@
     <input value=<%=user_id%> type="text" id="user_id"  hidden>
     <input value=<%=user%> type="text" id="user"  hidden>
     <input value=<%=data.Type_user_destino%> type="text" id="destino_type"  hidden>
+    <input value=<%=data.Type_user_emisor%> type="text" id="origen_type"  hidden>
     <input value=<%=data.User_id_destino%> type="text" id="destino_id"  hidden>
     <input value=<%=data.Area_id%> type="text" id="area_id"  hidden>
     <input value=<%=data.Nombre%> type="text" id="nombre" hidden >
@@ -141,6 +143,7 @@
             let user_id = document.getElementById('user_id')
             let user = document.getElementById('user')
             let destino_type = document.getElementById('destino_type')
+            let origen_type = document.getElementById('origen_type')
             let destino_id = document.getElementById('destino_id')
             let area_id = document.getElementById('area_id')
             let nombre = document.getElementById('nombre')
@@ -150,7 +153,7 @@
             let check2 = document.getElementById('check2')
             let check3 = document.getElementById('check3')
             let status = ''
-
+            console.log(origen_type.value,destino_type.value)
 
             check2.onclick = () => {
                 limpiarCheck()
@@ -172,20 +175,13 @@
                 limpiarCheck()
 
                 //obj a enviar
-                let obj = {
+                  let obj = {
                     id_chat:id_chat.value,
-                    Codigo_Cliente:codigo_cliente.value,
-                    msg:msg.value,
-                    Type_user_emisor:'ADMIN',
-                    User_id_emisor:user_id.value,
-                    Type_user_destino:destino_type.value,
-                    User_id_destino:destino_id.value,
-                    Area_id:area_id.value,
-                    Nombre:nombre.value,
-                    leido:false,
-                    status,
-                    Date:new Date()
+                    msg:{msg:msg.value, leido:false, 
+                        Date_msg:new Date(),type_origen:'ADMIN',type_destino: `${origen_type == 'ADMIN'? destino_type:origen_type.value}`},
+                    status
                 }
+
 
                 fetch('/update-msg', {
                     method:'POST',
@@ -194,7 +190,7 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    console.log(data.status)
+                    
                     limpiarDespuesDeEnviar()
                     toastr["success"]("El mensaje fue enviado correctamente...")
                     window.location.reload()

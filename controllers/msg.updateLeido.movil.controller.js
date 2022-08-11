@@ -20,24 +20,18 @@ function SortArray(x, y){
 
 router.put("/msg-update-leido", async (req, res) => {
     if (req.body) {
-        console.log(req.body)
+       
         let result = await Chats.findOne({ _id: req.body.id_chat })
         if (result) {
             result.Mensajes.forEach(e => {
-                e.leido = true
+                if(e.type_destino == req.body.type){
+                    e.leido = true
+                }              
             })
 
             let msg = result.save()
             if (msg) {
-                res.status(200).end()//envio ya ordenado
-                /*let allChats = await Chats.where({})
-                if (allChats) {
-                    let misChats = personalFilter('User_id_emisor', String(id), 'Type_user_emisor', type, 'User_id_destino', String(id), 'Type_user_destino', type, allChats)
-                    if (misChats) {
-                        let dataToSend = misChats.sort(SortArray)
-                        res.status(200).json(dataToSend)//envio ya ordenado
-                    }
-                }*/
+                res.status(200).json({status:200})//envio ya ordenado
             }
         }
 
