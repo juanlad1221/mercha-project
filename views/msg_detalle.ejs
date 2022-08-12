@@ -26,7 +26,7 @@
                                 <li class="clearfix odd">
                                     <div class="chat-avatar">
                                         <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
-                                        <i><%=e.Date_msg.getHours().toLocaleString()+':'+e.Date_msg.getMinutes()%></i>
+                                        <i><%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%></i>
                                     </div>
                                     <div class="conversation-text">
                                         <div class="ctext-wrap">
@@ -42,7 +42,7 @@
                                 <li class="clearfix">
                                     <div class="chat-avatar">
                                         <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
-                                        <i><%=e.Date_msg.getHours().toLocaleString()+':'+e.Date_msg.getMinutes()%></i>
+                                        <i><%=e.Date_msg.getHours().toLocaleString()+':'+e.Date_msg.getMinutes().toLocaleString()%></i>
                                     </div>
                                     <div class="conversation-text">
                                         <div class="ctext-wrap">
@@ -178,9 +178,17 @@
                   let obj = {
                     id_chat:id_chat.value,
                     msg:{msg:msg.value, leido:false, 
-                        Date_msg:new Date(),type_origen:'ADMIN',type_destino: `${origen_type == 'ADMIN'? destino_type:origen_type.value}`},
+                        Date_msg:new Date(),type_origen:'ADMIN'},
                     status
                 }
+
+                if(origen_type == 'ADMIN'){
+                    obj.msg.type_destino =destino_type.value 
+                }else{
+                    obj.msg.type_destino = origen_type.value
+                }
+
+                obj.msg.id_destino = destino_id.value
 
 
                 fetch('/update-msg', {

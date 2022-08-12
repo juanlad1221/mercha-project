@@ -19,7 +19,7 @@ const chat_schema = Schema({
     status:{type:String},
     Mensajes:[{msg:{type:String}, Date_msg:{type:Date}, 
         leido:{type:Boolean}, name:{type:String},
-        type_origen:{type:String}, type_destino:{type:String}}]
+        type_origen:{type:String}, type_destino:{type:String},id_destino:{type:String}}]
 });
 
 //Exporto modelo
