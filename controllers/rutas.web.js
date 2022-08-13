@@ -620,7 +620,7 @@ router.get('/api-clientes', isAuthenticated, async (req, res) => {
   //traigo datos de la bd
   let clientes = await Clients.where({ active: true })
 
-  let data = { data: clientes }
+  let data = { data: clientes } 
   res.status(200).json(data)
 })//end get
 

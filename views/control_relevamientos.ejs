@@ -172,6 +172,7 @@
                             {
                                 "data": "porcentaje",
                                 "render": function (data, type, row) {
+                                    
                                     if (row) {
                                         return row.porcentaje + " %"
                                     }
@@ -185,6 +186,7 @@
                 btn.onclick = () => {
                     if (type == '' || mes == '' || mes == null) { alert('ATENCION: DEBE COMPLETAR LOS CAMPOS'); return }
                     loadTable('/api-relevamientos', 'POST', { 'type': type, 'mes': mes })
+                    f
                 }
 
                 //Selecciona elementos en tabla Ver

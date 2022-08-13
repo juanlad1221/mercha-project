@@ -1,12 +1,10 @@
 const express = require("express");
 const router = express.Router()
-//const {PrismaClient} = require('@prisma/client')
 let bcrypt = require('bcryptjs')
 let jwt = require('jsonwebtoken');
-
 //models
 const Users = require('../schemas/Users')
-//Instancio prisma
+
 //const prisma = new PrismaClient()
 
 router.post("/auth-movil", async (req, res) => {
@@ -26,7 +24,7 @@ router.post("/auth-movil", async (req, res) => {
             if(user && resultPass){
                 let obj = {}
                 //genero token
-                let token = jwt.sign(obj, process.env.JWT, { expiresIn: '1h' })
+                let token = jwt.sign(obj, 'mercha1221 ', { expiresIn: '1h' })
 
                 if(user.type == 'MERCHA'){
                     obj.id = user.id

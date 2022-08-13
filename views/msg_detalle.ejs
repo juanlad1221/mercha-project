@@ -9,120 +9,294 @@
                         <li id="link-actual" class="breadcrumb-item active">Dashboard</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Detalle Mensaje <%=user.id%></h4>
+                <h4 class="page-title">Detalle Mensaje <%=user.id%>
+                </h4>
             </div>
         </div>
     </div>
     <!-- end page title -->
 
-
     <div class="d-flex justify-content-center">
         <div class="col-xxl-6 col-xl-10">
             <div class="card">
                 <div class="card-body px-0 pb-0">
-                    <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
-                        <%data.Mensajes.forEach(e =>{%>
-                            <%if( e.type_origen == 'ADMIN'){%>
-                                <li class="clearfix odd">
-                                    <div class="chat-avatar">
-                                        <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
-                                        <i><%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%></i>
-                                    </div>
-                                    <div class="conversation-text">
-                                        <div class="ctext-wrap">
-                                            <i><%=e.name%></i>
-                                            <p>
-                                                <%=e.msg%>
-                                            </p>
+                    <% if(data.Type_user_emisor=='ADMIN' || data.Type_user_destino=='ADMIN' ){ %>
+                        <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
+                            <%data.Mensajes.forEach(e=>{%>
+
+                                <%if(e.type_origen=='ADMIN' && e.type_destino=='MERCHA' ){%>
+                                    <li class="clearfix odd">
+                                        <div class="chat-avatar">
+                                            <img src="assets/images/users/user1.png" class="rounded" alt="dominic" />
+                                            <i>
+                                                <%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%>
+                                            </i>
                                         </div>
-                                    </div>
-                                </li>
-                            <%}else{%>
-                               
-                                <li class="clearfix">
-                                    <div class="chat-avatar">
-                                        <img src="assets/images/users/user2.png" class="rounded" alt="Shreyu N" />
-                                        <i><%=e.Date_msg.getHours().toLocaleString()+':'+e.Date_msg.getMinutes().toLocaleString()%></i>
-                                    </div>
-                                    <div class="conversation-text">
-                                        <div class="ctext-wrap">
-                                            <i><%=e.name%></i>
-                                            <p>
-                                               <%=e.msg%>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </li>
-                            <%}%>
-                        
-                        <%})%>
-                    </ul>
-
-                    <% if(data.status != 'terminado'){ %>
-                    <div class="row px-3 pb-3">
-                        <div class="col">
-                            <div class="mt-2 bg-light p-3 rounded">
-
-                                <div class="d-flex justify-content-center">
-                                    <div class="form-check form-checkbox-danger" style="margin-right: 2%;">
-                                        <input  type="checkbox" class="form-check-input" id="check1" disabled>
-                                        <label class="form-check-label" for="customCheckcolor5">Pendiente</label>
-                                    </div>
-                                    <div class="form-check form-checkbox-info" style="margin-right: 2%;">
-                                        <input type="checkbox" class="form-check-input" id="check2" >
-                                        <label class="form-check-label" for="customCheckcolor3">Activo</label>
-                                    </div>
-                                    <div class="form-check form-checkbox-success ">
-                                        <input type="checkbox" class="form-check-input" id="check3" >
-                                        <label class="form-check-label" for="customCheckcolor2">Finalizado</label>
-                                    </div>
-                                </div>
-
-
-                                <form class="needs-validation mt-2" novalidate="" name="chat-form"
-                                    id="chat-form">
-                                    <div class="row">
-                                        <div class="col mb-2 mb-sm-0">
-                                            <input id="msg" type="text" class="form-control border-0" placeholder="Ingrese su mensaje" required="">
-                                            <div class="invalid-feedback">
-                                               Debe Escribir su Mensaje...
-                                               
+                                        <div class="conversation-text">
+                                            <div class="ctext-wrap">
+                                                <i>
+                                                    <%=e.name%>
+                                                </i>
+                                                <p>
+                                                    <%=e.msg%>
+                                                </p>
                                             </div>
                                         </div>
-                                        <div class="col-sm-auto">
-                                            <div class="btn-group">
-                                                <!--<a href="#" class="btn btn-light"><i class="uil uil-paperclip"></i></a>
-                                                <a href="#" class="btn btn-light"> <i class='uil uil-smile'></i> </a>-->
-                                                <div class="d-grid">
-                                                    <button id="btn" class="btn btn-success chat-send"><i class='uil uil-message'></i></button>
+                                    </li>
+                                <%}%>
+
+                                <%if(e.type_origen=='MERCHA' && e.type_destino=='ADMIN' ){%>
+                                    <li class="clearfix">
+                                        <div class="chat-avatar">
+                                            <img src="assets/images/users/user2.png" class="rounded"
+                                            alt="Shreyu N" />
+                                            <i>
+                                                <%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%>
+                                            </i>
+                                        </div>
+                                        <div class="conversation-text">
+                                            <div class="ctext-wrap">
+                                                <i>
+                                                    <%=e.name%>
+                                                </i>
+                                                <p>
+                                                    <%=e.msg%>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <%}%>
+
+                                <%if(e.type_origen=='ADMIN' && e.type_destino=='SELLER' ){%>
+                                    <li class="clearfix">
+                                        <div class="chat-avatar">
+                                            <img src="assets/images/users/user1.png" class="rounded"
+                                            alt="Shreyu N" />
+                                            <i>
+                                                <%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%>
+                                            </i>
+                                        </div>
+                                        <div class="conversation-text">
+                                            <div class="ctext-wrap">
+                                                <i>
+                                                    <%=e.name%>
+                                                </i>
+                                                <p>
+                                                    <%=e.msg%>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <%}%>
+
+                                <%if(e.type_origen=='SELLER' && e.type_destino=='ADMIN' ){%>
+                                    <li class="clearfix">
+                                        <div class="chat-avatar">
+                                            <img src="assets/images/users/user3.png" class="rounded"
+                                            alt="Shreyu N" />
+                                            <i>
+                                                <%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%>
+                                            </i>
+                                        </div>
+                                        <div class="conversation-text">
+                                            <div class="ctext-wrap">
+                                                <i>
+                                                    <%=e.name%>
+                                                </i>
+                                                <p>
+                                                    <%=e.msg%>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <%}%>
+
+                            <%})%>
+                        </ul>
+
+                        <% if(data.status=='terminado' ){ %>
+                            <div class="d-flex justify-content-end p-2" style="margin-top:5%; background-color:grey">
+                                <a href="/mensajes" class="btn btn-primary">Volver</a>
+                            </div>
+                        <%} else {%>
+                            <div class="row px-3 pb-3">
+                                <div class="col">
+                                    <div class="mt-2 bg-light p-3 rounded">
+
+                                        <div class="d-flex justify-content-center">
+                                            <div class="form-check form-checkbox-danger" style="margin-right: 2%;">
+                                                <input type="checkbox" class="form-check-input" id="check1"
+                                                        disabled>
+                                                <label class="form-check-label"
+                                                        for="customCheckcolor5">Pendiente</label>
+                                            </div>
+                                            <div class="form-check form-checkbox-info" style="margin-right: 2%;">
+                                                    <input type="checkbox" class="form-check-input" id="check2">
+                                                    <label class="form-check-label"
+                                                        for="customCheckcolor3">Activo</label>
+                                            </div>
+                                            <div class="form-check form-checkbox-success ">
+                                                    <input type="checkbox" class="form-check-input" id="check3">
+                                                    <label class="form-check-label"
+                                                        for="customCheckcolor2">Finalizado</label>
+                                            </div>
+                                        </div>
+
+
+                                        <form class="needs-validation mt-2" novalidate="" name="chat-form"
+                                                id="chat-form">
+                                            <div class="row">
+                                                <div class="col mb-2 mb-sm-0">
+                                                    <input id="msg" type="text" class="form-control border-0"
+                                                            placeholder="Ingrese su mensaje" required="">
+                                                    <div class="invalid-feedback">
+                                                            Debe Escribir su Mensaje...
+
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div> <!-- end col -->
-                                    </div> <!-- end row-->
-                                </form>
-                            </div> 
-                        </div> <!-- end col-->
-                    </div>
-                    <%}else{%>
-                        <div class="d-flex justify-content-end p-2" style="margin-top:5%; background-color:grey">
-                            <a href="/mensajes" class="btn btn-primary">Volver</a>
-                        </div>
+                                                <div class="col-sm-auto">
+                                                    <div class="btn-group">
+                                                            <!--<a href="#" class="btn btn-light"><i class="uil uil-paperclip"></i></a>
+                                                        <a href="#" class="btn btn-light"> <i class='uil uil-smile'></i> </a>-->
+                                                        <div class="d-grid">
+                                                                <button id="btn" class="btn btn-success chat-send"><i
+                                                                        class='uil uil-message'></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end col -->
+                                            </div> <!-- end row-->
+                                        </form>
+                                    </div>
+                                </div> <!-- end col-->
+                            </div>
+                        <%}%>
+
                     <%}%>
-                    <!-- end row -->
+
+
+
+
+                    <% if(data.Type_user_emisor !='ADMIN' && data.Type_user_destino !='ADMIN' ){ %>
+                        <ul id="list-chat" class="conversation-list px-3" data-simplebar style="max-height: 250px">
+                            <%data.Mensajes.forEach(e=>{%>
+
+                                <%if(e.type_origen=='MERCHA' || e.type_destino=='MERCHA' ){%>
+                                    <li class="clearfix odd">
+                                        <div class="chat-avatar">
+                                            <img src="assets/images/users/user2.png" class="rounded" alt="dominic" />
+                                            <i>
+                                                <%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%>
+                                            </i>
+                                        </div>
+                                        <div class="conversation-text">
+                                            <div class="ctext-wrap">
+                                                <i>
+                                                    <%=e.name%>
+                                                </i>
+                                                <p>
+                                                    <%=e.msg%>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <%}%>
+
+                                <%if(e.type_origen=='SELLER' || e.type_destino=='SELLER' ){%>
+                                                    <li class="clearfix">
+                                                        <div class="chat-avatar">
+                                                            <img src="assets/images/users/user3.png" class="rounded"
+                                                                alt="Shreyu N" />
+                                                            <i>
+                                                                <%=e.Date_msg.getHours()+':'+e.Date_msg.getMinutes()%>
+                                                            </i>
+                                                        </div>
+                                                        <div class="conversation-text">
+                                                            <div class="ctext-wrap">
+                                                                <i>
+                                                                    <%=e.name%>
+                                                                </i>
+                                                                <p>
+                                                                    <%=e.msg%>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                <%}%>
+
+                            <%})%>
+                        </ul>
+
+                        <% if(data.status=='terminado' || data.Type_user_emisor !='ADMIN' && data.Type_user_destino !='ADMIN' ){ %>
+                            <div class="d-flex justify-content-end p-2" style="margin-top:5%; background-color:grey">
+                                <a href="/mensajes" class="btn btn-primary">Volver</a>
+                            </div>
+                        <%} else {%>
+                            <div class="row px-3 pb-3">
+                                <div class="col">
+                                    <div class="mt-2 bg-light p-3 rounded">
+
+                                        <div class="d-flex justify-content-center">
+                                            <div class="form-check form-checkbox-danger" style="margin-right: 2%;">
+                                                <input type="checkbox" class="form-check-input" id="check1"
+                                                        disabled>
+                                                <label class="form-check-label"
+                                                        for="customCheckcolor5">Pendiente</label>
+                                            </div>
+                                            <div class="form-check form-checkbox-info" style="margin-right: 2%;">
+                                                    <input type="checkbox" class="form-check-input" id="check2">
+                                                    <label class="form-check-label"
+                                                        for="customCheckcolor3">Activo</label>
+                                            </div>
+                                            <div class="form-check form-checkbox-success ">
+                                                    <input type="checkbox" class="form-check-input" id="check3">
+                                                    <label class="form-check-label"
+                                                        for="customCheckcolor2">Finalizado</label>
+                                            </div>
+                                        </div>
+
+
+                                        <form class="needs-validation mt-2" novalidate="" name="chat-form"
+                                                id="chat-form">
+                                            <div class="row">
+                                                <div class="col mb-2 mb-sm-0">
+                                                    <input id="msg" type="text" class="form-control border-0"
+                                                            placeholder="Ingrese su mensaje" required="">
+                                                    <div class="invalid-feedback">
+                                                            Debe Escribir su Mensaje...
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <div class="btn-group">
+                                                            <!--<a href="#" class="btn btn-light"><i class="uil uil-paperclip"></i></a>
+                                                        <a href="#" class="btn btn-light"> <i class='uil uil-smile'></i> </a>-->
+                                                        <div class="d-grid">
+                                                                <button id="btn" class="btn btn-success chat-send"><i
+                                                                        class='uil uil-message'></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end col -->
+                                            </div> <!-- end row-->
+                                        </form>
+                                    </div>
+                                </div> <!-- end col-->
+                            </div>
+                        <%}%>
+
+                    <%}%>
                 </div> <!-- end card-body -->
             </div> <!-- end card -->
         </div>
     </div>
     <!-- end chat area-->
     <input value=<%=id_chat%> type="text" id="chat" hidden>
-    <input value=<%=user_id%> type="text" id="user_id"  hidden>
-    <input value=<%=data.Codigo_Cliente%> type="text" id="codigo_cliente"  hidden>
-    <input value=<%=user_id%> type="text" id="user_id"  hidden>
-    <input value=<%=user%> type="text" id="user"  hidden>
-    <input value=<%=data.Type_user_destino%> type="text" id="destino_type"  hidden>
-    <input value=<%=data.Type_user_emisor%> type="text" id="origen_type"  hidden>
-    <input value=<%=data.User_id_destino%> type="text" id="destino_id"  hidden>
-    <input value=<%=data.Area_id%> type="text" id="area_id"  hidden>
+    <input value=<%=data.Codigo_Cliente%> type="text" id="codigo_cliente" hidden>
+    <input value=<%=data.User_id_emisor%> type="text" id="user_id" hidden>
+    <input value=<%=user%> type="text" id="user" hidden>
+    <input value=<%=data.Type_user_destino%> type="text" id="destino_type" hidden>
+    <input value=<%=data.Type_user_emisor%> type="text" id="origen_type" hidden>
+    <input value=<%=data.User_id_destino%> type="text" id="destino_id" hidden>
+    <input value=<%=data.Area_id%> type="text" id="area_id" hidden>
     <input value=<%=data.Nombre%> type="text" id="nombre" hidden >
 
     <%- include('block_end')%>
@@ -131,11 +305,12 @@
             .bt {
                 border: 1px solid blue;
             }
-           .ver{
-            cursor: pointer;
-           }
+
+            .ver {
+                cursor: pointer;
+            }
         </style>
-    
+
         <script>
             let id_chat = document.getElementById('chat')
             let msg = document.getElementById('msg')
@@ -153,7 +328,7 @@
             let check2 = document.getElementById('check2')
             let check3 = document.getElementById('check3')
             let status = ''
-            console.log(origen_type.value,destino_type.value)
+           
 
             check2.onclick = () => {
                 limpiarCheck()
@@ -165,57 +340,63 @@
                 status = 'terminado'
                 check3.checked = true
             }
-            
+
 
             btn.onclick = () => {
                 event.preventDefault()
-               
-                if(msg.value == '' ||msg.value == null){alert('DEBE COMPLETAR TODOS LOS CAMPOS...');return}
-                if(!check2.checked && !check3.checked ){alert('DEBE COMPLETAR TODOS LOS CAMPOS...');return}
+
+                if (msg.value == '' || msg.value == null) { alert('DEBE COMPLETAR TODOS LOS CAMPOS...'); return }
+                if (!check2.checked && !check3.checked) { alert('DEBE COMPLETAR TODOS LOS CAMPOS...'); return }
                 limpiarCheck()
 
                 //obj a enviar
-                  let obj = {
-                    id_chat:id_chat.value,
-                    msg:{msg:msg.value, leido:false, 
-                        Date_msg:new Date(),type_origen:'ADMIN'},
+                let obj = {
+                    id_chat: id_chat.value,
+                    msg: {
+                        msg: msg.value, leido: false,Date_msg: new Date(), 
+                        type_origen: 'ADMIN',/*type_destino: `${origen_type == 'ADMIN' ? destino_type.value : origen_type.value}`,*/
+                            /*id_destino: `${origen_type == 'ADMIN' ? destino_id.value : user_id.value}`*/
+                    },
                     status
                 }
 
-                if(origen_type == 'ADMIN'){
-                    obj.msg.type_destino =destino_type.value 
-                }else{
-                    obj.msg.type_destino = origen_type.value
-                }
-
-                obj.msg.id_destino = destino_id.value
+                    if(origen_type.value == 'ADMIN'){
+                        obj.msg.type_destino = destino_type.value
+                        obj.msg.id_destino = destino_id.value
+                    }else{
+                        obj.msg.type_destino = origen_type.value
+                        obj.msg.id_destino = user_id.value
+                    }
+                
+                
+            
 
 
                 fetch('/update-msg', {
-                    method:'POST',
-                    body:JSON.stringify(obj),
-                    headers: {"Content-type": "application/json"}
+                    method: 'POST',
+                    body: JSON.stringify(obj),
+                    headers: { "Content-type": "application/json" }
                 })
-                .then(res => res.json())
-                .then(data => {
-                    
-                    limpiarDespuesDeEnviar()
-                    toastr["success"]("El mensaje fue enviado correctamente...")
-                    window.location.reload()
-                })
-                .catch(e => {
-                    console.log(e)
-                    toastr["danger"]("No se pudo enviar el mensaje...")
-                })
+                    .then(res => res.json())
+                    .then(data => {
+
+                        limpiarDespuesDeEnviar()
+                        toastr["success"]("El mensaje fue enviado correctamente...")
+                        window.location.reload()
+                    })
+                    .catch(e => {
+                        console.log(e)
+                        toastr["danger"]("No se pudo enviar el mensaje...")
+                    })
             }
 
-            function limpiarCheck(){
+            function limpiarCheck() {
                 check1.checked = false
                 check2.checked = false
                 check3.checked = false
             }
-            
-            function limpiarDespuesDeEnviar(){
+
+            function limpiarDespuesDeEnviar() {
                 limpiarCheck()
                 status = ''
                 msg.value = ''
