@@ -13,9 +13,10 @@ const { base, objMes, relevados,
   getDataMercha, filterByOneKey, filterByThreeKey,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
   filterSpecial, filterCuntNoObjetive, filterByThreeKeyOR,
-  filterByTwoKeyOR, personalFliter6,getMeses,
+  filterByTwoKeyOR, personalFliter6,getMeses,returnDate,
   personalFilter5,
-  personalFliter2} = require('./utils/filters')
+  personalFliter2,
+  personalFliter4} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 
@@ -737,20 +738,27 @@ router.post('/api-dashboard-web', async (req, res) => {
       
       año = fecha_convertida.getFullYear()
       mes = fecha_convertida.getMonth() + 1
+      
       ultimo_dia_mes = new Date(fecha_convertida.getFullYear(), mes, 0)
       ultimo_dia = ultimo_dia_mes.getDate()
      
       let obj = {}
-      //objetivos
-      survey_objetivos = await Survey.where({Año: año, Mes:mes, Relevado:true})
-      //no objetivos
-      let survey_noObjetivos = await Survey.find({Año: null, Mes:null, createdAt: { $gte: fecha_convertida, $lte: ultimo_dia_mes } })
+      let data = await Survey.find({createdAt: { $gte: new Date(año,0,1), $lte: new Date() } })
      
-      //let survey = await Survey.find({Año: null, Mes:null, createdAt: { $gte: new Date(2022,1,1), $lte: new Date(2022,8,30) } })
+      //objetivos
+      survey_objetivos = filterByThreeKey('Año',año,'Mes',mes,'Relevado',true,data)//await Survey.where({Año: año, Mes:mes, Relevado:true})
+      //no objetivos
+      let survey_noObjetivos = personalFliter6(new Date(año,mes,1), new Date(año,mes,ultimo_dia),data)
+     
       
-      //console.log(survey)
-      //console.log(fecha_convertida, mes, ultimo_dia_mes)
-
+      let meses = getMeses(mes)
+      let arr2 = []
+      meses.forEach(e => {
+        let yu = filterByThreeKey('Año',año,'Mes',e,'Relevado',true,data).length
+        let tu = personalFliter6(new Date(año,e-1,1), new Date(año,e-1,returnDate(año,e)),data).length
+        
+        arr2.push({mes:e, cant:yu+tu})
+      })
 
 
 
@@ -773,7 +781,7 @@ router.post('/api-dashboard-web', async (req, res) => {
             }
             }).length
 
-          arr.push({fecha:new Date(año,mes-1,i).getDate(), cant:cant + cant2})
+          arr.push({fecha:new Date(año,mes-1,i).getDate(), cant:cant+cant2})
         }//end for
 
 
@@ -783,6 +791,7 @@ router.post('/api-dashboard-web', async (req, res) => {
         obj.objetivos = survey_objetivos.length
         obj.noObjetivos = survey_noObjetivos.length
         obj.survey_diario = arr
+        obj.survey_mes = arr2
 
         res.status(200).json(obj)
       }
@@ -832,7 +841,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
 
           if (all_users && surveys) {
             let arr = []
-            console.log('po', all_users)
+          
             all_users.forEach(e => {
               if (e.type != 'ADMIN') {
                 let obj = {}
@@ -998,7 +1007,7 @@ router.post('/api-relevamientos', isAuthenticated, async (req, res) => {
 router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
 
   if (req.body) {
-    console.log(req.body)
+   
     if (req.body.mes) {
       //obtengo los datos
       let año_solo = new Date(req.body.mes).getFullYear()
