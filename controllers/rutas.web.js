@@ -748,8 +748,8 @@ router.post('/api-dashboard-web', async (req, res) => {
      
       let survey = await Survey.find({Año: null, Mes:null, createdAt: { $gte: new Date(2022,1,1), $lte: new Date(2022,8,30) } })
       
-      console.log(survey)
-
+      //console.log(survey)
+      //console.log(fecha_convertida, ultimo_dia)
 
 
 
