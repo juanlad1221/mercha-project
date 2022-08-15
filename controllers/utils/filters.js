@@ -152,8 +152,16 @@ const personalFilter5 = (key1,v1,key2,v2,data) => {
 }
 
 const personalFliter6 = (f1,f2,data) => {
-  
-  return data.filter(function (v){v.createdAt >= f1 && v.createdAt <= f2 })
+  //return data.filter(function (v){v.createdAt >= f1 && v.createdAt <= f2 && v.Relevado == true})
+  let arr = []
+  let c = 0
+  data.forEach(e => {
+      if(e.createdAt >= f1 && e.createdAt <= f2 && e.Relevado == true && e.Año == null && e.Mes == null){
+        c = c + 1
+        arr.push(e)
+      }
+  })
+  return arr
 }
 
 const getMeses = (mes) => {
@@ -166,6 +174,11 @@ const getMeses = (mes) => {
     }
     mes = mes - 1
   }
+}
+
+const returnDate = (año,num) => {
+  let fecha = new Date(año,num,0).getDate()
+  return fecha 
 }
 
 
@@ -191,5 +204,6 @@ const getMeses = (mes) => {
     personalFliter4,
     personalFilter5,
     personalFliter6,
-    getMeses
+    getMeses,
+    returnDate
   }
