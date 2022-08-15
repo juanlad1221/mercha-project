@@ -44,6 +44,7 @@ const base = (v1, data) => {
   }
 
   const filterByOneKey = (key1,v1,data) => {
+    
     return data.filter(function (v){return v[key1] == v1})
   }
   const filterByTwoKey = (key1,v1,key2,v2,data) => {
@@ -129,6 +130,7 @@ const personalFliter2 = (f1,f2,data) => {
   return c
 }
 
+
 const personalFliter4 = (f1,f2,data) => {
   let arr = []
   let c = 0
@@ -147,6 +149,23 @@ const personalFilter3 = (key1,v1,key2,v2,key3,v3,data) => {
 
 const personalFilter5 = (key1,v1,key2,v2,data) => {
   return data.filter(function (v){return v[key1] == v1 && v[key2] != v2})
+}
+
+const personalFliter6 = (f1,f2,data) => {
+  
+  return data.filter(function (v){v.createdAt >= f1 && v.createdAt <= f2 })
+}
+
+const getMeses = (mes) => {
+  let arr = []
+  for (i in [1,2,3,4,5,6,7,8,9,10,11,12]){
+    if(mes > 0){
+      arr.push(mes)
+    }else{
+      return arr
+    }
+    mes = mes - 1
+  }
 }
 
 
@@ -170,5 +189,7 @@ const personalFilter5 = (key1,v1,key2,v2,data) => {
     personalFliter2,
     personalFilter3,
     personalFliter4,
-    personalFilter5
+    personalFilter5,
+    personalFliter6,
+    getMeses
   }
