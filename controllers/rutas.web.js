@@ -746,8 +746,9 @@ router.post('/api-dashboard-web', async (req, res) => {
       //no objetivos
       let survey_noObjetivos = await Survey.find({Año: null, Mes:null, createdAt: { $gte: fecha_convertida, $lte: ultimo_dia_mes } })
      
+      let survey = await Survey.find({Año: null, Mes:null, createdAt: { $gte: new Date(2022,1,1), $lte: new Date(2022,8,30) } })
       
-      //console.log(getMeses(mes))
+      console.log(survey)
 
 
 
@@ -772,7 +773,7 @@ router.post('/api-dashboard-web', async (req, res) => {
             }
             }).length
 
-          arr.push({fecha:new Date(año,mes-1,i).toLocaleString(), cant:cant + cant2})
+          arr.push({fecha:new Date(año,mes-1,i).getDate(), cant:cant + cant2})
         }//end for
 
 
