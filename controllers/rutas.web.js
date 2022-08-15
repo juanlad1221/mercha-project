@@ -13,8 +13,9 @@ const { base, objMes, relevados,
   getDataMercha, filterByOneKey, filterByThreeKey,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
   filterSpecial, filterCuntNoObjetive, filterByThreeKeyOR,
-  filterByTwoKeyOR, 
-  personalFilter5} = require('./utils/filters')
+  filterByTwoKeyOR, personalFliter6,getMeses,
+  personalFilter5,
+  personalFliter2} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
 const { storage, storagexls } = require('./utils/multer.config')
 
@@ -27,7 +28,7 @@ const Survey = require("../schemas/Survey")
 const chats = require("../schemas/Chats");
 const Chats = require("../schemas/Chats");
 const Areas = require('../schemas/Area');
-const { findOneAndUpdate } = require("../schemas/Users");
+const { findOneAndUpdate, collection } = require("../schemas/Users");
 
 //Time
 let currentTime = new Date();
@@ -719,6 +720,77 @@ router.get('/api-select-3', isAuthenticated, async (req, res) => {
   }
 
 })//end get
+
+router.post('/api-dashboard-web', async (req, res) => {
+  
+    if(req.body){
+      //obtengo la fecha
+      const {fecha} = req.body
+
+      if(!fecha){
+        console.log('No hay fecha...')
+        res.status(400).json({status:400, msg:'No hay fecha...'})
+      }//end if fecha
+
+      //obtengo año y mes de la fecha recibida
+      let fecha_convertida = new Date(fecha)
+      
+      año = fecha_convertida.getFullYear()
+      mes = fecha_convertida.getMonth() + 2
+      ultimo_dia_mes = new Date(fecha_convertida.getFullYear(), fecha_convertida.getMonth() + 2, 0)
+      ultimo_dia = ultimo_dia_mes.getDate()
+      
+      let obj = {}
+      //objetivos
+      survey_objetivos = await Survey.where({Año: año, Mes:mes, Relevado:true})
+      //no objetivos
+      let survey_noObjetivos = await Survey.find({Año: null, Mes:null, createdAt: { $gte: fecha_convertida, $lte: ultimo_dia_mes } })
+     
+      
+      //console.log(getMeses(mes))
+
+
+
+
+
+
+      if(survey_objetivos && survey_noObjetivos){
+
+        let arr = []
+        for(i=1; i <= ultimo_dia; i++ ){
+          //objetivos
+          let cant = survey_objetivos.filter(function(item){
+          if(item.createdAt.getDate() == new Date(año,mes-1,i).getDate()){
+            return true
+          }
+          }).length
+
+          //no objetivos
+          let cant2 = survey_noObjetivos.filter(function(item){
+            if(item.createdAt.getDate() == new Date(año,mes-1,i).getDate()){
+              return true
+            }
+            }).length
+
+          arr.push({fecha:new Date(año,mes-1,i).toLocaleString(), cant:cant + cant2})
+        }//end for
+
+
+
+        obj.fecha_enviada = fecha
+        obj.total_relevado = survey_objetivos.length + survey_noObjetivos.length
+        obj.objetivos = survey_objetivos.length
+        obj.noObjetivos = survey_noObjetivos.length
+        obj.survey_diario = arr
+
+        res.status(200).json(obj)
+      }
+
+      
+
+    }//end if body
+ 
+})//end post
 
 
 
