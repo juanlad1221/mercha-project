@@ -736,10 +736,10 @@ router.post('/api-dashboard-web', async (req, res) => {
       let fecha_convertida = new Date(fecha)
       
       año = fecha_convertida.getFullYear()
-      mes = fecha_convertida.getMonth() + 2
-      ultimo_dia_mes = new Date(fecha_convertida.getFullYear(), fecha_convertida.getMonth() + 2, 0)
+      mes = fecha_convertida.getMonth() + 1
+      ultimo_dia_mes = new Date(fecha_convertida.getFullYear(), mes, 0)
       ultimo_dia = ultimo_dia_mes.getDate()
-      
+     
       let obj = {}
       //objetivos
       survey_objetivos = await Survey.where({Año: año, Mes:mes, Relevado:true})
@@ -749,7 +749,7 @@ router.post('/api-dashboard-web', async (req, res) => {
       //let survey = await Survey.find({Año: null, Mes:null, createdAt: { $gte: new Date(2022,1,1), $lte: new Date(2022,8,30) } })
       
       //console.log(survey)
-      //console.log(fecha_convertida, ultimo_dia)
+      //console.log(fecha_convertida, mes, ultimo_dia_mes)
 
 
 
