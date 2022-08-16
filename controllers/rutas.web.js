@@ -14,7 +14,7 @@ const { base, objMes, relevados,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
   filterSpecial, filterCuntNoObjetive, filterByThreeKeyOR,
   filterByTwoKeyOR, personalFliter6,getMeses,returnDate,
-  personalFilter5,returnMounth,
+  personalFilter5,returnMounth,filterByFiveKey,
   personalFliter2,
   personalFliter4} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
@@ -1009,23 +1009,37 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
   if (req.body) {
    
     if (req.body.mes) {
-      //obtengo los datos
-      let año_solo = new Date(req.body.mes).getFullYear()
-      let oneDate = moment(req.body.mes, 'DD-MM-YYYY')
-      let mes_solo = Number(oneDate.format('MM'))
+      console.log(req.body)
+      //obtengo año y mes de la fecha recibida
+      let fecha_convertida = new Date(req.body.mes)
+      
+      año = fecha_convertida.getFullYear()
+      mes = fecha_convertida.getMonth() + 2
+      
+      ultimo_dia_mes = new Date(fecha_convertida.getFullYear(), mes, 0)
+      ultimo_dia = ultimo_dia_mes.getDate()
+      //console.log(fecha_convertida,año,mes,ultimo_dia)
       let user = Number(req.body.idUser)
       let type_user = req.body.typeUser
+      //console.log(oneDate,mes_solo)
 
-      const data = await Survey.where({ Año: año_solo, Mes: mes_solo })
-
+      //let data = await Survey.find({createdAt: { $gte: new Date(año,mes,1), $lte: new Date(año,mes,ultimo_dia) } })
+      let data = await Survey.find({createdAt: { $gte: new Date(año,(mes-2),1), $lte: new Date(año,(mes-2),31) } })
+      
       switch (req.body.type) {
         case 'todos':
           if (type_user == 'MERCHA') {
-            let surveyAll = filterByTwoKey('Merchandising', user, 'type', 'MERCHA', data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo })
-            let arr = []
+            let surveyAllObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',año,'Mes',(mes-1),data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo })
+            let surveyAllObjetives2 = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',false,'Año',año,'Mes',(mes-1),data)
+            //let array = surveyAllObjetives.concat(surveyAllObjetives2)
+            let surveyAllNoObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',null,'Mes',null,data)
+            //let surveyAllNoObjetives2 = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',false,'Año',null,'Mes',null,data)
+            let arrRelevado = surveyAllObjetives.concat(surveyAllNoObjetives)
+            let tosend = arrRelevado.concat(surveyAllObjetives2)
 
-            if (surveyAll) {
-              surveyAll.forEach(e => {
+            let arr = []
+            if (tosend) {
+              tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
@@ -1042,12 +1056,20 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
               res.status(200).json(data)
             }
           }
-          if (type_user == 'SELLER') {
-            let sellerAll = filterByTwoKey('Vendedor', user, 'type', 'SELLER', data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo })
-            let arr = []
 
-            if (sellerAll) {
-              sellerAll.forEach(e => {
+          if (type_user == 'SELLER') {
+            let surveyAllObjetives = filterByFiveKey('Vendedor', user, 'type', type_user,'Relevado',true,'Año',año,'Mes',(mes-1),data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo })
+            let surveyAllObjetives2 = filterByFiveKey('Vendedor', user, 'type', type_user,'Relevado',false,'Año',año,'Mes',(mes-1),data)
+            //let array = surveyAllObjetives.concat(surveyAllObjetives2)
+            let surveyAllNoObjetives = filterByFiveKey('Vendedor', user, 'type', type_user,'Relevado',true,'Año',null,'Mes',null,data)
+            //let surveyAllNoObjetives2 = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',false,'Año',null,'Mes',null,data)
+            let arrRelevado = surveyAllObjetives.concat(surveyAllNoObjetives)
+            let tosend = arrRelevado.concat(surveyAllObjetives2)
+
+            
+            let arr = []
+            if (tosend) {
+              tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
@@ -1067,11 +1089,13 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
           break
         case 'relevados':
           if (type_user == 'MERCHA') {
-            let surveyAll = filterByThreeKey('Merchandising', user, 'type', 'MERCHA', 'Relevado', true, data) //await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo, Relevado: true })
+            let surveyAllObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',año,'Mes',(mes-1),data)
+            let surveyAllNoObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',null,'Mes',null,data)
+            let tosend = surveyAllObjetives.concat(surveyAllNoObjetives)
+           
             let arr = []
-
-            if (surveyAll) {
-              surveyAll.forEach(e => {
+            if (tosend) {
+              tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
@@ -1090,11 +1114,14 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
           }
 
           if (type_user == 'SELLER') {
-            let sellerAll = filterByThreeKey('Vendedor', user, 'type', 'SELLER', 'Relevado', true, data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo, Relevado: true })
+            let surveyAllObjetives = filterByFiveKey('Vendedor', user, 'type', type_user,'Relevado',true,'Año',año,'Mes',(mes-1),data)
+            let surveyAllNoObjetives = filterByFiveKey('Vendedor', user, 'type', type_user,'Relevado',true,'Año',null,'Mes',null,data)
+            let tosend = surveyAllObjetives.concat(surveyAllNoObjetives)
             let arr = []
-
-            if (sellerAll) {
-              sellerAll.forEach(e => {
+            //console.log(surveyAllObjetives[0].Codigo_Cliente)
+            //console.log(año,mes)
+            if (tosend) {
+              tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
@@ -1114,11 +1141,12 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
           break
         case 'sin-relevar':
           if (type_user == 'MERCHA') {
-            let surveyAll = filterByThreeKey('Merchandising', user, 'type', 'MERCHA', 'Relevado', false, data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo, Relevado: false })
+            let surveyAllObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',false,'Año',año,'Mes',(mes-1),data)
+            let tosend = surveyAllObjetives
+            
             let arr = []
-
-            if (surveyAll) {
-              surveyAll.forEach(e => {
+            if (tosend) {
+              tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
@@ -1137,11 +1165,12 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
           }
 
           if (type_user == 'SELLER') {
-            let sellerAll = filterByThreeKey('Vendedor', user, 'type', 'SELLER', 'Relevado', false, data)//await Survey.where({ Vendedor: user, type: 'SELLER', Año: año_solo, Mes: mes_solo, Relevado: false })
+            let surveyAllObjetives = filterByFiveKey('Vendedor', user, 'type', type_user,'Relevado',false,'Año',año,'Mes',(mes-1),data)
+            let tosend = surveyAllObjetives
+            
             let arr = []
-
-            if (sellerAll) {
-              sellerAll.forEach(e => {
+            if (tosend) {
+              tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
@@ -1171,33 +1200,63 @@ router.post('/consulta-relevamiento', async (req, res) => {
   //obtengo los datos
   try {
     if (req.body) {
-      //console.log(req.body)
+      
       let today = new Date(req.body.fecha)
       let lastDay = new Date(today.getFullYear(), (today.getMonth() + 2), 0).getDate()
-      console.log(today, lastDay)
+      
       let fecha2 = new Date(today.getFullYear() + '-' + completeDate(today.getMonth() + 2) + '-' + lastDay)
       let fecha = today
       let user_id = Number(req.body.user_id)
       let typeUser = req.body.typeUser
-      //console.log(req.body)
-      let data_ = await Survey.where({ Relevado: true })
-
+      
+      let data_ = await Survey.find({createdAt: { $gte: fecha, $lte: fecha2 } })
+     
       if (data_) {
+        
         if (typeUser == 'MERCHA') {
           //aplico filtros
-          let data_mercha = filterByTwoKey('type', typeUser, 'Merchandising', user_id, data_)
-          //aplico filtro sobre el date
-          let dataToSend = filterSpecial(data_mercha, fecha, fecha2, typeUser)
+          let data_mercha = filterByThreeKey('type', typeUser, 'Merchandising', user_id, 'Relevado',true,data_)
+          
+          let arr = []
+          data_mercha.forEach(e => {
+            let obj = {}
+            obj.Codigo_Cliente=e.Codigo_Cliente,
+            obj.Nombre=e.Nombre,
+            obj.Direccion=e.Direccion,
+            obj.Type= e.type,
+            obj.Pictures=e.Pictures
 
-          let data = { data: dataToSend }
+            if(e.type == 'MERCHA'){
+              obj.User = e.Merchandising
+              obj.Nombre_User= e.Nombre_Merchandising
+            }
+            arr.push(obj)
+          })//end
+
+
+          let data = { data: arr }
           res.status(200).json(data)
         } else {
           //aplico filtros
-          let data_seller = filterByTwoKey('type', typeUser, 'Vendedor', user_id, data_)
-          //aplico filtro sobre el date
-          let dataToSend = filterSpecial(data_seller, fecha, fecha2, typeUser)
+          let data_seller = filterByThreeKey('type', typeUser, 'Vendedor', user_id, 'Relevado',true,data_)
+      
+          let arr = []
+          data_seller.forEach(e => {
+            let obj = {}
+            obj.Codigo_Cliente=e.Codigo_Cliente,
+            obj.Nombre=e.Nombre,
+            obj.Direccion=e.Direccion,
+            obj.Type= e.type,
+            obj.Pictures=e.Pictures
 
-          let data = { data: dataToSend }
+            if(e.type == 'SELLER'){
+              obj.User = e.Vendedor
+              obj.Nombre_User= e.Nombre_Vendedor
+            }
+            arr.push(obj)
+          })//end
+
+          let data = { data: arr }
           res.status(200).json(data)
         }
       }
