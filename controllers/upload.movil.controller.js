@@ -24,8 +24,6 @@ router.post('/upload-img', async (req, res) => {
             let Total_Pictures = Number(req.body.Total_Pictures)
             let Objetive = req.body.Objetive
 
-            //console.log(Codigo_Cliente, Id_user,Msg, Total_Pictures, Pictures)
-
             if (req.body.Type == 'MERCHA') {
                 let existe = await Survey.exists({
                     Codigo_Cliente: Codigo_Cliente,Año:year,Mes:mounth,
@@ -114,7 +112,7 @@ router.post('/upload-img', async (req, res) => {
 
             if (req.body.Type == 'SELLER') {
                 let existe = await Survey.exists({
-                    Codigo_Cliente: Codigo_Cliente,
+                    Codigo_Cliente: Codigo_Cliente,Año:year,Mes:mounth,
                     Vendedor: Id_user, Relevado: true
                 })
 
@@ -126,11 +124,12 @@ router.post('/upload-img', async (req, res) => {
                     if (Objetive) {
                         //almaceno
                         let update = await Survey.updateOne({
-                            Codigo_Cliente: Codigo_Cliente,
-                            Vendedor: Id_user
+                            Codigo_Cliente: Codigo_Cliente,Año:year,Mes:mounth,
+                            Vendedor: Id_user,type:'SELLER'
                         }, {
                             Relevado: true,
                             Pictures: Pictures, Msg: Msg,
+                            Total_Pictures: Total_Pictures,
                             Date: moment().format('DD-MM-YYYY')
                         })
                         if (update.modifiedCount == 1) {
