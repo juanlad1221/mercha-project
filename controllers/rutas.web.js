@@ -14,7 +14,7 @@ const { base, objMes, relevados,
   filterByFourKey, SortArrayDesc, filterByTwoKey,
   filterSpecial, filterCuntNoObjetive, filterByThreeKeyOR,
   filterByTwoKeyOR, personalFliter6,getMeses,returnDate,
-  personalFilter5,
+  personalFilter5,returnMounth,
   personalFliter2,
   personalFliter4} = require('./utils/filters')
 const isAuthenticated = require('./utils/isAutenticated')
@@ -757,7 +757,7 @@ router.post('/api-dashboard-web', async (req, res) => {
         let yu = filterByThreeKey('Año',año,'Mes',e,'Relevado',true,data).length
         let tu = personalFliter6(new Date(año,e-1,1), new Date(año,e-1,returnDate(año,e)),data).length
         
-        arr2.push({mes:e, cant:yu+tu})
+        arr2.push({mes:returnMounth(e), cant:yu+tu})
       })
 
 
@@ -1171,9 +1171,10 @@ router.post('/consulta-relevamiento', async (req, res) => {
   //obtengo los datos
   try {
     if (req.body) {
+      //console.log(req.body)
       let today = new Date(req.body.fecha)
       let lastDay = new Date(today.getFullYear(), (today.getMonth() + 2), 0).getDate()
-
+      console.log(today, lastDay)
       let fecha2 = new Date(today.getFullYear() + '-' + completeDate(today.getMonth() + 2) + '-' + lastDay)
       let fecha = today
       let user_id = Number(req.body.user_id)
