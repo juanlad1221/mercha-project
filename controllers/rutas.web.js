@@ -765,10 +765,10 @@ router.post('/api-dashboard-web', async (req, res) => {
       let meses = getMeses(mes)
       let arr2 = []
       meses.forEach(e => {
-        let yu = filterByThreeKey('Año',año,'Mes',e,'Relevado',true,data).length
-        let tu = personalFliter6(new Date(año,e-1,1), new Date(año,e-1,returnDate(año,e)),data).length
+        let r1 = filterByThreeKey('Año',año,'Mes',e,'Relevado',true,data).length
+        let r2 = personalFliter6(new Date(año,e-1,1), new Date(año,e-1,returnDate(año,e)),data).length
         
-        arr2.push({mes:returnMounth(e), cant:yu+tu})
+        arr2.push({x:returnMounth(e), y:r1+r2})
       })
 
 
