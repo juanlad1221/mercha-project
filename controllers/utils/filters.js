@@ -57,6 +57,10 @@ const base = (v1, data) => {
     return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] == v4})
   }
 
+  const filterByFiveKey = (key1,v1,key2,v2,key3,v3,key4,v4,key5,v5,data) => {
+    return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] == v4 && v[key5] == v5})
+  }
+
   const filterCuntNoObjetive = (key1,v1,key2,v2,key3,v3,key4,v4,key5,v5,data) => {
     
     return data.filter(function (v){return v[key1] == v1 && v[key2] == v2 && v[key3] == v3 && v[key4] >= v4 &&  v[key5] <= v5})
@@ -232,6 +236,7 @@ const returnMounth = (mes) => {
     filterByTwoKey,
     filterByThreeKey,
     filterByFourKey,
+    filterByFiveKey,
     SortArrayDesc,
     filterSpecial,
     filterCuntNoObjetive,
