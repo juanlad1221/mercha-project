@@ -744,7 +744,18 @@ router.post('/api-dashboard-web', async (req, res) => {
      
       let obj = {}
       let data = await Survey.find({createdAt: { $gte: new Date(año,0,1), $lte: new Date() } })
-     
+      
+      //si la consulta da vacia
+      if(data.length == 0){
+        obj.fecha_enviada = fecha
+        obj.total_relevado = 0
+        obj.objetivos = 0
+        obj.noObjetivos = 0
+        obj.survey_diario = 0
+        obj.survey_mes = 0
+        res.status(200).json(obj)
+      }
+
       //objetivos
       survey_objetivos = filterByThreeKey('Año',año,'Mes',mes,'Relevado',true,data)//await Survey.where({Año: año, Mes:mes, Relevado:true})
       //no objetivos
@@ -781,7 +792,7 @@ router.post('/api-dashboard-web', async (req, res) => {
             }
             }).length
 
-          arr.push({fecha:new Date(año,mes-1,i).getDate(), cant:cant+cant2})
+          arr.push({x:new Date(año,mes-1,i).getDate(), y:cant+cant2})
         }//end for
 
 
