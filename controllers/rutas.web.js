@@ -802,7 +802,7 @@ router.post('/api-dashboard-web', async (req, res) => {
         obj.objetivos = survey_objetivos.length
         obj.noObjetivos = survey_noObjetivos.length
         obj.survey_diario = arr
-        obj.survey_mes = arr2
+        obj.survey_mes = arr2.reverse()
 
         res.status(200).json(obj)
       }
