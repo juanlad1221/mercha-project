@@ -46,6 +46,7 @@ app.use('/api', require('./controllers/msg.detail.chat.controller'))
 app.use('/api', require('./controllers/dash.movil.controller'))
 app.use('/api', require('./controllers/dash.movil.controller2'))
 app.use('/api', require('./controllers/msg.updateLeido.movil.controller'))
+app.use('/api', require('./controllers/isActive.movil.controller'))
 //rutas web
 app.use('/', require('./controllers/rutas.web'))
 
@@ -57,7 +58,7 @@ require('./db_conexion/conexion');
 
 //Server
 let host = '164.92.118.90'
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3001);
 app.listen(app.get('port'),() => {
     console.log(`Server corriendo en ${app.get('port')}...`)
 
