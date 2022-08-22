@@ -478,8 +478,10 @@ router.get('/panel-relevamientos', isAuthenticated, async (req, res) => {
   let data = await Users.where({})
   let mercha_users = filterByOneKey('type', 'MERCHA', data)
   let seller_users = filterByOneKey('type', 'SELLER', data)
-
-  res.render('../views/panel_relevamientos', { user, mercha_users, seller_users })
+  var users =  data.filter(function(unUsuario){ 
+    return unUsuario.type!='ADMIN';
+  });
+  res.render('../views/panel_relevamientos', { user,users, mercha_users, seller_users })
 })//end get
 
 
@@ -723,7 +725,7 @@ router.get('/api-select-3', isAuthenticated, async (req, res) => {
 })//end get
 
 router.post('/api-dashboard-web', async (req, res) => {
-  
+    console.log(req.body)
     if(req.body){
       //obtengo la fecha
       const {fecha} = req.body
@@ -744,6 +746,7 @@ router.post('/api-dashboard-web', async (req, res) => {
      
       let obj = {}
       let data = await Survey.find({createdAt: { $gte: new Date(año,0,1), $lte: new Date() } })
+      
       
       //si la consulta da vacia
       if(data.length == 0){
@@ -1020,7 +1023,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
   if (req.body) {
    
     if (req.body.mes) {
-      console.log(req.body)
+      
       //obtengo año y mes de la fecha recibida
       let fecha_convertida = new Date(req.body.mes)
       
@@ -1029,18 +1032,19 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
       
       ultimo_dia_mes = new Date(fecha_convertida.getFullYear(), mes, 0)
       ultimo_dia = ultimo_dia_mes.getDate()
-      //console.log(fecha_convertida,año,mes,ultimo_dia)
+     
       let user = Number(req.body.idUser)
       let type_user = req.body.typeUser
-      //console.log(oneDate,mes_solo)
+      
 
       //let data = await Survey.find({createdAt: { $gte: new Date(año,mes,1), $lte: new Date(año,mes,ultimo_dia) } })
       let data = await Survey.find({createdAt: { $gte: new Date(año,(mes-2),1), $lte: new Date(año,(mes-2),31) } })
-      
+      let objetivos = await Objetives.where({Año:año,Mes:(mes-1)})
+
       switch (req.body.type) {
         case 'todos':
           if (type_user == 'MERCHA') {
-            let surveyAllObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',año,'Mes',(mes-1),data)//await Survey.where({ Merchandising: user, type: 'MERCHA', Año: año_solo, Mes: mes_solo })
+            let surveyAllObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',año,'Mes',(mes-1),data)
             let surveyAllObjetives2 = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',false,'Año',año,'Mes',(mes-1),data)
             //let array = surveyAllObjetives.concat(surveyAllObjetives2)
             let surveyAllNoObjetives = filterByFiveKey('Merchandising', user, 'type', type_user,'Relevado',true,'Año',null,'Mes',null,data)
@@ -1049,21 +1053,30 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
             let tosend = arrRelevado.concat(surveyAllObjetives2)
 
             let arr = []
-            if (tosend) {
+            if (tosend && objetivos) {
               tosend.forEach(e => {
                 let obj = {}
+                
                 obj.id = e.Codigo_Cliente
                 obj.Date_ultimo = e.Date
                 obj.name = e.Nombre
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
                 obj.Total_Pictures = e.Total_Pictures
+                obj.objetivo = false
 
+                objetivos.forEach(f =>{
+                  if(f.Codigo_Cliente === e.Codigo_Cliente){
+                    obj.objetivo = true
+                  }
+                })
+    
                 arr.push(obj)
               })//end
 
               //envio datos
               let data = { data: arr }
+             
               res.status(200).json(data)
             }
           }
@@ -1079,7 +1092,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
 
             
             let arr = []
-            if (tosend) {
+            if (tosend && objetivos) {
               tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
@@ -1088,6 +1101,13 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
                 obj.Total_Pictures = e.Total_Pictures
+                obj.objetivo = false
+
+                objetivos.forEach(f =>{
+                  if(f.Codigo_Cliente === e.Codigo_Cliente){
+                    obj.objetivo = true
+                  }
+                })
 
                 arr.push(obj)
               })//end
@@ -1105,7 +1125,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
             let tosend = surveyAllObjetives.concat(surveyAllNoObjetives)
            
             let arr = []
-            if (tosend) {
+            if (tosend && objetivos) {
               tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
@@ -1114,6 +1134,13 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
                 obj.Total_Pictures = e.Total_Pictures
+                obj.objetivo = false
+
+                objetivos.forEach(f =>{
+                  if(f.Codigo_Cliente === e.Codigo_Cliente){
+                    obj.objetivo = true
+                  }
+                })
 
                 arr.push(obj)
               })//end
@@ -1131,7 +1158,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
             let arr = []
             //console.log(surveyAllObjetives[0].Codigo_Cliente)
             //console.log(año,mes)
-            if (tosend) {
+            if (tosend && objetivos) {
               tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
@@ -1140,6 +1167,13 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
                 obj.Total_Pictures = e.Total_Pictures
+                obj.objetivo = false
+
+                objetivos.forEach(f =>{
+                  if(f.Codigo_Cliente === e.Codigo_Cliente){
+                    obj.objetivo = true
+                  }
+                })
 
                 arr.push(obj)
               })//end
@@ -1156,7 +1190,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
             let tosend = surveyAllObjetives
             
             let arr = []
-            if (tosend) {
+            if (tosend && objetivos) {
               tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
@@ -1165,6 +1199,13 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
                 obj.Total_Pictures = e.Total_Pictures
+                obj.objetivo = false
+
+                objetivos.forEach(f =>{
+                  if(f.Codigo_Cliente === e.Codigo_Cliente){
+                    obj.objetivo = true
+                  }
+                })
 
                 arr.push(obj)
               })//end
@@ -1180,7 +1221,7 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
             let tosend = surveyAllObjetives
             
             let arr = []
-            if (tosend) {
+            if (tosend && objetivos) {
               tosend.forEach(e => {
                 let obj = {}
                 obj.id = e.Codigo_Cliente
@@ -1189,6 +1230,13 @@ router.post('/api-clientes-relevamietos', isAuthenticated, async (req, res) => {
                 obj.direccion = e.Direccion
                 obj.localidad = e.Localidad
                 obj.Total_Pictures = e.Total_Pictures
+                obj.objetivo = false
+
+                objetivos.forEach(f =>{
+                  if(f.Codigo_Cliente === e.Codigo_Cliente){
+                    obj.objetivo = true
+                  }
+                })
 
                 arr.push(obj)
               })//end
@@ -1236,6 +1284,7 @@ router.post('/consulta-relevamiento', async (req, res) => {
             obj.Direccion=e.Direccion,
             obj.Type= e.type,
             obj.Pictures=e.Pictures
+            obj.Date = e.Date
 
             if(e.type == 'MERCHA'){
               obj.User = e.Merchandising
@@ -1259,6 +1308,7 @@ router.post('/consulta-relevamiento', async (req, res) => {
             obj.Direccion=e.Direccion,
             obj.Type= e.type,
             obj.Pictures=e.Pictures
+            obj.Date = e.Date
 
             if(e.type == 'SELLER'){
               obj.User = e.Vendedor
